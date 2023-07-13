@@ -18,9 +18,11 @@ spring:
 
 easy-log:
   collector:
-    poll-timeout: 1000ms
+    poll-timeout: 1s
+    pull-batch-size: 100
+    insert-batch-size: 100
     consumer-nums: 1,2,3,4
-    batch-size: 100
+    queue-capacity: 1024
 
 easy-es:
   enable: true
@@ -33,4 +35,5 @@ easy-es:
 
 logging:
   level:
-    "com.chj.easy.log.server.common.mapper": debug
+    root: info
+    tracer: trace

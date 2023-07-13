@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.stream.Consumer;
@@ -50,7 +49,7 @@ public class RedisStreamAutoConfiguration {
                 .StreamMessageListenerContainerOptions
                 .builder()
                 .pollTimeout(easyLogCollectorProperties.getPollTimeout())
-                .batchSize(easyLogCollectorProperties.getReadBatchSize())
+                .batchSize(easyLogCollectorProperties.getPullBatchSize())
                 .executor(EasyLogManager.EASY_LOG_FIXED_THREAD_POOL)
                 .build();
     }
