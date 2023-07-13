@@ -25,7 +25,7 @@ public class EasyLogCollectorProperties {
 
     private int queueCapacity = 1024;
 
-    private int insertBatchSize = 10;
+    private int insertBatchSize = 100;
 
     private int[] consumerNums;
 }

@@ -70,7 +70,7 @@ public class AppReadyEventListener implements ApplicationListener<ApplicationRea
                 }
                 if (!logDocs.isEmpty()) {
                     StopWatch stopWatch = new StopWatch("es 批量输入");
-                    stopWatch.start("聚合查询");
+                    stopWatch.start();
                     Integer batch = logDocMapper.insertBatch(logDocs);
                     stopWatch.stop();
                     log.info("es 批量输入条数【{}】", batch);

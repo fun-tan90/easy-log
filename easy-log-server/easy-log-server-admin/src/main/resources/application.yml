@@ -18,5 +18,14 @@ spring:
 
 logging:
   level:
-    root: info
+    root: trace
   config: classpath:logback-tlog.xml
+
+easy-es:
+  enable: true
+  address: 172.16.8.31:9200,172.16.8.31:9201,172.16.8.31:9202
+  global-config:
+    process_index_mode: manual # 手动挡模式
+    print-dsl: true
+    db-config:
+      index-prefix: daily_

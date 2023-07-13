@@ -18,11 +18,13 @@ public class DemoController {
 
     @GetMapping("info")
     public Res<String> info() {
-        log.error("hello error");
-        log.warn("hello warn");
-        log.debug("hello debug");
-        log.info("hello info");
-        log.trace("hello trace");
+        for (int i = 0; i < 100; i++) {
+            log.error("hello error" + i);
+            log.warn("hello warn" + i);
+            log.debug("hello debug" + i);
+            log.info("hello info" + i);
+            log.trace("hello trace" + i);
+        }
         return Res.ok("info");
     }
 }
