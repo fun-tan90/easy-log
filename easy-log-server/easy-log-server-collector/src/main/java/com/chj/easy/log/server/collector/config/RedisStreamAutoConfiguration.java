@@ -1,11 +1,12 @@
 package com.chj.easy.log.server.collector.config;
 
-import cn.hutool.core.util.RandomUtil;
 import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
+import com.chj.easy.log.server.collector.property.EasyLogCollectorProperties;
 import com.chj.easy.log.server.collector.stream.RedisStreamMessageListener;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.stream.Consumer;
@@ -16,6 +17,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.stream.StreamMessageListenerContainer;
 import org.springframework.data.redis.stream.Subscription;
 
+import javax.annotation.Resource;
 import java.time.Duration;
 
 /**
@@ -27,7 +29,11 @@ import java.time.Duration;
  */
 @Slf4j
 @AutoConfigureAfter(EasyLogCollectorAutoConfiguration.class)
+@EnableConfigurationProperties(EasyLogCollectorProperties.class)
 public class RedisStreamAutoConfiguration {
+
+    @Resource
+    EasyLogCollectorProperties easyLogCollectorProperties;
 
     @Bean
     public RedisStreamMessageListener redisStreamMessageListener(StringRedisTemplate stringRedisTemplate) {
@@ -39,8 +45,8 @@ public class RedisStreamAutoConfiguration {
         return StreamMessageListenerContainer
                 .StreamMessageListenerContainerOptions
                 .builder()
-                .pollTimeout(Duration.ofSeconds(1))
-                .batchSize(100)
+                .pollTimeout(easyLogCollectorProperties.getPollTimeout())
+                .batchSize(easyLogCollectorProperties.getBatchSize())
                 .executor(EasyLogManager.EASY_LOG_FIXED_THREAD_POOL)
                 .build();
     }
@@ -59,7 +65,7 @@ public class RedisStreamAutoConfiguration {
                                      RedisStreamMessageListener redisStreamMessageListener) {
         return streamMessageListenerContainer
                 .receive(
-                        Consumer.from(EasyLogConstants.GROUP_NAME, RandomUtil.randomNumbers(2)),
+                        Consumer.from(EasyLogConstants.GROUP_NAME, EasyLogConstants.CONSUMER_NAME + "-" + easyLogCollectorProperties.getConsumerNum()),
                         StreamOffset.create(EasyLogConstants.STREAM_KEY, ReadOffset.lastConsumed()),
                         redisStreamMessageListener);
     }
