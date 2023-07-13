@@ -10,9 +10,10 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>easy-log-server</module>
         <module>easy-log-appender</module>
         <module>easy-log-common</module>
+        <module>easy-log-example</module>
+        <module>easy-log-server</module>
     </modules>
 
     <properties>
@@ -31,6 +32,7 @@
         <sa-token.version>1.35.0.RC</sa-token.version>
         <mybatis-flex.version>1.4.3</mybatis-flex.version>
         <tlog.version>1.5.0</tlog.version>
+        <easy-es.version>2.0.0-beta3</easy-es.version>
     </properties>
 
     <dependencies>
@@ -184,22 +186,10 @@
                 <version>${tlog.version}</version>
             </dependency>
 
-<!--            <dependency>-->
-<!--                <groupId>org.elasticsearch.client</groupId>-->
-<!--                <artifactId>elasticsearch-rest-high-level-client</artifactId>-->
-<!--                <version>7.14.0</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.elasticsearch</groupId>-->
-<!--                <artifactId>elasticsearch</artifactId>-->
-<!--                <version>7.14.0</version>-->
-<!--            </dependency>-->
-
             <dependency>
                 <groupId>org.dromara.easy-es</groupId>
                 <artifactId>easy-es-boot-starter</artifactId>
-                <!--这里Latest Version是指最新版本的依赖,比如2.0.0,可以通过下面的图片获取-->
-                <version>2.0.0-beta3</version>
+                <version>${easy-es.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

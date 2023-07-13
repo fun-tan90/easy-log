@@ -1,0 +1,12 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: easy-log-example-boot2
+
+logging:
+  level:
+    root: info
+    tracer: trace
+  config: classpath:logback-tlog.xml
