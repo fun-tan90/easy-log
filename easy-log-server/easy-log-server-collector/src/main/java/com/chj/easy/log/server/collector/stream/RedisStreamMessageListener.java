@@ -50,11 +50,11 @@ public class RedisStreamMessageListener implements StreamListener<String, MapRec
                 boolean offer = logDocBlockingQueue.offer(logDoc, 100, TimeUnit.MILLISECONDS);
                 if (!offer) {
                     log.error("Dropping LogDoc due to timeout limit of [100] being exceeded");
-                } else {
-                    stringRedisTemplate.opsForStream().acknowledge(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_NAME, recordId);
                 }
             } catch (InterruptedException e) {
                 log.error("Interrupted while appending LogDoc to LogDocBlockingQueue", e);
+            } finally {
+                stringRedisTemplate.opsForStream().acknowledge(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_NAME, recordId);
             }
         }
     }
