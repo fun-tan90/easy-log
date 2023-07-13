@@ -25,17 +25,16 @@ import java.util.concurrent.LinkedBlockingQueue;
 @EnableConfigurationProperties(EasyLogCollectorProperties.class)
 public class EasyLogCollectorAutoConfiguration {
 
-    private final EasyLogCollectorProperties easyLogCollectorProperties;
-
     @Bean
-    public BlockingQueue<LogDoc> logDocBlockingQueue() {
+    public BlockingQueue<LogDoc> logDocBlockingQueue(EasyLogCollectorProperties easyLogCollectorProperties) {
         return new LinkedBlockingQueue<>(easyLogCollectorProperties.getQueueCapacity());
     }
 
     @Bean
     public AppReadyEventListener appReadyEventProcessor(StringRedisTemplate stringRedisTemplate,
                                                         BlockingQueue<LogDoc> logDocBlockingQueue,
-                                                        LogDocMapper logDocMapper) {
+                                                        LogDocMapper logDocMapper,
+                                                        EasyLogCollectorProperties easyLogCollectorProperties) {
         return new AppReadyEventListener(stringRedisTemplate, logDocBlockingQueue, logDocMapper, easyLogCollectorProperties);
     }
 }

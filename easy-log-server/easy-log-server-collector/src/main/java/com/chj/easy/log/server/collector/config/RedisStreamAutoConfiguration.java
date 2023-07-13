@@ -5,10 +5,8 @@ import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.server.collector.property.EasyLogCollectorProperties;
 import com.chj.easy.log.server.collector.stream.RedisStreamMessageListener;
 import com.chj.easy.log.server.common.model.LogDoc;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.stream.Consumer;
@@ -31,11 +29,8 @@ import java.util.concurrent.BlockingQueue;
  * @date 2023/7/13 8:50
  */
 @Slf4j
-@RequiredArgsConstructor
 @AutoConfigureAfter(EasyLogCollectorAutoConfiguration.class)
 public class RedisStreamAutoConfiguration {
-
-    private final EasyLogCollectorProperties easyLogCollectorProperties;
 
     @Bean
     public RedisStreamMessageListener redisStreamMessageListener(BlockingQueue<LogDoc> logDocBlockingQueue, StringRedisTemplate stringRedisTemplate) {
@@ -43,7 +38,7 @@ public class RedisStreamAutoConfiguration {
     }
 
     @Bean
-    public StreamMessageListenerContainer.StreamMessageListenerContainerOptions<String, MapRecord<String, String, String>> streamMessageListenerContainerOptions() {
+    public StreamMessageListenerContainer.StreamMessageListenerContainerOptions<String, MapRecord<String, String, String>> streamMessageListenerContainerOptions(EasyLogCollectorProperties easyLogCollectorProperties) {
         return StreamMessageListenerContainer
                 .StreamMessageListenerContainerOptions
                 .builder()
@@ -63,7 +58,8 @@ public class RedisStreamAutoConfiguration {
     }
 
     @Bean
-    public List<Subscription> subscriptions(StreamMessageListenerContainer<String, MapRecord<String, String, String>> streamMessageListenerContainer,
+    public List<Subscription> subscriptions(EasyLogCollectorProperties easyLogCollectorProperties,
+                                            StreamMessageListenerContainer<String, MapRecord<String, String, String>> streamMessageListenerContainer,
                                             RedisStreamMessageListener redisStreamMessageListener) {
         List<Subscription> subscriptions = new ArrayList<>();
         for (int consumerNum : easyLogCollectorProperties.getConsumerNums()) {
