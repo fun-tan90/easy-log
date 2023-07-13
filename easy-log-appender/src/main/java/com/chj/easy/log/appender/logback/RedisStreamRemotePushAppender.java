@@ -1,7 +1,6 @@
 package com.chj.easy.log.appender.logback;
 
 
-import com.alibaba.fastjson.JSON;
 import com.chj.easy.log.appender.LogTransferred;
 import com.chj.easy.log.appender.LogTransferredContext;
 import com.chj.easy.log.common.constant.EasyLogConstants;
@@ -12,9 +11,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.StreamEntryID;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 /**
@@ -27,6 +24,7 @@ import java.util.concurrent.BlockingQueue;
 @Setter
 @Getter
 public class RedisStreamRemotePushAppender extends AbstractRemotePushAppender {
+
     private JedisPool jedisPool;
 
     private String redisHost = "127.0.0.1";
@@ -38,6 +36,8 @@ public class RedisStreamRemotePushAppender extends AbstractRemotePushAppender {
     private int redisDb;
 
     private int redisTimeout = 1000;
+
+    private long redisStreamMaxLen = 100000;
 
     @Override
     void initRemotePushClient() {
@@ -62,12 +62,9 @@ public class RedisStreamRemotePushAppender extends AbstractRemotePushAppender {
             }
         }
         if (!logTransferredList.isEmpty()) {
-            for (LogTransferred logTransferred : logTransferredList) {
-                Map<String, String> map = new HashMap<>();
-                map.put("content", logTransferred.getContent());
-                try (Jedis jedis = this.jedisPool.getResource()) {
-                    StreamEntryID xadd = jedis.xadd(EasyLogConstants.STREAM_KEY, StreamEntryID.NEW_ENTRY, map, 100000, false);
-                    System.out.println(xadd.toString());
+            try (Jedis jedis = this.jedisPool.getResource()) {
+                for (LogTransferred logTransferred : logTransferredList) {
+                    jedis.xadd(EasyLogConstants.STREAM_KEY, StreamEntryID.NEW_ENTRY, logTransferred.toMap(), redisStreamMaxLen, false);
                 }
             }
         }

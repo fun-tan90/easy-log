@@ -47,6 +47,7 @@
         <redisDb>10</redisDb>
         <redisPass>root@123456!</redisPass>
         <redisTimeout>1000</redisTimeout>
+        <redisStreamMaxLen>200000</redisStreamMaxLen>
     </appender>
 
     <root level="INFO">
