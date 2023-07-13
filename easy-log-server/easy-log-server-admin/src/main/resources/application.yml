@@ -15,3 +15,8 @@ spring:
         min-idle: 10
         max-active: 300
         max-wait: -1ms
+
+logging:
+  level:
+    root: info
+  config: classpath:logback-tlog.xml
