@@ -1,6 +1,11 @@
 package com.chj.easy.log.server.collector.listener;
 
+import cn.hutool.core.date.StopWatch;
+import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
+import com.chj.easy.log.server.collector.property.EasyLogCollectorProperties;
+import com.chj.easy.log.server.common.mapper.LogDocMapper;
+import com.chj.easy.log.server.common.model.LogDoc;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -8,7 +13,11 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.data.redis.connection.stream.StreamInfo;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
@@ -27,6 +36,12 @@ public class AppReadyEventListener implements ApplicationListener<ApplicationRea
 
     private final StringRedisTemplate stringRedisTemplate;
 
+    private final BlockingQueue<LogDoc> logDocBlockingQueue;
+
+    private final LogDocMapper logDocMapper;
+
+    private final EasyLogCollectorProperties easyLogCollectorProperties;
+
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         if (initialized.compareAndSet(false, true)) {
@@ -40,6 +55,28 @@ public class AppReadyEventListener implements ApplicationListener<ApplicationRea
                     stringRedisTemplate.opsForStream().createGroup(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_NAME);
                 }
             }
+
+            EasyLogManager.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
+                List<LogDoc> logDocs = new ArrayList<>();
+                while (logDocBlockingQueue.remainingCapacity() != -1) {
+                    LogDoc logDoc = logDocBlockingQueue.poll();
+                    if (logDoc == null) {
+                        break;
+                    }
+                    logDocs.add(logDoc);
+                    if (logDocs.size() == easyLogCollectorProperties.getInsertBatchSize()) {
+                        break;
+                    }
+                }
+                if (!logDocs.isEmpty()) {
+                    StopWatch stopWatch = new StopWatch("es 批量输入");
+                    stopWatch.start("聚合查询");
+                    Integer batch = logDocMapper.insertBatch(logDocs);
+                    stopWatch.stop();
+                    log.info("es 批量输入条数【{}】", batch);
+                    log.info(stopWatch.prettyPrint(TimeUnit.MILLISECONDS));
+                }
+            }, 1, 100, TimeUnit.MILLISECONDS);
         }
     }
 }

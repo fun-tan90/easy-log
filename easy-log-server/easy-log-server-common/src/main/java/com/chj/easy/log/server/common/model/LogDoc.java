@@ -9,6 +9,7 @@ import org.dromara.easyes.annotation.IndexId;
 import org.dromara.easyes.annotation.IndexName;
 import org.dromara.easyes.annotation.rely.Analyzer;
 import org.dromara.easyes.annotation.rely.FieldType;
+import org.dromara.easyes.annotation.rely.IdType;
 
 /**
  * description TODO
@@ -24,7 +25,7 @@ import org.dromara.easyes.annotation.rely.FieldType;
 @IndexName(value = "easy_log", keepGlobalPrefix = true)
 public class LogDoc {
 
-    @IndexId
+    @IndexId(type = IdType.CUSTOMIZE)
     private String id;
 
     private long timeStamp;

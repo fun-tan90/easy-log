@@ -21,7 +21,11 @@ public class EasyLogCollectorProperties {
 
     private Duration pollTimeout = Duration.ofSeconds(1);
 
-    private int batchSize = 20;
+    private int readBatchSize = 20;
+
+    private int queueCapacity = 1024;
+
+    private int insertBatchSize = 10;
 
     private int[] consumerNums;
 }

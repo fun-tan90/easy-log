@@ -153,7 +153,6 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
                 .spanId(TLogContext.getSpanId())
                 .currIp(TLogContext.getCurrIp())
                 .preIp(TLogContext.getPreIp())
-                .mdc(mdc)
                 .method(method)
                 .lineNumber(lineNumber)
                 .content(content)

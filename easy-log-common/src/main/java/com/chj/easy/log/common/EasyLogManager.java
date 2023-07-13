@@ -16,4 +16,7 @@ import java.util.concurrent.ScheduledExecutorService;
  */
 public class EasyLogManager {
     public final static ExecutorService EASY_LOG_FIXED_THREAD_POOL = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), new EasyLogThreadFactory("easy-log"));
+
+    public final static ScheduledExecutorService EASY_LOG_SCHEDULED_EXECUTOR = Executors.newScheduledThreadPool(2, new EasyLogThreadFactory("easy-log"));
+
 }

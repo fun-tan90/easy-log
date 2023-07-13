@@ -4,6 +4,7 @@ import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.server.collector.property.EasyLogCollectorProperties;
 import com.chj.easy.log.server.collector.stream.RedisStreamMessageListener;
+import com.chj.easy.log.server.common.model.LogDoc;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -21,6 +22,7 @@ import org.springframework.data.redis.stream.Subscription;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * description TODO
@@ -38,8 +40,8 @@ public class RedisStreamAutoConfiguration {
     private final EasyLogCollectorProperties easyLogCollectorProperties;
 
     @Bean
-    public RedisStreamMessageListener redisStreamMessageListener(ApplicationContext applicationContext, StringRedisTemplate stringRedisTemplate) {
-        return new RedisStreamMessageListener(applicationContext, stringRedisTemplate);
+    public RedisStreamMessageListener redisStreamMessageListener(BlockingQueue<LogDoc> logDocBlockingQueue, StringRedisTemplate stringRedisTemplate) {
+        return new RedisStreamMessageListener(logDocBlockingQueue, stringRedisTemplate);
     }
 
     @Bean
@@ -48,7 +50,7 @@ public class RedisStreamAutoConfiguration {
                 .StreamMessageListenerContainerOptions
                 .builder()
                 .pollTimeout(easyLogCollectorProperties.getPollTimeout())
-                .batchSize(easyLogCollectorProperties.getBatchSize())
+                .batchSize(easyLogCollectorProperties.getReadBatchSize())
                 .executor(EasyLogManager.EASY_LOG_FIXED_THREAD_POOL)
                 .build();
     }
