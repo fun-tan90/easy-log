@@ -1,0 +1,3 @@
+easy-log:
+  admin:
+    create-index-cron: 0 0 23 * * ?

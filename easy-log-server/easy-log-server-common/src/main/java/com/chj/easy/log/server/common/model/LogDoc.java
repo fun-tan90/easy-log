@@ -6,11 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.dromara.easyes.annotation.IndexField;
 import org.dromara.easyes.annotation.IndexId;
 import org.dromara.easyes.annotation.IndexName;
-import org.dromara.easyes.annotation.rely.Analyzer;
-import org.dromara.easyes.annotation.rely.FieldType;
 import org.dromara.easyes.annotation.rely.IdType;
 
 import java.util.Date;
@@ -58,7 +55,11 @@ public class LogDoc {
 
     private String content;
 
-    public static String indexName(){
+    public static String indexName() {
         return "daily-easy-log-" + DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN);
+    }
+
+    public static String newIndexName() {
+        return "daily-easy-log-" + DateUtil.format(DateUtil.offsetDay(new Date(), 1), DatePattern.NORM_DATE_PATTERN);
     }
 }

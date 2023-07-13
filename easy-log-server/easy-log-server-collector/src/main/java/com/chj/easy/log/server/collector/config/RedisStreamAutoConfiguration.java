@@ -33,7 +33,6 @@ import java.util.concurrent.BlockingQueue;
 @Slf4j
 @RequiredArgsConstructor
 @AutoConfigureAfter(EasyLogCollectorAutoConfiguration.class)
-@EnableConfigurationProperties(EasyLogCollectorProperties.class)
 public class RedisStreamAutoConfiguration {
 
     private final EasyLogCollectorProperties easyLogCollectorProperties;

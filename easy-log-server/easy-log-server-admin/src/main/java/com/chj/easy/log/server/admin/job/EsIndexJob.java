@@ -1,7 +1,5 @@
 package com.chj.easy.log.server.admin.job;
 
-import cn.hutool.core.date.DatePattern;
-import cn.hutool.core.date.DateUtil;
 import com.chj.easy.log.server.common.mapper.LogDocMapper;
 import com.chj.easy.log.server.common.model.LogDoc;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +7,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.Date;
 
 /**
  * description TODO
@@ -25,12 +22,12 @@ public class EsIndexJob {
     @Resource
     LogDocMapper logDocMapper;
 
-    @Scheduled(cron = "0/5 * * * * ?")
-    public void initIndex() {
-        String indexName = LogDoc.indexName();
-        if (Boolean.FALSE.equals(logDocMapper.existsIndex(indexName))) {
-            Boolean createIndex = logDocMapper.createIndex(indexName);
-            log.info("【{}】索引创建{}", indexName, Boolean.TRUE.equals(createIndex) ? "成功" : "失败");
+    @Scheduled(cron = "${easy-log.admin.create-index-cron}")
+    public void createIndexTask() {
+        String newIndexName = LogDoc.newIndexName();
+        if (Boolean.FALSE.equals(logDocMapper.existsIndex(newIndexName))) {
+            Boolean createIndex = logDocMapper.createIndex(newIndexName);
+            log.info("【{}】索引创建{}", newIndexName, Boolean.TRUE.equals(createIndex) ? "成功" : "失败");
         }
     }
 }

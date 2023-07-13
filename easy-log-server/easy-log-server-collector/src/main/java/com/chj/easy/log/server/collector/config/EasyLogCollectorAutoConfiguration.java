@@ -6,6 +6,7 @@ import com.chj.easy.log.server.common.mapper.LogDocMapper;
 import com.chj.easy.log.server.common.model.LogDoc;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
@@ -21,6 +22,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 @Slf4j
 @RequiredArgsConstructor
+@EnableConfigurationProperties(EasyLogCollectorProperties.class)
 public class EasyLogCollectorAutoConfiguration {
 
     private final EasyLogCollectorProperties easyLogCollectorProperties;
