@@ -2,9 +2,6 @@
 <configuration scan="false" debug="false">
     <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="app"/>
     <springProperty scope="context" name="LOG_HOME" source="logging.file.path" defaultValue="./logs"/>
-    <springProperty scope="context" name="GRAYLOG_IP" source="graylog.ip" defaultValue="127.0.0.1"/>
-    <springProperty scope="context" name="GRAYLOG_PORT" source="graylog.port" defaultValue="12201"/>
-    <springProperty scope="context" name="GRAYLOG_MAX_CHUNK_SIZE" source="graylog.maxChunkSize" defaultValue="508"/>
 
     <contextListener class="com.yomahub.tlog.core.enhance.logback.TLogLogbackTTLMdcListener"/>
     <!-- 日志输出格式 -->
@@ -43,13 +40,12 @@
         <appName>easy-log-server-admin</appName>
         <appEnv>dev</appEnv>
         <queueSize>1024</queueSize>
-        <batchPushSize>20</batchPushSize>
         <redisHost>172.16.8.31</redisHost>
         <redisPort>6379</redisPort>
         <redisDb>10</redisDb>
         <redisPass>root@123456!</redisPass>
-        <redisTimeout>1000</redisTimeout>
-        <redisStreamMaxLen>200000</redisStreamMaxLen>
+        <redisConnectionTimeout>1000</redisConnectionTimeout>
+        <redisStreamMaxLen>1000000</redisStreamMaxLen>
     </appender>
 
     <root level="INFO">

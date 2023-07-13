@@ -8,7 +8,6 @@ import ch.qos.logback.core.AppenderBase;
 import ch.qos.logback.core.util.Duration;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import com.chj.easy.log.appender.LogTransferred;
-import com.chj.easy.log.appender.LogTransferredContext;
 import com.yomahub.tlog.context.TLogContext;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,25 +30,17 @@ import java.util.concurrent.TimeUnit;
 @Setter
 public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEvent> {
 
-    private static final Duration DEFAULT_EVENT_DELAY_TIMEOUT = new Duration(100);
-
-    public static final int DEFAULT_QUEUE_SIZE = 512;
-
-    public static final int DEFAULT_PUSH_BATCH_SIZE = 24;
-
     private BlockingQueue<LogTransferred> queue;
 
     private ScheduledFuture<?> scheduledFuture;
 
-    private String appName;
+    private String appName = "unknown";
 
     private String appEnv = "default";
 
-    private int queueSize = DEFAULT_QUEUE_SIZE;
+    private int queueSize = 1024;
 
-    private Duration eventDelayLimit = DEFAULT_EVENT_DELAY_TIMEOUT;
-
-    int batchPushSize = DEFAULT_PUSH_BATCH_SIZE;
+    private Duration eventDelayLimit = new Duration(100);
 
     @Override
     public void start() {
@@ -59,13 +50,8 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
         initRemotePushClient();
         this.queue = new LinkedBlockingQueue<>(queueSize);
         this.scheduledFuture = getContext().getScheduledExecutorService().scheduleWithFixedDelay(() -> {
-            try {
-                LogTransferredContext.setLogTransferred(batchPushSize);
-                push(queue);
-            } finally {
-                LogTransferredContext.clear();
-            }
-        }, 1, 100, TimeUnit.MILLISECONDS);
+            push(queue);
+        }, 1, 50, TimeUnit.MILLISECONDS);
         super.start();
     }
 

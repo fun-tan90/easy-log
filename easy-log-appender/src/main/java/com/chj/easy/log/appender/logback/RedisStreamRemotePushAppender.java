@@ -2,7 +2,6 @@ package com.chj.easy.log.appender.logback;
 
 
 import com.chj.easy.log.appender.LogTransferred;
-import com.chj.easy.log.appender.LogTransferredContext;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +10,6 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.StreamEntryID;
 
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
 /**
@@ -35,9 +33,9 @@ public class RedisStreamRemotePushAppender extends AbstractRemotePushAppender {
 
     private int redisDb;
 
-    private int redisTimeout = 1000;
+    private int redisConnectionTimeout = 1000;
 
-    private long redisStreamMaxLen = 100000;
+    private long redisStreamMaxLen = 1000000;
 
     @Override
     void initRemotePushClient() {
@@ -45,27 +43,18 @@ public class RedisStreamRemotePushAppender extends AbstractRemotePushAppender {
         config.setMaxTotal(30);
         config.setMaxIdle(10);
         config.setTestOnBorrow(true);
-        this.jedisPool = new JedisPool(config, redisHost, redisPort, redisTimeout, redisPass, redisDb);
+        this.jedisPool = new JedisPool(config, redisHost, redisPort, redisConnectionTimeout, redisPass, redisDb);
     }
 
     @Override
     void push(BlockingQueue<LogTransferred> queue) {
-        List<LogTransferred> logTransferredList = LogTransferredContext.getLogTransferred();
-        while (queue.remainingCapacity() != -1) {
-            LogTransferred logTransferred = queue.poll();
-            if (logTransferred == null) {
-                break;
-            }
-            logTransferredList.add(logTransferred);
-            if (logTransferredList.size() == batchPushSize) {
-                break;
-            }
-        }
-        if (!logTransferredList.isEmpty()) {
-            try (Jedis jedis = this.jedisPool.getResource()) {
-                for (LogTransferred logTransferred : logTransferredList) {
-                    jedis.xadd(EasyLogConstants.STREAM_KEY, StreamEntryID.NEW_ENTRY, logTransferred.toMap(), redisStreamMaxLen, false);
+        try (Jedis jedis = this.jedisPool.getResource()) {
+            while (queue.remainingCapacity() != -1) {
+                LogTransferred logTransferred = queue.poll();
+                if (logTransferred == null) {
+                    break;
                 }
+                jedis.xadd(EasyLogConstants.STREAM_KEY, StreamEntryID.NEW_ENTRY, logTransferred.toMap(), redisStreamMaxLen, false);
             }
         }
     }
