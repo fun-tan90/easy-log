@@ -52,6 +52,7 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
         if (isStarted()) {
             return;
         }
+        initRemotePushClient();
         this.queue = new LinkedBlockingQueue<>(queueSize);
         this.scheduledFuture = getContext().getScheduledExecutorService().scheduleWithFixedDelay(() -> {
             try {
@@ -63,6 +64,8 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
         }, 1, 100, TimeUnit.MILLISECONDS);
         super.start();
     }
+
+    abstract void initRemotePushClient();
 
     abstract void push(BlockingQueue<LogTransferred> queue);
 
