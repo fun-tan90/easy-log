@@ -4,8 +4,6 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.time.Duration;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -25,6 +23,5 @@ public class EasyLogCollectorProperties {
 
     private int batchSize = 20;
 
-    private int consumerNum = 1;
-
+    private int[] consumerNums;
 }

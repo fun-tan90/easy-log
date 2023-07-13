@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.stream.Consumer;
@@ -17,6 +18,9 @@ import org.springframework.data.redis.connection.stream.StreamOffset;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.stream.StreamMessageListenerContainer;
 import org.springframework.data.redis.stream.Subscription;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * description TODO
@@ -34,8 +38,8 @@ public class RedisStreamAutoConfiguration {
     private final EasyLogCollectorProperties easyLogCollectorProperties;
 
     @Bean
-    public RedisStreamMessageListener redisStreamMessageListener(StringRedisTemplate stringRedisTemplate) {
-        return new RedisStreamMessageListener(stringRedisTemplate);
+    public RedisStreamMessageListener redisStreamMessageListener(ApplicationContext applicationContext, StringRedisTemplate stringRedisTemplate) {
+        return new RedisStreamMessageListener(applicationContext, stringRedisTemplate);
     }
 
     @Bean
@@ -59,12 +63,17 @@ public class RedisStreamAutoConfiguration {
     }
 
     @Bean
-    public Subscription subscription(StreamMessageListenerContainer<String, MapRecord<String, String, String>> streamMessageListenerContainer,
-                                     RedisStreamMessageListener redisStreamMessageListener) {
-        return streamMessageListenerContainer
-                .receive(
-                        Consumer.from(EasyLogConstants.GROUP_NAME, EasyLogConstants.GROUP_CONSUMER_NAME + "-" + easyLogCollectorProperties.getConsumerNum()),
-                        StreamOffset.create(EasyLogConstants.STREAM_KEY, ReadOffset.lastConsumed()),
-                        redisStreamMessageListener);
+    public List<Subscription> subscriptions(StreamMessageListenerContainer<String, MapRecord<String, String, String>> streamMessageListenerContainer,
+                                            RedisStreamMessageListener redisStreamMessageListener) {
+        List<Subscription> subscriptions = new ArrayList<>();
+        for (int consumerNum : easyLogCollectorProperties.getConsumerNums()) {
+            Subscription subscription = streamMessageListenerContainer
+                    .receive(
+                            Consumer.from(EasyLogConstants.GROUP_NAME, EasyLogConstants.GROUP_CONSUMER_NAME + "-" + consumerNum),
+                            StreamOffset.create(EasyLogConstants.STREAM_KEY, ReadOffset.lastConsumed()),
+                            redisStreamMessageListener);
+            subscriptions.add(subscription);
+        }
+        return subscriptions;
     }
 }

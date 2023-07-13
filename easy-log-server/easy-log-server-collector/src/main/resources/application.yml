@@ -19,7 +19,7 @@ spring:
 easy-log:
   collector:
     poll-timeout: 1000ms
-    consumer-num: 1
+    consumer-nums: 1,2,3,4
     batch-size: 100
 
 easy-es:
