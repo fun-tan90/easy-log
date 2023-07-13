@@ -1,7 +1,8 @@
-package com.chj.easy.log.appender.logback;
+package com.chj.easy.log.appender.logback.redis;
 
 
 import com.chj.easy.log.appender.LogTransferred;
+import com.chj.easy.log.appender.logback.AbstractRemotePushAppender;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import lombok.Getter;
 import lombok.Setter;
@@ -45,7 +46,7 @@ public class RedisStreamRemotePushAppender extends AbstractRemotePushAppender {
     private int redisPoolMaxIdle = 30;
 
     @Override
-    void initRemotePushClient() {
+    public void initRemotePushClient() {
         JedisPoolConfig config = new JedisPoolConfig();
         config.setMaxTotal(redisPoolMaxTotal);
         config.setMaxIdle(redisPoolMaxIdle);
@@ -58,7 +59,7 @@ public class RedisStreamRemotePushAppender extends AbstractRemotePushAppender {
     }
 
     @Override
-    void push(BlockingQueue<LogTransferred> queue) {
+    public void push(BlockingQueue<LogTransferred> queue) {
         try (Jedis jedis = this.jedisPool.getResource()) {
             while (queue.remainingCapacity() != -1) {
                 LogTransferred logTransferred = queue.poll();

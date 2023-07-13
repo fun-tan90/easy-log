@@ -57,9 +57,9 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
         super.start();
     }
 
-    abstract void initRemotePushClient();
+    protected abstract void initRemotePushClient();
 
-    abstract void push(BlockingQueue<LogTransferred> queue);
+    protected abstract void push(BlockingQueue<LogTransferred> queue);
 
     @Override
     public void stop() {

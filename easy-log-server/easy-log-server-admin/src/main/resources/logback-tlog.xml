@@ -36,7 +36,7 @@
         <appender-ref ref="FILE"/>
     </appender>
 
-    <appender name="REDIS_STREAM" class="com.chj.easy.log.appender.logback.RedisStreamRemotePushAppender">
+    <appender name="REDIS_STREAM" class="com.chj.easy.log.appender.logback.redis.RedisStreamRemotePushAppender">
         <enable>true</enable>
         <appName>easy-log-server-admin</appName>
         <appEnv>dev</appEnv>
