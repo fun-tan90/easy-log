@@ -1,0 +1,7 @@
+easy-log:
+  collector:
+    poll-timeout: 1s
+    pull-batch-size: 100
+    insert-batch-size: 100
+    consumer-nums: 1,2,3,4
+    queue-capacity: 1024

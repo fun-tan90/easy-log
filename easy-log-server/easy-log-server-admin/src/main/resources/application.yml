@@ -2,30 +2,14 @@ server:
   port: 1203
 
 spring:
-  redis:
-    host: 172.16.8.31
-    port: 6379
-    database: 10
-    password: root@123456!
-    connect-timeout: 5000ms
-    lettuce:
-      pool:
-        enabled: true
-        max-idle: 50
-        min-idle: 10
-        max-active: 300
-        max-wait: -1ms
-
-logging:
-  level:
-    root: debug
-  config: classpath:logback-tlog.xml
-
-easy-es:
-  enable: true
-  address: 172.16.8.31:9200,172.16.8.31:9201,172.16.8.31:9202
-  global-config:
-    process_index_mode: manual # 手动挡模式
-    print-dsl: true
-    db-config:
-      index-prefix: daily_
+  application:
+    name: easy-log-server-admin
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+  profiles:
+    active: dev
+    group:
+      dev:
+        - cache
+        - es
+        - log

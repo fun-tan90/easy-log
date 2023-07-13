@@ -1,5 +1,7 @@
 package com.chj.easy.log.server.collector.listener;
 
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.date.StopWatch;
 import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
@@ -14,6 +16,7 @@ import org.springframework.data.redis.connection.stream.StreamInfo;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
@@ -71,7 +74,7 @@ public class AppReadyEventListener implements ApplicationListener<ApplicationRea
                 }
                 if (!logDocs.isEmpty()) {
                     stopWatch.start("批量插入数据耗时");
-                    Integer batch = logDocMapper.insertBatch(logDocs);
+                    Integer batch = logDocMapper.insertBatch(logDocs, LogDoc.indexName());
                     log.info("es 批量输入条数【{}】", batch);
                     stopWatch.stop();
                     log.info(stopWatch.prettyPrint(TimeUnit.MILLISECONDS));

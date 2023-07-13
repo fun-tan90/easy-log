@@ -1,6 +1,7 @@
 package com.chj.easy.log.server.admin.rest;
 
-import com.chj.easy.log.server.admin.convention.Res;
+
+import com.chj.easy.log.server.common.convention.Res;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

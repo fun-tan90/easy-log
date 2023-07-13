@@ -1,5 +1,7 @@
 package com.chj.easy.log.server.common.model;
 
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,6 +12,8 @@ import org.dromara.easyes.annotation.IndexName;
 import org.dromara.easyes.annotation.rely.Analyzer;
 import org.dromara.easyes.annotation.rely.FieldType;
 import org.dromara.easyes.annotation.rely.IdType;
+
+import java.util.Date;
 
 /**
  * description TODO
@@ -22,7 +26,7 @@ import org.dromara.easyes.annotation.rely.IdType;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@IndexName(value = "easy_log", keepGlobalPrefix = true)
+@IndexName(value = "easy-log", keepGlobalPrefix = true)
 public class LogDoc {
 
     @IndexId(type = IdType.CUSTOMIZE)
@@ -52,6 +56,9 @@ public class LogDoc {
 
     private String lineNumber;
 
-    @IndexField(fieldType = FieldType.TEXT, analyzer = Analyzer.STANDARD, searchAnalyzer = Analyzer.STANDARD)
     private String content;
+
+    public static String indexName(){
+        return "daily-easy-log-" + DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN);
+    }
 }

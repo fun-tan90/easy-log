@@ -2,38 +2,15 @@ server:
   port: 1134
 
 spring:
-  redis:
-    host: 172.16.8.31
-    port: 6379
-    database: 10
-    password: root@123456!
-    connect-timeout: 5000ms
-    lettuce:
-      pool:
-        enabled: true
-        max-idle: 50
-        min-idle: 10
-        max-active: 300
-        max-wait: -1ms
-
-easy-log:
-  collector:
-    poll-timeout: 1s
-    pull-batch-size: 100
-    insert-batch-size: 100
-    consumer-nums: 1,2,3,4
-    queue-capacity: 1024
-
-easy-es:
-  enable: true
-  address: 172.16.8.31:9200,172.16.8.31:9201,172.16.8.31:9202
-  global-config:
-    process_index_mode: manual # 手动挡模式
-    print-dsl: true
-    db-config:
-      index-prefix: daily_
-
-logging:
-  level:
-    root: info
-    tracer: trace
+  application:
+    name: easy-log-server-collector
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+  profiles:
+    active: dev
+    group:
+      dev:
+        - cache
+        - el
+        - es
+        - log
