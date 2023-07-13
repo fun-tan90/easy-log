@@ -1,5 +1,6 @@
 easy-es:
   enable: true
+  banner: false
   address: 172.16.8.31:9200,172.16.8.31:9201,172.16.8.31:9202
   global-config:
     process_index_mode: manual # 手动挡模式
