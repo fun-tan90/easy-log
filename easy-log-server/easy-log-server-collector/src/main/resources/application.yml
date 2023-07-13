@@ -1,5 +1,5 @@
 server:
-  port: 1124
+  port: 1134
 
 spring:
   redis:
@@ -7,3 +7,11 @@ spring:
     port: 6379
     database: 10
     password: root@123456!
+    connect-timeout: 5000ms
+    lettuce:
+      pool:
+        enabled: true
+        max-idle: 50
+        min-idle: 10
+        max-active: 300
+        max-wait: -1ms

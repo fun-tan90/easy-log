@@ -12,6 +12,7 @@
     <modules>
         <module>easy-log-server</module>
         <module>easy-log-appender</module>
+        <module>easy-log-common</module>
     </modules>
 
     <properties>
@@ -58,6 +59,12 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.chj</groupId>
+                <artifactId>easy-log-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
