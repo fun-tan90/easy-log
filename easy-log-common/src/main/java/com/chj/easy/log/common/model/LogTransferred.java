@@ -1,6 +1,5 @@
-package com.chj.easy.log.appender;
+package com.chj.easy.log.common.model;
 
-import com.alibaba.fastjson.JSON;
 import lombok.Builder;
 import lombok.Data;
 

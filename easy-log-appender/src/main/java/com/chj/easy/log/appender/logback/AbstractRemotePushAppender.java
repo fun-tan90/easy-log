@@ -7,7 +7,7 @@ import ch.qos.logback.classic.spi.ThrowableProxy;
 import ch.qos.logback.core.AppenderBase;
 import ch.qos.logback.core.util.Duration;
 import cn.hutool.core.exceptions.ExceptionUtil;
-import com.chj.easy.log.appender.LogTransferred;
+import com.chj.easy.log.common.model.LogTransferred;
 import com.yomahub.tlog.context.TLogContext;
 import lombok.Getter;
 import lombok.Setter;

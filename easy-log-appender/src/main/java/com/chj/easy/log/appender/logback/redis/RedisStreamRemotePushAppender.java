@@ -1,7 +1,7 @@
 package com.chj.easy.log.appender.logback.redis;
 
 
-import com.chj.easy.log.appender.LogTransferred;
+import com.chj.easy.log.common.model.LogTransferred;
 import com.chj.easy.log.appender.logback.AbstractRemotePushAppender;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import lombok.Getter;
