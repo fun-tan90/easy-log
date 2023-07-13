@@ -61,7 +61,6 @@ public class AppReadyEventListener implements ApplicationListener<ApplicationRea
 
             EasyLogManager.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
                 List<LogDoc> logDocs = new ArrayList<>();
-                StopWatch stopWatch = new StopWatch("es 批量输入");
                 while (logDocBlockingQueue.remainingCapacity() != -1) {
                     LogDoc logDoc = logDocBlockingQueue.poll();
                     if (logDoc == null) {
@@ -73,6 +72,7 @@ public class AppReadyEventListener implements ApplicationListener<ApplicationRea
                     }
                 }
                 if (!logDocs.isEmpty()) {
+                    StopWatch stopWatch = new StopWatch("es 批量输入");
                     stopWatch.start("批量插入数据耗时");
                     Integer batch = logDocMapper.insertBatch(logDocs, LogDoc.indexName());
                     log.info("es 批量输入条数【{}】", batch);
