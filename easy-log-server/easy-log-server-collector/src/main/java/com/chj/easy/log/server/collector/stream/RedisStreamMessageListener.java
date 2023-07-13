@@ -1,4 +1,4 @@
-package com.chj.easy.log.server.collector.config;
+package com.chj.easy.log.server.collector.stream;
 
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import lombok.RequiredArgsConstructor;

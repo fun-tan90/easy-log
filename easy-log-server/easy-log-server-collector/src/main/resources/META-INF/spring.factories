@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.chj.easy.log.server.collector.config.EasyLogCollectorAutoConfiguration,\
   com.chj.easy.log.server.collector.config.RedisStreamAutoConfiguration

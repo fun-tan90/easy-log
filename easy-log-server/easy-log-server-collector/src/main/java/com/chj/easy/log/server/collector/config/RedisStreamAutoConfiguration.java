@@ -3,7 +3,9 @@ package com.chj.easy.log.server.collector.config;
 import cn.hutool.core.util.RandomUtil;
 import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
+import com.chj.easy.log.server.collector.stream.RedisStreamMessageListener;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.stream.Consumer;
@@ -24,6 +26,7 @@ import java.time.Duration;
  * @date 2023/7/13 8:50
  */
 @Slf4j
+@AutoConfigureAfter(EasyLogCollectorAutoConfiguration.class)
 public class RedisStreamAutoConfiguration {
 
     @Bean
@@ -60,39 +63,4 @@ public class RedisStreamAutoConfiguration {
                         StreamOffset.create(EasyLogConstants.STREAM_KEY, ReadOffset.lastConsumed()),
                         redisStreamMessageListener);
     }
-
-//
-//    @Bean(initMethod = "start", destroyMethod = "stop")
-//    public StreamMessageListenerContainer<String, MapRecord<String, String, String>> streamMessageListenerContainer(RedisConnectionFactory factory,
-//                                                                                                                    StringRedisTemplate stringRedisTemplate,
-//                                                                                                                    RedisStreamMessageListener redisStreamMessageListener) {
-//        StreamMessageListenerContainer.StreamMessageListenerContainerOptions<String, MapRecord<String, String, String>> options =
-//                StreamMessageListenerContainer
-//                        .StreamMessageListenerContainerOptions
-//                        .builder()
-//                        .pollTimeout(Duration.ofSeconds(1))
-//                        .batchSize(100)
-//                        .build();
-//
-//        StreamMessageListenerContainer<String, MapRecord<String, String, String>> listenerContainer =
-//                StreamMessageListenerContainer.create(factory, options);
-//
-////        Boolean hasKey = stringRedisTemplate.hasKey(EasyLogConstants.STREAM_KEY);
-////        if (Boolean.FALSE.equals(hasKey)) {
-////            Map<String, Object> content = new HashMap<>();
-////            content.put("field", "value");
-////            RecordId recordId = stringRedisTemplate.opsForStream().add(EasyLogConstants.STREAM_KEY, content);
-////            Assert.notNull(recordId, "RecordId must not be null");
-////            stringRedisTemplate.opsForStream().createGroup(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_NAME);
-////            stringRedisTemplate.opsForStream().delete(EasyLogConstants.STREAM_KEY, recordId.getValue());
-////        }
-//
-//        listenerContainer
-//                .receive(
-//                        Consumer.from(EasyLogConstants.GROUP_NAME, RandomUtil.randomNumbers(2)),
-//                        StreamOffset.create(EasyLogConstants.STREAM_KEY, ReadOffset.lastConsumed()),
-//                        redisStreamMessageListener);
-//
-//        return listenerContainer;
-//    }
 }
