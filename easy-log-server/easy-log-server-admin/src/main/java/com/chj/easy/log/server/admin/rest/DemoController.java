@@ -21,9 +21,8 @@ public class DemoController {
         for (int i = 0; i < 100; i++) {
             log.error("hello error" + i);
             log.warn("hello warn" + i);
-            log.debug("hello debug" + i);
             log.info("hello info" + i);
-            log.trace("hello trace" + i);
+            log.debug("hello debug" + i);
         }
         return Res.ok("info");
     }

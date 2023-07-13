@@ -18,7 +18,7 @@ spring:
 
 logging:
   level:
-    root: trace
+    root: debug
   config: classpath:logback-tlog.xml
 
 easy-es:
