@@ -21,6 +21,7 @@
         <dependency>
             <groupId>com.yomahub</groupId>
             <artifactId>tlog-core</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.chj</groupId>

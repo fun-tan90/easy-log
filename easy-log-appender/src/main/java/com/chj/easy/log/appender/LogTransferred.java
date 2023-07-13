@@ -39,8 +39,6 @@ public class LogTransferred {
 
     private String preIp;
 
-    private Map<String, String> mdc;
-
     private String method;
 
     private String lineNumber;
@@ -59,7 +57,6 @@ public class LogTransferred {
         map.put("spanId", Optional.ofNullable(spanId).orElse("-"));
         map.put("currIp", Optional.ofNullable(currIp).orElse("-"));
         map.put("preIp", Optional.ofNullable(preIp).orElse("-"));
-        map.put("mdc", JSON.toJSONString(mdc));
         map.put("method", Optional.ofNullable(method).orElse("-"));
         map.put("lineNumber", lineNumber);
         map.put("content", content);

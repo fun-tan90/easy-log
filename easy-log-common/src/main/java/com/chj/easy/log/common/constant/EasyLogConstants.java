@@ -7,7 +7,10 @@ package com.chj.easy.log.common.constant;
  * @since 1.0.0
  */
 public interface EasyLogConstants {
+    String SCAN_BASE_PACKAGES = "com.chj.easy.log.server";
+
     String STREAM_KEY = "easy-log";
+
     String GROUP_NAME = "easy-log-group";
 
     String GROUP_CONSUMER_NAME = "easy-log-group-consumer";

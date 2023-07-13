@@ -21,3 +21,16 @@ easy-log:
     poll-timeout: 1000ms
     consumer-num: 1
     batch-size: 100
+
+easy-es:
+  enable: true
+  address: 172.16.8.31:9200,172.16.8.31:9201,172.16.8.31:9202
+  global-config:
+    process_index_mode: manual # 手动挡模式
+    print-dsl: true
+    db-config:
+      index-prefix: daily_
+
+logging:
+  level:
+    "com.chj.easy.log.server.common.mapper": debug

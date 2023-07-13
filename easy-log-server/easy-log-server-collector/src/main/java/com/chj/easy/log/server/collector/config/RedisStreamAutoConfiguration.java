@@ -4,6 +4,7 @@ import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.server.collector.property.EasyLogCollectorProperties;
 import com.chj.easy.log.server.collector.stream.RedisStreamMessageListener;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -17,8 +18,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.stream.StreamMessageListenerContainer;
 import org.springframework.data.redis.stream.Subscription;
 
-import javax.annotation.Resource;
-
 /**
  * description TODO
  * company 铁人科技
@@ -27,12 +26,12 @@ import javax.annotation.Resource;
  * @date 2023/7/13 8:50
  */
 @Slf4j
+@RequiredArgsConstructor
 @AutoConfigureAfter(EasyLogCollectorAutoConfiguration.class)
 @EnableConfigurationProperties(EasyLogCollectorProperties.class)
 public class RedisStreamAutoConfiguration {
 
-    @Resource
-    EasyLogCollectorProperties easyLogCollectorProperties;
+    private final EasyLogCollectorProperties easyLogCollectorProperties;
 
     @Bean
     public RedisStreamMessageListener redisStreamMessageListener(StringRedisTemplate stringRedisTemplate) {

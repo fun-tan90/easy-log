@@ -69,6 +69,11 @@
                 <artifactId>easy-log-appender</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.chj</groupId>
+                <artifactId>easy-log-server-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -177,6 +182,24 @@
                 <groupId>com.yomahub</groupId>
                 <artifactId>tlog-all-spring-boot-starter</artifactId>
                 <version>${tlog.version}</version>
+            </dependency>
+
+<!--            <dependency>-->
+<!--                <groupId>org.elasticsearch.client</groupId>-->
+<!--                <artifactId>elasticsearch-rest-high-level-client</artifactId>-->
+<!--                <version>7.14.0</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>org.elasticsearch</groupId>-->
+<!--                <artifactId>elasticsearch</artifactId>-->
+<!--                <version>7.14.0</version>-->
+<!--            </dependency>-->
+
+            <dependency>
+                <groupId>org.dromara.easy-es</groupId>
+                <artifactId>easy-es-boot-starter</artifactId>
+                <!--这里Latest Version是指最新版本的依赖,比如2.0.0,可以通过下面的图片获取-->
+                <version>2.0.0-beta3</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
