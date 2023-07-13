@@ -18,7 +18,6 @@ import org.springframework.data.redis.stream.StreamMessageListenerContainer;
 import org.springframework.data.redis.stream.Subscription;
 
 import javax.annotation.Resource;
-import java.time.Duration;
 
 /**
  * description TODO
@@ -65,7 +64,7 @@ public class RedisStreamAutoConfiguration {
                                      RedisStreamMessageListener redisStreamMessageListener) {
         return streamMessageListenerContainer
                 .receive(
-                        Consumer.from(EasyLogConstants.GROUP_NAME, EasyLogConstants.CONSUMER_NAME + "-" + easyLogCollectorProperties.getConsumerNum()),
+                        Consumer.from(EasyLogConstants.GROUP_NAME, EasyLogConstants.GROUP_CONSUMER_NAME + "-" + easyLogCollectorProperties.getConsumerNum()),
                         StreamOffset.create(EasyLogConstants.STREAM_KEY, ReadOffset.lastConsumed()),
                         redisStreamMessageListener);
     }

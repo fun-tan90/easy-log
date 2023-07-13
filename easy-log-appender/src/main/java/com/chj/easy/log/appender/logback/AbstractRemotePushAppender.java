@@ -41,6 +41,10 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
 
     private ScheduledFuture<?> scheduledFuture;
 
+    private String appName;
+
+    private String appEnv = "default";
+
     private int queueSize = DEFAULT_QUEUE_SIZE;
 
     private Duration eventDelayLimit = DEFAULT_EVENT_DELAY_TIMEOUT;
@@ -140,6 +144,8 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
         }
         return LogTransferred.builder()
                 .timeStamp(timeStamp)
+                .appName(appName)
+                .appEnv(appEnv)
                 .level(level.levelStr)
                 .loggerName(loggerName)
                 .threadName(threadName)

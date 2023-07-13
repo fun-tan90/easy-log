@@ -38,11 +38,6 @@ public class AppReadyEventListener implements ApplicationListener<ApplicationRea
                 Optional<StreamInfo.XInfoGroup> xInfoGroupOpt = groups.stream().filter(n -> n.groupName().equals(EasyLogConstants.GROUP_NAME)).findAny();
                 if (!xInfoGroupOpt.isPresent()) {
                     stringRedisTemplate.opsForStream().createGroup(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_NAME);
-                } else {
-                    StreamInfo.XInfoConsumers consumers = stringRedisTemplate.opsForStream().consumers(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_NAME);
-                    consumers.forEach(n -> {
-                        System.out.println(n.consumerName());
-                    });
                 }
             }
         }

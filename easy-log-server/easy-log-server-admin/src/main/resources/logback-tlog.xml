@@ -40,6 +40,8 @@
     </appender>
 
     <appender name="REDIS_STREAM" class="com.chj.easy.log.appender.logback.RedisStreamRemotePushAppender">
+        <appName>easy-log-server-admin</appName>
+        <appEnv>dev</appEnv>
         <queueSize>1024</queueSize>
         <batchPushSize>20</batchPushSize>
         <redisHost>172.16.8.31</redisHost>

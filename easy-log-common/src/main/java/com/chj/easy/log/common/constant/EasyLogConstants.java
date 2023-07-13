@@ -10,5 +10,5 @@ public interface EasyLogConstants {
     String STREAM_KEY = "easy-log";
     String GROUP_NAME = "easy-log-group";
 
-    String CONSUMER_NAME = "easy-log-consumer";
+    String GROUP_CONSUMER_NAME = "easy-log-group-consumer";
 }
