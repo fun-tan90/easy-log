@@ -23,6 +23,10 @@
             <artifactId>tlog-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.chj</groupId>
+            <artifactId>easy-log-common</artifactId>
+        </dependency>
+        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
             <scope>provided</scope>
