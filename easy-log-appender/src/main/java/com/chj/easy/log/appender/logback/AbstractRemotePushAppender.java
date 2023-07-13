@@ -34,6 +34,8 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
 
     private ScheduledFuture<?> scheduledFuture;
 
+    private boolean enable = true;
+
     private String appName = "unknown";
 
     private String appEnv = "default";
@@ -44,7 +46,7 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
 
     @Override
     public void start() {
-        if (isStarted()) {
+        if (!enable || isStarted()) {
             return;
         }
         initRemotePushClient();
