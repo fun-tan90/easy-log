@@ -1,5 +1,5 @@
 server:
-  port: 1124
+  port: 1134
 
 spring:
   redis:
@@ -19,5 +19,5 @@ spring:
 easy-log:
   collector:
     poll-timeout: 1000ms
-    consumer-num: 2
+    consumer-num: 1
     batch-size: 100

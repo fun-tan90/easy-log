@@ -26,9 +26,8 @@ public class RedisStreamMessageListener implements StreamListener<String, MapRec
             System.out.println("message id " + entries.getId());
             System.out.println("stream " + stream);
             System.out.println("value " + entries.getValue());
-
             stringRedisTemplate.opsForStream().acknowledge(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_NAME, entries.getId().getValue());
-            stringRedisTemplate.opsForStream().delete(EasyLogConstants.STREAM_KEY, entries.getId().getValue());
+//            stringRedisTemplate.opsForStream().delete(EasyLogConstants.STREAM_KEY, entries.getId().getValue());
         }
     }
 

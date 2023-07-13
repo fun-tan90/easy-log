@@ -5,12 +5,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.data.redis.connection.stream.RecordId;
+import org.springframework.data.redis.connection.stream.StreamInfo;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.util.Assert;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
@@ -34,12 +32,18 @@ public class AppReadyEventListener implements ApplicationListener<ApplicationRea
         if (initialized.compareAndSet(false, true)) {
             Boolean hasKey = stringRedisTemplate.hasKey(EasyLogConstants.STREAM_KEY);
             if (Boolean.FALSE.equals(hasKey)) {
-                Map<String, Object> content = new HashMap<>();
-                content.put("field", "value");
-                RecordId recordId = stringRedisTemplate.opsForStream().add(EasyLogConstants.STREAM_KEY, content);
-                Assert.notNull(recordId, "RecordId must not be null");
                 stringRedisTemplate.opsForStream().createGroup(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_NAME);
-                stringRedisTemplate.opsForStream().delete(EasyLogConstants.STREAM_KEY, recordId.getValue());
+            } else {
+                StreamInfo.XInfoGroups groups = stringRedisTemplate.opsForStream().groups(EasyLogConstants.STREAM_KEY);
+                Optional<StreamInfo.XInfoGroup> xInfoGroupOpt = groups.stream().filter(n -> n.groupName().equals(EasyLogConstants.GROUP_NAME)).findAny();
+                if (!xInfoGroupOpt.isPresent()) {
+                    stringRedisTemplate.opsForStream().createGroup(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_NAME);
+                } else {
+                    StreamInfo.XInfoConsumers consumers = stringRedisTemplate.opsForStream().consumers(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_NAME);
+                    consumers.forEach(n -> {
+                        System.out.println(n.consumerName());
+                    });
+                }
             }
         }
     }
