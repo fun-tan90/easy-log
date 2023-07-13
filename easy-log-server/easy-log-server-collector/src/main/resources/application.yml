@@ -1,0 +1,9 @@
+server:
+  port: 1124
+
+spring:
+  redis:
+    host: 172.16.8.31
+    port: 6379
+    database: 10
+    password: root@123456!
