@@ -41,8 +41,8 @@
         <appName>easy-log-server-admin</appName>
         <appEnv>dev</appEnv>
         <queueSize>1024</queueSize>
-        <redisHost>172.16.8.31</redisHost>
-        <redisPort>6379</redisPort>
+        <redisMode>single</redisMode>
+        <redisAddress>172.16.8.31:6379</redisAddress>
         <redisDb>10</redisDb>
         <redisPass>root@123456!</redisPass>
         <redisConnectionTimeout>1000</redisConnectionTimeout>

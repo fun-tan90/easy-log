@@ -25,9 +25,12 @@ public class RedisStreamRemotePushAppender extends AbstractRemotePushAppender {
 
     private JedisPool jedisPool;
 
-    private String redisHost = "127.0.0.1";
+    /**
+     * single、sentinel、cluster
+     */
+    private String redisMode = "single";
 
-    private int redisPort = 6379;
+    private String redisAddress = "127.0.0.1:6379";
 
     private String redisPass;
 
@@ -37,13 +40,21 @@ public class RedisStreamRemotePushAppender extends AbstractRemotePushAppender {
 
     private long redisStreamMaxLen = 1000000;
 
+    private int redisPoolMaxTotal = 30;
+
+    private int redisPoolMaxIdle = 30;
+
     @Override
     void initRemotePushClient() {
         JedisPoolConfig config = new JedisPoolConfig();
-        config.setMaxTotal(30);
-        config.setMaxIdle(10);
+        config.setMaxTotal(redisPoolMaxTotal);
+        config.setMaxIdle(redisPoolMaxIdle);
         config.setTestOnBorrow(true);
-        this.jedisPool = new JedisPool(config, redisHost, redisPort, redisConnectionTimeout, redisPass, redisDb);
+        if ("single".equals(redisMode)) {
+            // TODO redisAddress 正则校验
+            String[] arrays = redisAddress.split(":");
+            this.jedisPool = new JedisPool(config, arrays[0], Integer.parseInt(arrays[1]), redisConnectionTimeout, redisPass, redisDb);
+        }
     }
 
     @Override
