@@ -14,7 +14,6 @@ public interface EsService {
      *
      * @param indexName     索引名称
      * @param indexTemplate 索引模板
-     * @return true 成功 false 失败
      */
-    boolean createIndex(String indexName, String indexTemplate);
+    void createIndex(String indexName, String indexTemplate);
 }

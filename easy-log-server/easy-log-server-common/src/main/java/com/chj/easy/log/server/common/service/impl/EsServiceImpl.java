@@ -1,17 +1,8 @@
 package com.chj.easy.log.server.common.service.impl;
 
-import com.chj.easy.log.server.common.service.EsService;
-import lombok.SneakyThrows;
+import com.chj.easy.log.server.common.service.AbstractEsService;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.client.indices.CreateIndexRequest;
-import org.elasticsearch.client.indices.CreateIndexResponse;
-import org.elasticsearch.client.indices.GetIndexRequest;
-import org.elasticsearch.common.xcontent.XContentType;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
 
 /**
  * description TODO
@@ -22,24 +13,15 @@ import javax.annotation.Resource;
  */
 @Slf4j
 @Service
-public class EsServiceImpl implements EsService {
+public class EsServiceImpl extends AbstractEsService {
 
-    @Resource
-    RestHighLevelClient restHighLevelClient;
-
-    @SneakyThrows
     @Override
-    public boolean createIndex(String indexName, String indexTemplate) {
-        GetIndexRequest getIndexRequest = new GetIndexRequest(indexName);
-        boolean exists = restHighLevelClient.indices().exists(getIndexRequest, RequestOptions.DEFAULT);
+    public void createIndex(String indexName, String indexTemplate) {
+        boolean exists = exists(indexName);
         if (!exists) {
-            CreateIndexRequest indexRequest = new CreateIndexRequest(indexName);
-            indexRequest.source(indexTemplate, XContentType.JSON);
-            CreateIndexResponse createIndexResponse = restHighLevelClient.indices().create(indexRequest, RequestOptions.DEFAULT);
-            return createIndexResponse.isAcknowledged();
-        } else {
-            log.warn("【{}】索引已存在", indexName);
-            return false;
+            boolean isOk = create(indexName, indexTemplate);
+            log.info("【{}】索引创建{}", indexName, isOk ? "成功" : "失败");
         }
+        log.info("【{}】索引已存在", indexName);
     }
 }
