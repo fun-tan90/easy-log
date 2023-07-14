@@ -132,7 +132,7 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
             content = logEvent.getFormattedMessage();
         }
         return LogTransferred.builder()
-                .date(new Date(timeStamp))
+                .timeStamp(timeStamp)
                 .appName(appName)
                 .appEnv(appEnv)
                 .level(level.levelStr)

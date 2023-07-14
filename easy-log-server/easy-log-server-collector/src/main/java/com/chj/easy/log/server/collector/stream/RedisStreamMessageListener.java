@@ -1,6 +1,5 @@
 package com.chj.easy.log.server.collector.stream;
 
-import cn.hutool.core.date.DateUtil;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.server.common.model.LogDoc;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +8,7 @@ import org.springframework.data.redis.connection.stream.MapRecord;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.stream.StreamListener;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -33,7 +33,7 @@ public class RedisStreamMessageListener implements StreamListener<String, MapRec
             Map<String, String> value = entries.getValue();
             LogDoc logDoc = LogDoc.builder()
                     .id(recordId)
-                    .date(DateUtil.parseDate(value.get("date")))
+                    .dateTime(new Date(Long.parseLong(value.get("timeStamp"))))
                     .appName(value.get("appName"))
                     .appEnv(value.get("appEnv"))
                     .level(value.get("level"))
@@ -59,5 +59,4 @@ public class RedisStreamMessageListener implements StreamListener<String, MapRec
             }
         }
     }
-
 }

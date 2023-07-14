@@ -2,8 +2,8 @@ package com.chj.easy.log.server.collector.config;
 
 import com.chj.easy.log.server.collector.listener.AppReadyEventListener;
 import com.chj.easy.log.server.collector.property.EasyLogCollectorProperties;
-import com.chj.easy.log.server.common.mapper.LogDocMapper;
 import com.chj.easy.log.server.common.model.LogDoc;
+import com.chj.easy.log.server.common.service.LogDocService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -33,8 +33,8 @@ public class EasyLogCollectorAutoConfiguration {
     @Bean
     public AppReadyEventListener appReadyEventProcessor(StringRedisTemplate stringRedisTemplate,
                                                         BlockingQueue<LogDoc> logDocBlockingQueue,
-                                                        LogDocMapper logDocMapper,
+                                                        LogDocService logDocService,
                                                         EasyLogCollectorProperties easyLogCollectorProperties) {
-        return new AppReadyEventListener(stringRedisTemplate, logDocBlockingQueue, logDocMapper, easyLogCollectorProperties);
+        return new AppReadyEventListener(stringRedisTemplate, logDocBlockingQueue, logDocService, easyLogCollectorProperties);
     }
 }

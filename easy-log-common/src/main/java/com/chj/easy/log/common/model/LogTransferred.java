@@ -21,7 +21,7 @@ import java.util.Optional;
 @Builder
 public class LogTransferred {
 
-    private Date date;
+    private long timeStamp;
 
     private String appName;
 
@@ -49,7 +49,7 @@ public class LogTransferred {
 
     public Map<String, String> toMap() {
         Map<String, String> map = new HashMap<>();
-        map.put("date", DateUtil.format(date, DatePattern.NORM_DATETIME_MS_PATTERN));
+        map.put("timeStamp", String.valueOf(timeStamp));
         map.put("appName", appName);
         map.put("appEnv", appEnv);
         map.put("level", level);

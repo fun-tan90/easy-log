@@ -26,14 +26,14 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@IndexName(replicasNum = 2, shardsNum = 6)
+@IndexName(replicasNum = 1, shardsNum = 6)
 public class LogDoc {
 
     @IndexId(type = IdType.CUSTOMIZE)
     private String id;
 
-    @IndexField(fieldType = FieldType.DATE)
-    private Date date;
+    @IndexField(fieldType = FieldType.DATE, dateFormat = DatePattern.NORM_DATETIME_MS_PATTERN)
+    private Date dateTime;
 
     @IndexField(fieldType = FieldType.KEYWORD)
     private String appName;

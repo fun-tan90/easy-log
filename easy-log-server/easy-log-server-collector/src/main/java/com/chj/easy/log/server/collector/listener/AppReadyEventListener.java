@@ -4,8 +4,8 @@ import cn.hutool.core.date.StopWatch;
 import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.server.collector.property.EasyLogCollectorProperties;
-import com.chj.easy.log.server.common.mapper.LogDocMapper;
 import com.chj.easy.log.server.common.model.LogDoc;
+import com.chj.easy.log.server.common.service.LogDocService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -38,7 +38,7 @@ public class AppReadyEventListener implements ApplicationListener<ApplicationRea
 
     private final BlockingQueue<LogDoc> logDocBlockingQueue;
 
-    private final LogDocMapper logDocMapper;
+    private final LogDocService logDocService;
 
     private final EasyLogCollectorProperties easyLogCollectorProperties;
 
@@ -47,8 +47,14 @@ public class AppReadyEventListener implements ApplicationListener<ApplicationRea
         if (initialized.compareAndSet(false, true)) {
             createStreamKeyAndGroup();
 
+            createLogDocIndex();
+
             batchInsertLogDocBySchedule();
         }
+    }
+
+    private void createLogDocIndex() {
+        logDocService.createIndex(LogDoc.indexName());
     }
 
     private void batchInsertLogDocBySchedule() {
@@ -67,7 +73,7 @@ public class AppReadyEventListener implements ApplicationListener<ApplicationRea
             if (!logDocs.isEmpty()) {
                 StopWatch stopWatch = new StopWatch("es 批量输入");
                 stopWatch.start("批量插入数据耗时");
-                Integer batch = logDocMapper.insertBatch(logDocs, LogDoc.indexName());
+                Integer batch = logDocService.insertBatch(logDocs, LogDoc.indexName());
                 log.info("es 批量输入条数【{}】", batch);
                 stopWatch.stop();
                 log.info(stopWatch.prettyPrint(TimeUnit.MILLISECONDS));
