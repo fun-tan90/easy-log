@@ -79,6 +79,14 @@ public class GlobalExceptionHandler {
         return Res.errorMsgAndData("系统发生空指针异常", message);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public Res<String> onIllegalArgumentException(IllegalArgumentException e) {
+        e.printStackTrace();
+        String message = e.getMessage();
+        log.error("==IllegalArgumentException=={}==class=={}", message, e.getClass());
+        return Res.errorMsgAndData("参数校验异常", message);
+    }
+
     @ExceptionHandler(AbstractException.class)
     public Res<Void> abstractException(HttpServletRequest request, AbstractException ex) {
         if (ex.getCause() != null) {

@@ -85,6 +85,7 @@ GET /daily-easy-log-2023-07-14/_search
     }
   }
 }
+
 ```
 - 相关性算分查询
 ```shell

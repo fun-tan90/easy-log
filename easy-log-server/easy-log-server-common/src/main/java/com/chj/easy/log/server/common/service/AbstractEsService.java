@@ -20,7 +20,7 @@ import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.indices.PutMappingRequest;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.rest.RestStatus;
-import org.springframework.util.CollectionUtils;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -43,6 +43,7 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
 
     @Override
     public boolean exists(String indexName) {
+        Assert.hasLength(indexName, "indexName不能为空");
         GetIndexRequest getIndexRequest = new GetIndexRequest(indexName);
         try {
             return restHighLevelClient.indices().exists(getIndexRequest, RequestOptions.DEFAULT);
@@ -53,6 +54,8 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
 
     @Override
     public boolean create(String indexName, Class<T> tClass) {
+        Assert.hasLength(indexName, "indexName不能为空");
+        Assert.notNull(tClass, "tClass不能为空");
         CreateIndexRequest createIndexRequest = new CreateIndexRequest(indexName);
         createIndexRequest.source(ResourceUtil.readUtf8Str(StrUtil.format(EasyLogConstants.INDEX_TEMPLATE_PATH, tClass.getSimpleName())), XContentType.JSON);
         try {
@@ -65,6 +68,7 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
 
     @Override
     public boolean delete(String indexName) {
+        Assert.hasLength(indexName, "indexName不能为空");
         DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest(indexName);
         try {
             AcknowledgedResponse acknowledgedResponse = restHighLevelClient.indices().delete(deleteIndexRequest, RequestOptions.DEFAULT);
@@ -76,6 +80,8 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
 
     @Override
     public boolean put(String indexName, String mappingSource) {
+        Assert.hasLength(indexName, "indexName不能为空");
+        Assert.hasLength(mappingSource, "mappingSource不能为空");
         PutMappingRequest putMappingRequest = new PutMappingRequest(indexName);
         putMappingRequest.source(mappingSource, XContentType.JSON);
         try {
@@ -88,6 +94,8 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
 
     @Override
     public int insertOne(String indexName, T entity) {
+        Assert.hasLength(indexName, "indexName不能为空");
+        Assert.notNull(entity, "entity不能为空");
         IndexRequest indexRequest = new IndexRequest(indexName);
         if (StringUtils.hasLength(entity.indexId())) {
             indexRequest.id(entity.indexId());
@@ -97,6 +105,7 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
             IndexResponse indexResponse = restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT);
             RestStatus status = indexResponse.status();
             if (Objects.equals(status, RestStatus.CREATED)) {
+                entity.setIndexId(indexResponse.getId());
                 return 1;
             } else if (Objects.equals(indexResponse.status(), RestStatus.OK)) {
                 // 该id已存在,数据被更新的情况
@@ -111,9 +120,8 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
 
     @Override
     public int insertBatch(String indexName, List<T> entities) {
-        if (CollectionUtils.isEmpty(entities)) {
-            return 0;
-        }
+        Assert.hasLength(indexName, "indexName不能为空");
+        Assert.notEmpty(entities, "entities不能为空");
         BulkRequest bulkRequest = new BulkRequest();
         entities.forEach(entity -> {
             IndexRequest indexRequest = new IndexRequest(indexName);
@@ -128,9 +136,11 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
             if (bulkResponse.hasFailures()) {
                 log.error(String.join(",", bulkResponse.buildFailureMessage()));
             }
+
             int totalSuccess = 0;
             for (BulkItemResponse next : bulkResponse) {
                 if (Objects.equals(next.status(), RestStatus.CREATED)) {
+                    entities.get(totalSuccess).setIndexId(next.getId());
                     totalSuccess++;
                 }
             }

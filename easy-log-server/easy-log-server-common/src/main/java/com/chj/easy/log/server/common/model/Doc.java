@@ -1,6 +1,5 @@
 package com.chj.easy.log.server.common.model;
 
-import cn.hutool.json.JSONConfig;
 import cn.hutool.json.JSONUtil;
 
 /**
@@ -11,6 +10,8 @@ import cn.hutool.json.JSONUtil;
  * @date 2023/7/12 22:24
  */
 public interface Doc {
+
+     void setIndexId(String id);
 
     default String indexId() {
         return null;

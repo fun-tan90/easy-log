@@ -60,6 +60,11 @@ public class LogDoc implements Doc {
     }
 
     @Override
+    public void setIndexId(String id) {
+        setId(id);
+    }
+
+    @Override
     public String indexId() {
         return this.id;
     }
