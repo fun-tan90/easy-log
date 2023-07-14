@@ -12,5 +12,4 @@ spring:
       dev:
         - cache
         - el
-        - es
         - log

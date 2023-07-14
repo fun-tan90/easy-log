@@ -5,7 +5,7 @@ import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.server.collector.property.EasyLogCollectorProperties;
 import com.chj.easy.log.server.common.model.LogDoc;
-import com.chj.easy.log.server.common.service.LogDocService;
+import com.chj.easy.log.server.common.service.EsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -38,7 +38,7 @@ public class AppReadyEventListener implements ApplicationListener<ApplicationRea
 
     private final BlockingQueue<LogDoc> logDocBlockingQueue;
 
-    private final LogDocService logDocService;
+    private final EsService esService;
 
     private final EasyLogCollectorProperties easyLogCollectorProperties;
 
@@ -54,7 +54,7 @@ public class AppReadyEventListener implements ApplicationListener<ApplicationRea
     }
 
     private void createLogDocIndex() {
-        logDocService.createIndex(LogDoc.indexName());
+        esService.createIndex(LogDoc.indexName(), EasyLogConstants.EASY_LOG_INDEX_MAPPINGS);
     }
 
     private void batchInsertLogDocBySchedule() {
@@ -73,8 +73,8 @@ public class AppReadyEventListener implements ApplicationListener<ApplicationRea
             if (!logDocs.isEmpty()) {
                 StopWatch stopWatch = new StopWatch("es 批量输入");
                 stopWatch.start("批量插入数据耗时");
-                Integer batch = logDocService.insertBatch(logDocs, LogDoc.indexName());
-                log.info("es 批量输入条数【{}】", batch);
+                // TODO 批量插入
+                log.info("es 批量输入条数【{}】", 0);
                 stopWatch.stop();
                 log.info(stopWatch.prettyPrint(TimeUnit.MILLISECONDS));
             }

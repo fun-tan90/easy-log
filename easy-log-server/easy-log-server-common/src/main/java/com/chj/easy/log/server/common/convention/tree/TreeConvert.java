@@ -4,7 +4,6 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.date.TimeInterval;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
-import com.alibaba.fastjson.JSON;
 import com.chj.easy.log.server.common.convention.tree.annotation.TreeFid;
 import com.chj.easy.log.server.common.convention.tree.annotation.TreeId;
 import lombok.AllArgsConstructor;
@@ -100,8 +99,6 @@ public class TreeConvert<T> {
         TreeConvert<TreeNode> treeConvert = new TreeConvert<>();
 
         TimeInterval timer = DateUtil.timer();
-        System.out.println(JSON.toJSONString(treeConvert.tree(dataList)));
-        System.out.println(timer.interval());
     }
 
     @Data

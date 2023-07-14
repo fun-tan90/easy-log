@@ -1,0 +1,47 @@
+{
+  "mappings": {
+    "properties": {
+      "appEnv": {
+        "type": "keyword"
+      },
+      "appName": {
+        "type": "keyword"
+      },
+      "content": {
+        "type": "text"
+      },
+      "currIp": {
+        "type": "keyword"
+      },
+      "dateTime": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss.SSS"
+      },
+      "level": {
+        "type": "keyword"
+      },
+      "lineNumber": {
+        "type": "keyword"
+      },
+      "loggerName": {
+        "type": "text"
+      },
+      "method": {
+        "type": "text"
+      },
+      "preIp": {
+        "type": "keyword"
+      },
+      "spanId": {
+        "type": "keyword"
+      },
+      "threadName": {
+        "type": "keyword",
+        "index": false
+      },
+      "traceId": {
+        "type": "keyword"
+      }
+    }
+  }
+}

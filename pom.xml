@@ -32,7 +32,6 @@
         <sa-token.version>1.35.0.RC</sa-token.version>
         <mybatis-flex.version>1.4.3</mybatis-flex.version>
         <tlog.version>1.5.0</tlog.version>
-        <easy-es.version>2.0.0-beta3</easy-es.version>
     </properties>
 
     <dependencies>
@@ -184,12 +183,6 @@
                 <groupId>com.yomahub</groupId>
                 <artifactId>tlog-all-spring-boot-starter</artifactId>
                 <version>${tlog.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.dromara.easy-es</groupId>
-                <artifactId>easy-es-boot-starter</artifactId>
-                <version>${easy-es.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

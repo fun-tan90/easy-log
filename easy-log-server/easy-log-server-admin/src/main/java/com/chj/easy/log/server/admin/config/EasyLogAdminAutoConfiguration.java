@@ -2,7 +2,7 @@ package com.chj.easy.log.server.admin.config;
 
 import com.chj.easy.log.server.admin.listener.AppReadyEventListener;
 import com.chj.easy.log.server.admin.property.EasyLogAdminProperties;
-import com.chj.easy.log.server.common.service.LogDocService;
+import com.chj.easy.log.server.common.service.EsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Bean;
 public class EasyLogAdminAutoConfiguration {
 
     @Bean
-    public AppReadyEventListener appReadyEventProcessor(LogDocService logDocService) {
-        return new AppReadyEventListener(logDocService);
+    public AppReadyEventListener appReadyEventProcessor(EsService esService) {
+        return new AppReadyEventListener(esService);
     }
 }

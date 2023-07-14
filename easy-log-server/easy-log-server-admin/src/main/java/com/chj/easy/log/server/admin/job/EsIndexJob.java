@@ -1,7 +1,8 @@
 package com.chj.easy.log.server.admin.job;
 
+import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.server.common.model.LogDoc;
-import com.chj.easy.log.server.common.service.LogDocService;
+import com.chj.easy.log.server.common.service.EsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -20,11 +21,11 @@ import javax.annotation.Resource;
 public class EsIndexJob {
 
     @Resource
-    LogDocService logDocService;
+    EsService esService;
 
     @Scheduled(cron = "${easy-log.admin.create-index-cron}")
     public void createLogDocIndexTask() {
         String newIndexName = LogDoc.newIndexName();
-        logDocService.createIndex(newIndexName);
+        esService.createIndex(newIndexName, EasyLogConstants.EASY_LOG_INDEX_MAPPINGS);
     }
 }

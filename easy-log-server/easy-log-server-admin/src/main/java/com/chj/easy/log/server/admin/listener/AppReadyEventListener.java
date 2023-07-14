@@ -1,7 +1,8 @@
 package com.chj.easy.log.server.admin.listener;
 
+import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.server.common.model.LogDoc;
-import com.chj.easy.log.server.common.service.LogDocService;
+import com.chj.easy.log.server.common.service.EsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -23,12 +24,12 @@ public class AppReadyEventListener implements ApplicationListener<ApplicationRea
 
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
-    private final LogDocService logDocService;
+    private final EsService esService;
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         if (initialized.compareAndSet(false, true)) {
-            logDocService.createIndex(LogDoc.indexName());
+            esService.createIndex(LogDoc.indexName(), EasyLogConstants.EASY_LOG_INDEX_MAPPINGS);
         }
     }
 

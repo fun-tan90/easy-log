@@ -12,5 +12,5 @@ spring:
       dev:
         - admin
         - cache
-        - es
+        - el
         - log
