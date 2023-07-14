@@ -1,8 +1,8 @@
 # docker版es集群安装教程
 ## 前置条件
 - 对elasticsearch有基础了解
-- 宿主机上安装docker
-- 宿主机上安装docker-compose
+- 宿主机上安装docker，安装教程找官网或百度
+- 宿主机上安装docker-compose，安装教程找官网或百度
 - 宿主机建议4G以上内存
 
 #### 1、创建网络!
