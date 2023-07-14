@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 public class EsServiceImpl extends AbstractEsService {
 
     @Override
-    public void createIndex(String indexName, String indexTemplate) {
+    public void createIndexIfNotExists(String indexName, String indexTemplate) {
         boolean exists = exists(indexName);
         if (!exists) {
             boolean isOk = create(indexName, indexTemplate);

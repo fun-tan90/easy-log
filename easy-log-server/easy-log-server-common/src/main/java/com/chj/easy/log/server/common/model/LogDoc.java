@@ -2,6 +2,7 @@ package com.chj.easy.log.server.common.model;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +22,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class LogDoc {
+public class LogDoc implements Doc {
 
     private String id;
 
@@ -57,5 +58,15 @@ public class LogDoc {
 
     public static String newIndexName() {
         return EasyLogConstants.INDEX_FIXED_PREFIX + DateUtil.format(DateUtil.offsetDay(new Date(), 1), DatePattern.NORM_DATE_PATTERN);
+    }
+
+    @Override
+    public String indexId() {
+        return this.id;
+    }
+
+    @Override
+    public String toSource() {
+        return JSONUtil.toJsonStr(this);
     }
 }

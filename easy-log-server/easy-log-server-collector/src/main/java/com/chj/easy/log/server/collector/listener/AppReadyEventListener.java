@@ -38,7 +38,7 @@ public class AppReadyEventListener implements ApplicationListener<ApplicationRea
 
     private final BlockingQueue<LogDoc> logDocBlockingQueue;
 
-    private final EsService esService;
+    private final EsService<LogDoc> esService;
 
     private final EasyLogCollectorProperties easyLogCollectorProperties;
 
@@ -54,7 +54,7 @@ public class AppReadyEventListener implements ApplicationListener<ApplicationRea
     }
 
     private void createLogDocIndex() {
-        esService.createIndex(LogDoc.indexName(), EasyLogConstants.EASY_LOG_INDEX_MAPPINGS);
+        esService.createIndexIfNotExists(LogDoc.indexName(), EasyLogConstants.EASY_LOG_INDEX_MAPPINGS);
     }
 
     private void batchInsertLogDocBySchedule() {
@@ -73,8 +73,8 @@ public class AppReadyEventListener implements ApplicationListener<ApplicationRea
             if (!logDocs.isEmpty()) {
                 StopWatch stopWatch = new StopWatch("es 批量输入");
                 stopWatch.start("批量插入数据耗时");
-                // TODO 批量插入
-                log.info("es 批量输入条数【{}】", 0);
+                int insertedSize = esService.insertBatch(LogDoc.indexName(), logDocs);
+                log.info("es 批量输入条数【{}】", insertedSize);
                 stopWatch.stop();
                 log.info(stopWatch.prettyPrint(TimeUnit.MILLISECONDS));
             }

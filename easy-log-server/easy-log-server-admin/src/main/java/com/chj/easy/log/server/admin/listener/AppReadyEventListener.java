@@ -24,12 +24,12 @@ public class AppReadyEventListener implements ApplicationListener<ApplicationRea
 
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
-    private final EsService esService;
+    private final EsService<LogDoc> esService;
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         if (initialized.compareAndSet(false, true)) {
-            esService.createIndex(LogDoc.indexName(), EasyLogConstants.EASY_LOG_INDEX_MAPPINGS);
+            esService.createIndexIfNotExists(LogDoc.indexName(), EasyLogConstants.EASY_LOG_INDEX_MAPPINGS);
         }
     }
 

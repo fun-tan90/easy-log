@@ -33,7 +33,7 @@ public class EasyLogCollectorAutoConfiguration {
     @Bean
     public AppReadyEventListener appReadyEventProcessor(StringRedisTemplate stringRedisTemplate,
                                                         BlockingQueue<LogDoc> logDocBlockingQueue,
-                                                        EsService esService,
+                                                        EsService<LogDoc> esService,
                                                         EasyLogCollectorProperties easyLogCollectorProperties) {
         return new AppReadyEventListener(stringRedisTemplate, logDocBlockingQueue, esService, easyLogCollectorProperties);
     }

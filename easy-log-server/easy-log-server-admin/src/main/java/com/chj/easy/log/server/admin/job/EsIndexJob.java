@@ -21,11 +21,11 @@ import javax.annotation.Resource;
 public class EsIndexJob {
 
     @Resource
-    EsService esService;
+    EsService<LogDoc> esService;
 
     @Scheduled(cron = "${easy-log.admin.create-index-cron}")
     public void createLogDocIndexTask() {
         String newIndexName = LogDoc.newIndexName();
-        esService.createIndex(newIndexName, EasyLogConstants.EASY_LOG_INDEX_MAPPINGS);
+        esService.createIndexIfNotExists(newIndexName, EasyLogConstants.EASY_LOG_INDEX_MAPPINGS);
     }
 }
