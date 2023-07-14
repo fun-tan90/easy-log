@@ -30,7 +30,9 @@ curl localhost:9200
 #### 3、安装ik分词器
 ```
 https://github.com/medcl/elasticsearch-analysis-ik
+支持分词器的拓展和停用词典
 ```
+![img.png](img/img04.png)
 - 1、将elasticsearch-analysis-ik-7.9.3.zip解压，文件夹名称为ik
 ```shell
 unzip elasticsearch-analysis-ik-7.9.3.zip -d ik

@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.helpers.MessageFormatter;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -131,7 +132,7 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
             content = logEvent.getFormattedMessage();
         }
         return LogTransferred.builder()
-                .timeStamp(timeStamp)
+                .date(new Date(timeStamp))
                 .appName(appName)
                 .appEnv(appEnv)
                 .level(level.levelStr)

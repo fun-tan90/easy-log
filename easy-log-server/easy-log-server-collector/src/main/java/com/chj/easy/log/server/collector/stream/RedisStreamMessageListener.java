@@ -32,7 +32,7 @@ public class RedisStreamMessageListener implements StreamListener<String, MapRec
             Map<String, String> value = entries.getValue();
             LogDoc logDoc = LogDoc.builder()
                     .id(recordId)
-                    .timeStamp(Long.parseLong(value.get("timeStamp")))
+                    .date(value.get("date"))
                     .appName(value.get("appName"))
                     .appEnv(value.get("appEnv"))
                     .level(value.get("level"))

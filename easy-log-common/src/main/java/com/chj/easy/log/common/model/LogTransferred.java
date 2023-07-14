@@ -1,8 +1,11 @@
 package com.chj.easy.log.common.model;
 
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -18,7 +21,7 @@ import java.util.Optional;
 @Builder
 public class LogTransferred {
 
-    private long timeStamp;
+    private Date date;
 
     private String appName;
 
@@ -46,7 +49,7 @@ public class LogTransferred {
 
     public Map<String, String> toMap() {
         Map<String, String> map = new HashMap<>();
-        map.put("timeStamp", String.valueOf(timeStamp));
+        map.put("date", DateUtil.format(date, DatePattern.NORM_DATETIME_MS_PATTERN));
         map.put("appName", appName);
         map.put("appEnv", appEnv);
         map.put("level", level);

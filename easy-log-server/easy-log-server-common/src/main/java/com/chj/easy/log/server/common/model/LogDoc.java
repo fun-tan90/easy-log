@@ -29,7 +29,7 @@ public class LogDoc {
     @IndexId(type = IdType.CUSTOMIZE)
     private String id;
 
-    private long timeStamp;
+    private String date;
 
     private String appName;
 
