@@ -54,7 +54,7 @@ public class AppReadyEventListener implements ApplicationListener<ApplicationRea
     }
 
     private void createLogDocIndex() {
-        esService.createIndexIfNotExists(LogDoc.indexName(), EasyLogConstants.EASY_LOG_INDEX_MAPPINGS);
+        esService.createIndexIfNotExists(LogDoc.indexName());
     }
 
     private void batchInsertLogDocBySchedule() {

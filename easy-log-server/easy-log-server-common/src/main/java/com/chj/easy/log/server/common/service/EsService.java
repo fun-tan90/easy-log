@@ -17,9 +17,8 @@ public interface EsService<T extends Doc> {
      * 创建索引
      *
      * @param indexName     索引名称
-     * @param indexTemplate 索引模板
      */
-    void createIndexIfNotExists(String indexName, String indexTemplate);
+    void createIndexIfNotExists(String indexName);
 
     /**
      * 判断索引是否存在
@@ -31,10 +30,10 @@ public interface EsService<T extends Doc> {
     /**
      * 创建索引
      * @param indexName     索引名称
-     * @param indexTemplate 索引模板
+     * @param tClass 索引模板
      * @return true 成功 false 失败
      */
-    boolean create(String indexName, String indexTemplate);
+    boolean create(String indexName, Class<T> tClass);
 
     /**
      * 删除索引

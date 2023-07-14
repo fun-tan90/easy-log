@@ -29,10 +29,5 @@ public class EsController {
     @Resource
     RestHighLevelClient restHighLevelClient;
 
-    @PutMapping("index")
-    public CreateIndexResponse index(String indexName) throws IOException {
-        CreateIndexRequest indexRequest = new CreateIndexRequest(indexName);
-        indexRequest.source(EasyLogConstants.EASY_LOG_INDEX_MAPPINGS, XContentType.JSON);
-        return restHighLevelClient.indices().create(indexRequest, RequestOptions.DEFAULT);
-    }
+
 }

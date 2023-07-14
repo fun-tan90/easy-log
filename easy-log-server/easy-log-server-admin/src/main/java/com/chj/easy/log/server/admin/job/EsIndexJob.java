@@ -26,6 +26,6 @@ public class EsIndexJob {
     @Scheduled(cron = "${easy-log.admin.create-index-cron}")
     public void createLogDocIndexTask() {
         String newIndexName = LogDoc.newIndexName();
-        esService.createIndexIfNotExists(newIndexName, EasyLogConstants.EASY_LOG_INDEX_MAPPINGS);
+        esService.createIndexIfNotExists(newIndexName);
     }
 }

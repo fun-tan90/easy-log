@@ -1,6 +1,8 @@
 package com.chj.easy.log.server.common.service;
 
+import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.core.util.StrUtil;
+import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.server.common.model.Doc;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -50,9 +52,9 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
     }
 
     @Override
-    public boolean create(String indexName, String indexTemplate) {
+    public boolean create(String indexName, Class<T> tClass) {
         CreateIndexRequest createIndexRequest = new CreateIndexRequest(indexName);
-        createIndexRequest.source(indexTemplate, XContentType.JSON);
+        createIndexRequest.source(ResourceUtil.readUtf8Str(StrUtil.format(EasyLogConstants.INDEX_TEMPLATE_PATH, tClass.getSimpleName())), XContentType.JSON);
         try {
             CreateIndexResponse createIndexResponse = restHighLevelClient.indices().create(createIndexRequest, RequestOptions.DEFAULT);
             return createIndexResponse.isAcknowledged() && createIndexResponse.isShardsAcknowledged();

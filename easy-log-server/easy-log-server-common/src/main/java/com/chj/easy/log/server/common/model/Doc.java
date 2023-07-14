@@ -1,5 +1,8 @@
 package com.chj.easy.log.server.common.model;
 
+import cn.hutool.json.JSONConfig;
+import cn.hutool.json.JSONUtil;
+
 /**
  * description TODO
  * company 铁人科技
@@ -13,5 +16,7 @@ public interface Doc {
         return null;
     }
 
-    String toSource();
+    default String toSource() {
+        return JSONUtil.toJsonStr(this);
+    }
 }

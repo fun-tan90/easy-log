@@ -1,5 +1,6 @@
 package com.chj.easy.log.server.common.service.impl;
 
+import com.chj.easy.log.server.common.model.LogDoc;
 import com.chj.easy.log.server.common.service.AbstractEsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,13 +14,13 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-public class EsServiceImpl extends AbstractEsService {
+public class LogDocEsServiceImpl extends AbstractEsService<LogDoc> {
 
     @Override
-    public void createIndexIfNotExists(String indexName, String indexTemplate) {
+    public void createIndexIfNotExists(String indexName) {
         boolean exists = exists(indexName);
         if (!exists) {
-            boolean isOk = create(indexName, indexTemplate);
+            boolean isOk = create(indexName, LogDoc.class);
             log.info("【{}】索引创建{}", indexName, isOk ? "成功" : "失败");
         }
         log.info("【{}】索引已存在", indexName);

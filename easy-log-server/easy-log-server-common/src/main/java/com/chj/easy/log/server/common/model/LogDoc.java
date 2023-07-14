@@ -2,7 +2,6 @@ package com.chj.easy.log.server.common.model;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,9 +23,9 @@ import java.util.Date;
 @Builder
 public class LogDoc implements Doc {
 
-    private String id;
+    private transient String id;
 
-    private Date dateTime;
+    private String dateTime;
 
     private String appName;
 
@@ -63,10 +62,5 @@ public class LogDoc implements Doc {
     @Override
     public String indexId() {
         return this.id;
-    }
-
-    @Override
-    public String toSource() {
-        return JSONUtil.toJsonStr(this);
     }
 }
