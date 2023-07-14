@@ -1,4 +1,8 @@
 {
+  "settings": {
+    "number_of_shards": 5,
+    "number_of_replicas": 1
+  },
   "mappings": {
     "properties": {
       "appEnv": {
@@ -8,7 +12,8 @@
         "type": "keyword"
       },
       "content": {
-        "type": "text"
+        "type": "text",
+        "analyzer": "ik_smart"
       },
       "currIp": {
         "type": "keyword"
@@ -24,7 +29,8 @@
         "type": "keyword"
       },
       "loggerName": {
-        "type": "text"
+        "type": "text",
+        "analyzer": "stop"
       },
       "method": {
         "type": "text"
