@@ -75,5 +75,20 @@ GET /daily-easy-log-2023-07-14/_search
 }
 ```
 - 地理查询
-- 相关性算分
+```
+# 距离中心查询
+{
+  "query":{
+    "geo_distance": {
+      "distance": "15km",
+      "FILED":"32.21,121.5"
+    }
+  }
+}
+```
+- 相关性算分查询
+```shell
+
+
+```
 - bool查询
