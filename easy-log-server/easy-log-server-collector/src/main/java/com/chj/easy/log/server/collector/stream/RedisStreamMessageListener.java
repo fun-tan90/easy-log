@@ -1,5 +1,6 @@
 package com.chj.easy.log.server.collector.stream;
 
+import cn.hutool.core.date.DateUtil;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.server.common.model.LogDoc;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,7 @@ public class RedisStreamMessageListener implements StreamListener<String, MapRec
             Map<String, String> value = entries.getValue();
             LogDoc logDoc = LogDoc.builder()
                     .id(recordId)
-                    .date(value.get("date"))
+                    .date(DateUtil.parseDate(value.get("date")))
                     .appName(value.get("appName"))
                     .appEnv(value.get("appEnv"))
                     .level(value.get("level"))

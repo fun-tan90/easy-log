@@ -8,6 +8,7 @@ package com.chj.easy.log.common.constant;
  */
 public interface EasyLogConstants {
     String SCAN_BASE_PACKAGES = "com.chj.easy.log.server";
+    String INDEX_FIXED_PREFIX = "daily-easy-log-";
 
     String STREAM_KEY = "easy-log";
 

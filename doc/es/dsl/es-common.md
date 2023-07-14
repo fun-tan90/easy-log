@@ -1,5 +1,5 @@
 ```http request
-# 查看es
+# 查看es状态
 GET /
 ```
 
@@ -13,7 +13,3 @@ POST /_analyze
 }
 ```
 
-```
-安装ik分词器
-https://github.com/medcl/elasticsearch-analysis-ik
-```
