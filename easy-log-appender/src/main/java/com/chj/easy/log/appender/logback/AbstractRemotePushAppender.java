@@ -13,7 +13,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.helpers.MessageFormatter;
 
-import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -107,7 +106,7 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
             method = stackTraceElement.getMethodName();
             lineNumber = String.valueOf(stackTraceElement.getLineNumber());
         }
-        String content = "-";
+        String content;
         if (level.equals(Level.ERROR)) {
             if (logEvent.getThrowableProxy() != null) {
                 ThrowableProxy throwableProxy = (ThrowableProxy) logEvent.getThrowableProxy();
@@ -126,6 +125,8 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
                         message.append("\n").append(argument);
                     }
                     content = message.toString();
+                } else {
+                    content = logEvent.getFormattedMessage();
                 }
             }
         } else {

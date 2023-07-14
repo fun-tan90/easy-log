@@ -17,14 +17,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class DemoController {
 
-    @GetMapping("info")
-    public Res<String> info() {
-        for (int i = 0; i < 100; i++) {
-            log.error("hello error" + i);
-            log.warn("hello warn" + i);
-            log.info("hello info" + i);
-            log.debug("hello debug" + i);
-        }
-        return Res.ok("info");
+    @GetMapping
+    public Res<String> index() {
+        log.error("hello error");
+        log.warn("hello warn");
+        log.info("hello info");
+        log.debug("hello debug");
+        return Res.ok("");
+    }
+
+    @GetMapping("error-log")
+    public Res<String> errorLog() {
+        log.error("hello error");
+        return Res.ok("");
     }
 }
