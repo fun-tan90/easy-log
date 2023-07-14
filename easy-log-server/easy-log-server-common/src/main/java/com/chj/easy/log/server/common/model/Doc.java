@@ -1,6 +1,9 @@
 package com.chj.easy.log.server.common.model;
 
 import cn.hutool.json.JSONUtil;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
+
+import java.util.Map;
 
 /**
  * description TODO
@@ -11,7 +14,7 @@ import cn.hutool.json.JSONUtil;
  */
 public interface Doc {
 
-     void setIndexId(String id);
+    void setIndexId(String id);
 
     default String indexId() {
         return null;
@@ -20,4 +23,6 @@ public interface Doc {
     default String toSource() {
         return JSONUtil.toJsonStr(this);
     }
+
+    void setHighlight(Map<String, HighlightField> highlight);
 }

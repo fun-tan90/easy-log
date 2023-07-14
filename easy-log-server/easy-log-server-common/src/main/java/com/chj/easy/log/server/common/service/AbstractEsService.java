@@ -2,7 +2,10 @@ package com.chj.easy.log.server.common.service;
 
 import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.common.constant.EasyLogConstants;
+import com.chj.easy.log.server.common.convention.page.es.EsPageHelper;
+import com.chj.easy.log.server.common.convention.page.es.EsPageInfo;
 import com.chj.easy.log.server.common.model.Doc;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -11,6 +14,8 @@ import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -20,13 +25,18 @@ import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.indices.PutMappingRequest;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.rest.RestStatus;
+import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * description TODO
@@ -147,6 +157,45 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
             return totalSuccess;
         } catch (IOException e) {
             throw new RuntimeException(StrUtil.format("insertBatch failed, {}", e));
+        }
+    }
+
+
+    @Override
+    public EsPageInfo<T> paging(String indexName, Integer pageNum, Integer pageSize, SearchSourceBuilder searchSourceBuilder, Class<T> tClass) {
+        Assert.hasLength(indexName, "indexName不能为空");
+        Assert.notNull(searchSourceBuilder, "查询条件不能为空");
+        Assert.notNull(tClass, "tClass不能为空");
+        pageNum = pageNum == null || pageNum <= 0 ? 1 : pageNum;
+        pageSize = pageSize == null || pageSize <= 0 ? 10 : pageSize;
+
+        int from = (pageNum - 1) * pageSize;
+        int size = pageSize;
+
+        searchSourceBuilder.from(from);
+        searchSourceBuilder.size(size);
+
+        SearchRequest searchRequest = new SearchRequest(indexName);
+        searchRequest
+                .source(searchSourceBuilder);
+
+        try {
+            SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+            SearchHits searchHits = Optional.ofNullable(searchResponse)
+                    .map(SearchResponse::getHits)
+                    .orElseThrow(() -> new RuntimeException("SearchRequest failed"));
+            List<T> rows = Arrays.stream(searchHits.getHits())
+                    .map(searchHit -> {
+                        T entity = JSONUtil.toBean(searchHit.getSourceAsString(), tClass);
+                        entity.setIndexId(searchHit.getId());
+                        entity.setHighlight(searchHit.getHighlightFields());
+                        return entity;
+                    })
+                    .collect(Collectors.toList());
+            long total = searchHits.getTotalHits().value;
+            return EsPageHelper.getPageInfo(rows, total, pageNum, pageSize);
+        } catch (IOException e) {
+            throw new RuntimeException(StrUtil.format("search failed, {}", e));
         }
     }
 }

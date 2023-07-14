@@ -3,10 +3,7 @@ package com.chj.easy.log.server.common.model;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import com.chj.easy.log.common.constant.EasyLogConstants;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 
@@ -17,11 +14,12 @@ import java.util.Date;
  * @author 陈浩杰
  * @date 2023/7/12 22:24
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class LogDoc implements Doc {
+public abstract class LogDoc extends AbstractDoc {
 
     private transient String id;
 

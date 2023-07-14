@@ -1,14 +1,11 @@
 package com.chj.easy.log.server.common.convention;
 
 import com.chj.easy.log.server.common.convention.enums.IErrorCode;
-import com.chj.easy.log.server.common.convention.page.FullPage;
-import com.chj.easy.log.server.common.convention.page.SimplePage;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * description
@@ -68,28 +65,5 @@ public class Res<T> implements Serializable {
 
     public static <T> Res<T> errorMsgAndData(String msg, T data) {
         return new Res<>(IErrorCode.SYS_2000001.getCode(), msg, data);
-    }
-
-    /**
-     * @param currentPage 当前页
-     * @param totalCount  总记录数
-     * @param records     获取每页数据的list集合
-     * @return
-     */
-    public static <U> Res<SimplePage<U>> pageOf(int currentPage, long totalCount, List<U> records) {
-        return Res.ok(new SimplePage<>(currentPage, totalCount, records));
-    }
-
-    /**
-     * @param currentPage 当前页
-     * @param totalCount  总记录数
-     * @param totalPage   总页数
-     * @param previous    是否有上一页
-     * @param next        是否有下一页
-     * @param records     获取每页数据的list集合
-     * @return
-     */
-    public static <U> Res<FullPage<U>> pageOf(int currentPage, long totalCount, List<U> records, Long totalPage, boolean previous, boolean next) {
-        return Res.ok(new FullPage<>(currentPage, totalCount, records, totalPage, previous, next));
     }
 }

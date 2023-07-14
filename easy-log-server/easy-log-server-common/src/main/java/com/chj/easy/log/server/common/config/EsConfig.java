@@ -34,7 +34,7 @@ public class EsConfig {
     @Resource
     EasyLogEsProperties easyLogEsProperties;
 
-    @Bean
+    @Bean(destroyMethod = "close")
     public RestHighLevelClient restHighLevelClient() {
         // 处理地址
         String address = easyLogEsProperties.getAddress();
