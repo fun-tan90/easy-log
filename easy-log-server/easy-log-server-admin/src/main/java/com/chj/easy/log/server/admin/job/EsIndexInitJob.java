@@ -1,6 +1,5 @@
 package com.chj.easy.log.server.admin.job;
 
-import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.server.common.model.LogDoc;
 import com.chj.easy.log.server.common.service.EsService;
 import lombok.extern.slf4j.Slf4j;
@@ -18,12 +17,12 @@ import javax.annotation.Resource;
  */
 @Slf4j
 @Component
-public class EsIndexJob {
+public class EsIndexInitJob {
 
     @Resource
     EsService<LogDoc> esService;
 
-    @Scheduled(cron = "${easy-log.admin.create-index-cron}")
+    @Scheduled(cron = "${easy-log.admin.init-index-cron}")
     public void createLogDocIndexTask() {
         String newIndexName = LogDoc.newIndexName();
         esService.createIndexIfNotExists(newIndexName);
