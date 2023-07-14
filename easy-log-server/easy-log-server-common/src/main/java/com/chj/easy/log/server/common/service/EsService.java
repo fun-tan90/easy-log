@@ -84,4 +84,13 @@ public interface EsService<T extends Doc> {
      * @return 指定的返回类型
      */
     EsPageInfo<T> paging(String indexName, Integer pageNum, Integer pageSize, SearchSourceBuilder searchSourceBuilder, Class<T> tClass);
+
+    /**
+     * 原生查询
+     *
+     * @param indexName 索引名称
+     * @param dsl       dsl语句
+     * @return 执行结果
+     */
+    String executeDsl(String indexName, String dsl);
 }

@@ -1,7 +1,9 @@
 package com.chj.easy.log.server.common.service;
 
+import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.server.common.convention.page.es.EsPageHelper;
@@ -17,12 +19,15 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
+import org.elasticsearch.client.Request;
 import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.CreateIndexResponse;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.indices.PutMappingRequest;
+import org.elasticsearch.common.text.Text;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHits;
@@ -53,7 +58,7 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
 
     @Override
     public boolean exists(String indexName) {
-        Assert.hasLength(indexName, "indexName不能为空");
+        Assert.hasLength(indexName, "indexName must not be empty");
         GetIndexRequest getIndexRequest = new GetIndexRequest(indexName);
         try {
             return restHighLevelClient.indices().exists(getIndexRequest, RequestOptions.DEFAULT);
@@ -64,8 +69,8 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
 
     @Override
     public boolean create(String indexName, Class<T> tClass) {
-        Assert.hasLength(indexName, "indexName不能为空");
-        Assert.notNull(tClass, "tClass不能为空");
+        Assert.hasLength(indexName, "indexName must not be empty");
+        Assert.notNull(tClass, "tClass must not be null");
         CreateIndexRequest createIndexRequest = new CreateIndexRequest(indexName);
         createIndexRequest.source(ResourceUtil.readUtf8Str(StrUtil.format(EasyLogConstants.INDEX_TEMPLATE_PATH, tClass.getSimpleName())), XContentType.JSON);
         try {
@@ -78,7 +83,7 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
 
     @Override
     public boolean delete(String indexName) {
-        Assert.hasLength(indexName, "indexName不能为空");
+        Assert.hasLength(indexName, "indexName must not be empty");
         DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest(indexName);
         try {
             AcknowledgedResponse acknowledgedResponse = restHighLevelClient.indices().delete(deleteIndexRequest, RequestOptions.DEFAULT);
@@ -90,8 +95,8 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
 
     @Override
     public boolean put(String indexName, String mappingSource) {
-        Assert.hasLength(indexName, "indexName不能为空");
-        Assert.hasLength(mappingSource, "mappingSource不能为空");
+        Assert.hasLength(indexName, "indexName must not be empty");
+        Assert.hasLength(mappingSource, "mappingSource must not be empty");
         PutMappingRequest putMappingRequest = new PutMappingRequest(indexName);
         putMappingRequest.source(mappingSource, XContentType.JSON);
         try {
@@ -104,8 +109,8 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
 
     @Override
     public int insertOne(String indexName, T entity) {
-        Assert.hasLength(indexName, "indexName不能为空");
-        Assert.notNull(entity, "entity不能为空");
+        Assert.hasLength(indexName, "indexName must not be empty");
+        Assert.notNull(entity, "entity must not be null");
         IndexRequest indexRequest = new IndexRequest(indexName);
         if (StringUtils.hasLength(entity.indexId())) {
             indexRequest.id(entity.indexId());
@@ -130,8 +135,8 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
 
     @Override
     public int insertBatch(String indexName, List<T> entities) {
-        Assert.hasLength(indexName, "indexName不能为空");
-        Assert.notEmpty(entities, "entities不能为空");
+        Assert.hasLength(indexName, "indexName must not be empty");
+        Assert.notEmpty(entities, "entities must not be empty");
         BulkRequest bulkRequest = new BulkRequest();
         entities.forEach(entity -> {
             IndexRequest indexRequest = new IndexRequest(indexName);
@@ -160,12 +165,11 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
         }
     }
 
-
     @Override
     public EsPageInfo<T> paging(String indexName, Integer pageNum, Integer pageSize, SearchSourceBuilder searchSourceBuilder, Class<T> tClass) {
-        Assert.hasLength(indexName, "indexName不能为空");
-        Assert.notNull(searchSourceBuilder, "查询条件不能为空");
-        Assert.notNull(tClass, "tClass不能为空");
+        Assert.hasLength(indexName, "indexName must not be empty");
+        Assert.notNull(searchSourceBuilder, "SearchSourceBuilder must not be null");
+        Assert.notNull(tClass, "tClass must not be null");
         pageNum = pageNum == null || pageNum <= 0 ? 1 : pageNum;
         pageSize = pageSize == null || pageSize <= 0 ? 10 : pageSize;
 
@@ -175,27 +179,57 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
         searchSourceBuilder.from(from);
         searchSourceBuilder.size(size);
 
+
         SearchRequest searchRequest = new SearchRequest(indexName);
-        searchRequest
-                .source(searchSourceBuilder);
+        searchRequest.source(searchSourceBuilder);
 
         try {
             SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
-            SearchHits searchHits = Optional.ofNullable(searchResponse)
-                    .map(SearchResponse::getHits)
-                    .orElseThrow(() -> new RuntimeException("SearchRequest failed"));
-            List<T> rows = Arrays.stream(searchHits.getHits())
-                    .map(searchHit -> {
-                        T entity = JSONUtil.toBean(searchHit.getSourceAsString(), tClass);
-                        entity.setIndexId(searchHit.getId());
-                        entity.setHighlight(searchHit.getHighlightFields());
-                        return entity;
-                    })
-                    .collect(Collectors.toList());
-            long total = searchHits.getTotalHits().value;
+            List<T> rows = analyticSearchResponse(searchResponse, tClass);
+            long total = analyticSearchResponse(searchResponse);
             return EsPageHelper.getPageInfo(rows, total, pageNum, pageSize);
         } catch (IOException e) {
             throw new RuntimeException(StrUtil.format("search failed, {}", e));
+        }
+    }
+
+    private long analyticSearchResponse(SearchResponse searchResponse) {
+        SearchHits searchHits = Optional.ofNullable(searchResponse)
+                .map(SearchResponse::getHits)
+                .orElseThrow(() -> new RuntimeException("SearchRequest failed"));
+        return searchHits.getTotalHits().value;
+    }
+
+    private List<T> analyticSearchResponse(SearchResponse searchResponse, Class<T> tClass) {
+        SearchHits searchHits = Optional.ofNullable(searchResponse)
+                .map(SearchResponse::getHits)
+                .orElseThrow(() -> new RuntimeException("SearchRequest failed"));
+        return Arrays.stream(searchHits.getHits())
+                .map(searchHit -> {
+                    JSONObject row = JSONUtil.parseObj(searchHit.getSourceAsString());
+                    searchHit.getHighlightFields()
+                            .forEach((k,v)-> {
+                                Optional<Text> fragmentOpt = Arrays.stream(v.getFragments()).findFirst();
+                                fragmentOpt.ifPresent(value -> row.putOnce(k, value));
+                            });
+                    T entity =  row.toBean(tClass);
+                    entity.setIndexId(searchHit.getId());
+                    return entity;
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public String executeDsl(String indexName, String dsl) {
+        Assert.hasLength(indexName, "indexName must not be empty");
+        Assert.hasLength(dsl, "dsl must not be empty");
+        Request request = new Request("GET", indexName + "/_search");
+        request.setJsonEntity(dsl);
+        try {
+            Response response = restHighLevelClient.getLowLevelClient().performRequest(request);
+            return IoUtil.readUtf8(response.getEntity().getContent());
+        } catch (IOException e) {
+            throw new RuntimeException(StrUtil.format("executeDsl failed, {}", e));
         }
     }
 }
