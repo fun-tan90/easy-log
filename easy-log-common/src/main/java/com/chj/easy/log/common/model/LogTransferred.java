@@ -1,11 +1,9 @@
 package com.chj.easy.log.common.model;
 
-import cn.hutool.core.date.DatePattern;
-import cn.hutool.core.date.DateUtil;
+import cn.hutool.json.JSONUtil;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -47,6 +45,8 @@ public class LogTransferred {
 
     private String content;
 
+    private Map<String,String> mdc;
+
     public Map<String, String> toMap() {
         Map<String, String> map = new HashMap<>();
         map.put("timeStamp", String.valueOf(timeStamp));
@@ -62,6 +62,7 @@ public class LogTransferred {
         map.put("method", Optional.ofNullable(method).orElse("-"));
         map.put("lineNumber", lineNumber);
         map.put("content", content);
+        map.put("mdc", JSONUtil.toJsonStr(mdc));
         return map;
     }
 }

@@ -22,7 +22,8 @@ public class LogDocEsServiceImpl extends AbstractEsService<LogDoc> {
         if (!exists) {
             boolean isOk = create(indexName, LogDoc.class);
             log.info("【{}】索引创建{}", indexName, isOk ? "成功" : "失败");
+        } else {
+            log.info("【{}】索引已存在", indexName);
         }
-        log.info("【{}】索引已存在", indexName);
     }
 }

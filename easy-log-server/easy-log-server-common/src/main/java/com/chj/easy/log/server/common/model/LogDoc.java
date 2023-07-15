@@ -2,6 +2,7 @@ package com.chj.easy.log.server.common.model;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.json.JSONObject;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -50,6 +51,8 @@ public class LogDoc implements Doc {
     private String lineNumber;
 
     private String content;
+
+    private JSONObject mdc;
 
     public static String indexName() {
         return EasyLogConstants.INDEX_FIXED_PREFIX + DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN);

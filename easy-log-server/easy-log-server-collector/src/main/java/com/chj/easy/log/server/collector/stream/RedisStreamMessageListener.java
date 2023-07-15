@@ -2,6 +2,7 @@ package com.chj.easy.log.server.collector.stream;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.server.common.model.LogDoc;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +49,7 @@ public class RedisStreamMessageListener implements StreamListener<String, MapRec
                     .method(value.get("method"))
                     .lineNumber(value.get("lineNumber"))
                     .content(value.get("content"))
+                    .mdc(JSONUtil.parseObj(value.get("mdc")))
                     .build();
             try {
                 boolean offer = logDocBlockingQueue.offer(logDoc, 100, TimeUnit.MILLISECONDS);

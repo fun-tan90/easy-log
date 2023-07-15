@@ -146,6 +146,7 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
                 .method(method)
                 .lineNumber(lineNumber)
                 .content(content)
+                .mdc(mdc)
                 .build();
     }
 }

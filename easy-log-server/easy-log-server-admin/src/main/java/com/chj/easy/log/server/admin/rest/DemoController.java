@@ -2,6 +2,7 @@ package com.chj.easy.log.server.admin.rest;
 
 
 import com.chj.easy.log.server.common.convention.Res;
+import com.yomahub.tlog.core.annotation.TLogAspect;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class DemoController {
 
     @GetMapping
-    public Res<String> index() {
+    @TLogAspect({"id"})
+    public Res<String> index(String id) {
+        log.error("id is {}", id);
         log.error("hello error");
         log.warn("hello warn");
         log.info("hello info");
