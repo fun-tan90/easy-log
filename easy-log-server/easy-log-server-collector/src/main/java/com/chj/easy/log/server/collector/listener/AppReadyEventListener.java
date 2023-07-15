@@ -45,16 +45,12 @@ public class AppReadyEventListener implements ApplicationListener<ApplicationRea
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         if (initialized.compareAndSet(false, true)) {
-            createStreamKeyAndGroup();
+            esService.createIndexIfNotExists(LogDoc.indexName());
 
-            createLogDocIndex();
+            createStreamKeyAndGroup();
 
             batchInsertLogDocBySchedule();
         }
-    }
-
-    private void createLogDocIndex() {
-        esService.createIndexIfNotExists(LogDoc.indexName());
     }
 
     private void batchInsertLogDocBySchedule() {

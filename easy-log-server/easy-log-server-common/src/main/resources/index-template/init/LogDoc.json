@@ -4,6 +4,7 @@
     "number_of_replicas": 1
   },
   "mappings": {
+    "dynamic": "strict",
     "properties": {
       "appEnv": {
         "type": "keyword"
@@ -16,7 +17,7 @@
         "analyzer": "ik_smart"
       },
       "currIp": {
-        "type": "ip"
+        "type": "keyword"
       },
       "dateTime": {
         "type": "date",
@@ -36,7 +37,7 @@
         "type": "text"
       },
       "preIp": {
-        "type": "ip"
+        "type": "keyword"
       },
       "spanId": {
         "type": "keyword"

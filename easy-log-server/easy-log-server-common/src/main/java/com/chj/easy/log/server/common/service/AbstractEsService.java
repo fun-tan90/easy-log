@@ -31,16 +31,17 @@ import org.elasticsearch.common.text.Text;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.aggregations.Aggregation;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -68,16 +69,29 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
     }
 
     @Override
-    public boolean create(String indexName, Class<T> tClass) {
+    public boolean createIndex(String indexName, Class<T> tClass) {
         Assert.hasLength(indexName, "indexName must not be empty");
         Assert.notNull(tClass, "tClass must not be null");
         CreateIndexRequest createIndexRequest = new CreateIndexRequest(indexName);
-        createIndexRequest.source(ResourceUtil.readUtf8Str(StrUtil.format(EasyLogConstants.INDEX_TEMPLATE_PATH, tClass.getSimpleName())), XContentType.JSON);
+        createIndexRequest.source(ResourceUtil.readUtf8Str(StrUtil.format(EasyLogConstants.INDEX_TEMPLATE_INIT_FILE, tClass.getSimpleName())), XContentType.JSON);
         try {
             CreateIndexResponse createIndexResponse = restHighLevelClient.indices().create(createIndexRequest, RequestOptions.DEFAULT);
             return createIndexResponse.isAcknowledged() && createIndexResponse.isShardsAcknowledged();
         } catch (IOException e) {
             throw new RuntimeException(StrUtil.format("create index failed, {}", e));
+        }
+    }
+
+    @Override
+    public boolean updateIndex(String indexName) {
+        Assert.hasLength(indexName, "indexName must not be empty");
+        PutMappingRequest putMappingRequest = new PutMappingRequest(indexName);
+        putMappingRequest.source(ResourceUtil.readUtf8Str(EasyLogConstants.INDEX_TEMPLATE_UPDATE_FILE), XContentType.JSON);
+        try {
+            AcknowledgedResponse acknowledgedResponse = restHighLevelClient.indices().putMapping(putMappingRequest, RequestOptions.DEFAULT);
+            return acknowledgedResponse.isAcknowledged();
+        } catch (IOException e) {
+            throw new RuntimeException(StrUtil.format("updateIndex failed, {}", e));
         }
     }
 
@@ -208,16 +222,42 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
                 .map(searchHit -> {
                     JSONObject row = JSONUtil.parseObj(searchHit.getSourceAsString());
                     searchHit.getHighlightFields()
-                            .forEach((k,v)-> {
+                            .forEach((k, v) -> {
                                 Optional<Text> fragmentOpt = Arrays.stream(v.getFragments()).findFirst();
                                 fragmentOpt.ifPresent(value -> row.putOnce(k, value));
                             });
-                    T entity =  row.toBean(tClass);
+                    T entity = row.toBean(tClass);
                     entity.setIndexId(searchHit.getId());
                     return entity;
                 })
                 .collect(Collectors.toList());
     }
+
+
+    @Override
+    public Map<String, List<String>> aggregation(String indexName, SearchSourceBuilder searchSourceBuilder) {
+        SearchRequest searchRequest = new SearchRequest(indexName);
+        searchRequest
+                .source(searchSourceBuilder.size(0));
+        try {
+            SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+            Aggregations aggregations = searchResponse.getAggregations();
+            Map<String, Aggregation> aggregationsMap = aggregations.getAsMap();
+            System.out.println(aggregationsMap);
+            Map<String, List<String>> mapList = new HashMap<>();
+            aggregationsMap.forEach((k, v) -> {
+                Terms terms = (Terms) v;
+                List<? extends Terms.Bucket> buckets = terms.getBuckets();
+                List<String> res = buckets.stream().map(MultiBucketsAggregation.Bucket::getKeyAsString).collect(Collectors.toList());
+                String name = v.getName();
+                mapList.put(name, res);
+            });
+            return mapList;
+        } catch (IOException e) {
+            throw new RuntimeException(StrUtil.format("aggregation failed, {}", e));
+        }
+    }
+
 
     @Override
     public String executeDsl(String indexName, String dsl) {

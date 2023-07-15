@@ -20,10 +20,12 @@ public class LogDocEsServiceImpl extends AbstractEsService<LogDoc> {
     public void createIndexIfNotExists(String indexName) {
         boolean exists = exists(indexName);
         if (!exists) {
-            boolean isOk = create(indexName, LogDoc.class);
-            log.info("【{}】索引创建{}", indexName, isOk ? "成功" : "失败");
+            boolean createIndex = createIndex(indexName, LogDoc.class);
+            log.info("【{}】索引创建{}", indexName, createIndex ? "成功" : "失败");
         } else {
             log.info("【{}】索引已存在", indexName);
         }
+        boolean updateIndex = updateIndex(indexName);
+        log.info("【{}】索引字段添加{}", indexName, updateIndex ? "成功" : "失败");
     }
 }

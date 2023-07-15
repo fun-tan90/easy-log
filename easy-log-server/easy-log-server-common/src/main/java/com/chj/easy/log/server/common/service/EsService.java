@@ -5,6 +5,7 @@ import com.chj.easy.log.server.common.model.Doc;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * description TODO
@@ -37,7 +38,15 @@ public interface EsService<T extends Doc> {
      * @param tClass    索引模板
      * @return true 成功 false 失败
      */
-    boolean create(String indexName, Class<T> tClass);
+    boolean createIndex(String indexName, Class<T> tClass);
+
+    /**
+     * 更新索引
+     *
+     * @param indexName
+     * @return
+     */
+    boolean updateIndex(String indexName);
 
     /**
      * 删除索引
@@ -84,6 +93,16 @@ public interface EsService<T extends Doc> {
      * @return 指定的返回类型
      */
     EsPageInfo<T> paging(String indexName, Integer pageNum, Integer pageSize, SearchSourceBuilder searchSourceBuilder, Class<T> tClass);
+
+
+    /**
+     * keyword类型聚合查询
+     *
+     * @param indexName
+     * @param searchSourceBuilder
+     * @return
+     */
+    Map<String, List<String>> aggregation(String indexName, SearchSourceBuilder searchSourceBuilder);
 
     /**
      * 原生查询

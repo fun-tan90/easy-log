@@ -1,0 +1,36 @@
+{
+  "properties": {
+    "mdc": {
+      "properties": {
+        "currIp": {
+          "type": "keyword",
+          "index": false
+        },
+        "preIp": {
+          "type": "keyword",
+          "index": false
+        },
+        "preIvkApp": {
+          "type": "keyword",
+          "index": false
+        },
+        "preIvkHost": {
+          "type": "keyword",
+          "index": false
+        },
+        "tl": {
+          "type": "text",
+          "analyzer": "ik_smart"
+        },
+        "tlogSpanId": {
+          "type": "keyword",
+          "index": false
+        },
+        "tlogTraceId": {
+          "type": "keyword",
+          "index": false
+        }
+      }
+    }
+  }
+}

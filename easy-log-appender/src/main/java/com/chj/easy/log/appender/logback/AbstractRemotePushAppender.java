@@ -106,25 +106,24 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
             method = stackTraceElement.getMethodName();
             lineNumber = String.valueOf(stackTraceElement.getLineNumber());
         }
-        String content;
+        Object[] argumentArray = logEvent.getArgumentArray();
+        String content = "-";
         if (level.equals(Level.ERROR)) {
             if (logEvent.getThrowableProxy() != null) {
                 ThrowableProxy throwableProxy = (ThrowableProxy) logEvent.getThrowableProxy();
                 String[] args = new String[]{logEvent.getFormattedMessage() + "\n" + ExceptionUtil.stacktraceToString(throwableProxy.getThrowable())};
                 content = MessageFormatter.arrayFormat("{}", args).getMessage();
             } else {
-                Object[] argumentArray = logEvent.getArgumentArray();
                 if (argumentArray != null) {
                     for (int i = 0; i < argumentArray.length; i++) {
                         if (argumentArray[i] instanceof Throwable) {
                             argumentArray[i] = ExceptionUtil.stacktraceToOneLineString((Throwable) argumentArray[i]);
                         }
                     }
-                    StringBuilder message = new StringBuilder(logEvent.getMessage());
-                    for (Object argument : argumentArray) {
-                        message.append("\n").append(argument);
+                    String message = logEvent.getMessage();
+                    if (message != null && message.contains("{}")) {
+                        content = MessageFormatter.arrayFormat(message, argumentArray).getMessage();
                     }
-                    content = message.toString();
                 } else {
                     content = logEvent.getFormattedMessage();
                 }
@@ -132,6 +131,7 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
         } else {
             content = logEvent.getFormattedMessage();
         }
+
         return LogTransferred.builder()
                 .timeStamp(timeStamp)
                 .appName(appName)
