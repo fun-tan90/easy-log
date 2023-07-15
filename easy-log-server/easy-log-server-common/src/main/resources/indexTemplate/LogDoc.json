@@ -16,7 +16,7 @@
         "analyzer": "ik_smart"
       },
       "currIp": {
-        "type": "keyword"
+        "type": "ip"
       },
       "dateTime": {
         "type": "date",
@@ -36,7 +36,7 @@
         "type": "text"
       },
       "preIp": {
-        "type": "keyword"
+        "type": "ip"
       },
       "spanId": {
         "type": "keyword"

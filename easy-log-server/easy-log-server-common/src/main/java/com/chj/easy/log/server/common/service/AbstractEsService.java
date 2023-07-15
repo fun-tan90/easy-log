@@ -185,22 +185,22 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
 
         try {
             SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
-            List<T> rows = analyticSearchResponse(searchResponse, tClass);
-            long total = analyticSearchResponse(searchResponse);
+            List<T> rows = analyticSearchResponseForHits(searchResponse, tClass);
+            long total = analyticSearchResponseForTotalSize(searchResponse);
             return EsPageHelper.getPageInfo(rows, total, pageNum, pageSize);
         } catch (IOException e) {
             throw new RuntimeException(StrUtil.format("search failed, {}", e));
         }
     }
 
-    private long analyticSearchResponse(SearchResponse searchResponse) {
+    private long analyticSearchResponseForTotalSize(SearchResponse searchResponse) {
         SearchHits searchHits = Optional.ofNullable(searchResponse)
                 .map(SearchResponse::getHits)
                 .orElseThrow(() -> new RuntimeException("SearchRequest failed"));
         return searchHits.getTotalHits().value;
     }
 
-    private List<T> analyticSearchResponse(SearchResponse searchResponse, Class<T> tClass) {
+    private List<T> analyticSearchResponseForHits(SearchResponse searchResponse, Class<T> tClass) {
         SearchHits searchHits = Optional.ofNullable(searchResponse)
                 .map(SearchResponse::getHits)
                 .orElseThrow(() -> new RuntimeException("SearchRequest failed"));

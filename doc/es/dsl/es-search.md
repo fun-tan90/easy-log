@@ -93,3 +93,7 @@ GET /daily-easy-log-2023-07-14/_search
 
 ```
 - bool查询
+
+```shell
+
+```
