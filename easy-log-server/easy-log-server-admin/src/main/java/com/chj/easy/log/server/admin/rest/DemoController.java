@@ -53,7 +53,7 @@ public class DemoController {
     }
 
     @Resource
-    EsService<LogDoc> esService;
+    private EsService<LogDoc> esService;
 
     @PostMapping
     public Res<Map<String, List<String>>> aggregation(String indexName, int size, @RequestBody List<String> terms) {

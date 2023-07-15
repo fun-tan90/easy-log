@@ -2,11 +2,12 @@ package com.chj.easy.log.server.admin.listener;
 
 import com.chj.easy.log.server.common.model.LogDoc;
 import com.chj.easy.log.server.common.service.EsService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.Resource;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
@@ -18,12 +19,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @date 2023/7/13 10:15
  */
 @Slf4j
-@RequiredArgsConstructor
-public class AppReadyEventListener implements ApplicationListener<ApplicationReadyEvent> {
+@Configuration
+public class AdminInitListener implements ApplicationListener<ApplicationReadyEvent> {
 
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
-    private final EsService<LogDoc> esService;
+    @Resource
+    private EsService<LogDoc> esService;
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {

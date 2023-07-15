@@ -20,7 +20,7 @@ import javax.annotation.Resource;
 public class EsIndexInitJob {
 
     @Resource
-    EsService<LogDoc> esService;
+    private EsService<LogDoc> esService;
 
     @Scheduled(cron = "${easy-log.admin.init-index-cron}")
     public void createLogDocIndexTask() {

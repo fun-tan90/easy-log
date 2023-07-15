@@ -49,9 +49,23 @@
         <redisStreamMaxLen>1000000</redisStreamMaxLen>
     </appender>
 
+    <appender name="REDIS_STREAM_TEST" class="com.chj.easy.log.appender.logback.redis.RedisStreamRemotePushAppender">
+        <enable>true</enable>
+        <appName>easy-log-server-admin</appName>
+        <appEnv>test</appEnv>
+        <queueSize>1024</queueSize>
+        <redisMode>single</redisMode>
+        <redisAddress>114.217.55.239:6379</redisAddress>
+        <redisDb>3</redisDb>
+        <redisPass>ICONMAN20220106R</redisPass>
+        <redisConnectionTimeout>1000</redisConnectionTimeout>
+        <redisStreamMaxLen>1000000</redisStreamMaxLen>
+    </appender>
+
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="ASYNC_FILE"/>
-        <appender-ref ref="REDIS_STREAM"/>
+<!--        <appender-ref ref="REDIS_STREAM"/>-->
+        <appender-ref ref="REDIS_STREAM_TEST"/>
     </root>
 </configuration>
