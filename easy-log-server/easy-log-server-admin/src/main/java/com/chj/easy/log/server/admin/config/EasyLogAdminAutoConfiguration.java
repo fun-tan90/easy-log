@@ -18,9 +18,4 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableConfigurationProperties(EasyLogAdminProperties.class)
 public class EasyLogAdminAutoConfiguration {
-
-    @Bean
-    public AdminInitListener appReadyEventProcessor() {
-        return new AdminInitListener();
-    }
 }
