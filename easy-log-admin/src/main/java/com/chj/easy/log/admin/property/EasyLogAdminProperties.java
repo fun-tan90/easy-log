@@ -17,5 +17,7 @@ public class EasyLogAdminProperties {
 
     public static final String PREFIX = "easy-log.admin";
 
+    private boolean enable = true;
+
     private String initIndexCron = "0 0 23 * * ?";
 }

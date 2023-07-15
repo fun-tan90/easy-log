@@ -65,7 +65,5 @@
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="ASYNC_FILE"/>
-        <!--        <appender-ref ref="REDIS_STREAM"/>-->
-        <appender-ref ref="REDIS_STREAM_TEST"/>
     </root>
 </configuration>
