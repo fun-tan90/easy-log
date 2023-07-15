@@ -7,7 +7,7 @@ package com.chj.easy.log.common.constant;
  * @since 1.0.0
  */
 public interface EasyLogConstants {
-    String SCAN_BASE_PACKAGES = "com.chj.easy.log.server";
+    String SCAN_BASE_PACKAGES = "com.chj.easy.log";
 
     String INDEX_FIXED_PREFIX = "daily-easy-log-";
 

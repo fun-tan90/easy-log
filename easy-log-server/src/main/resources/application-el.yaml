@@ -1,0 +1,12 @@
+easy-log:
+  es:
+    address: 172.16.8.31:9200,172.16.8.31:9201,172.16.8.31:9202
+  admin:
+    init-index-cron: 0 0 23 * * ?
+  collector:
+    enable: true
+    poll-timeout: 1s
+    pull-batch-size: 100
+    insert-batch-size: 100
+    consumer-global-orders: 1,2,3,4
+    queue-capacity: 1024

@@ -9,25 +9,13 @@
         <version>1.0.1</version>
     </parent>
 
-    <artifactId>easy-log-server</artifactId>
+    <artifactId>easy-log-collector</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>com.chj</groupId>
-            <artifactId>easy-log-collector</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.chj</groupId>
-            <artifactId>easy-log-admin</artifactId>
+            <artifactId>easy-log-core</artifactId>
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 </project>
