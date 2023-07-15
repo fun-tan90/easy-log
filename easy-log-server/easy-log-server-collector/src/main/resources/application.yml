@@ -10,6 +10,6 @@ spring:
     active: dev
     group:
       dev:
-        - cache
+        - cache-iot
         - el
         - log

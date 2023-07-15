@@ -35,10 +35,10 @@ public interface EsService<T extends Doc> {
      * 创建索引
      *
      * @param indexName 索引名称
-     * @param tClass    索引模板
+     * @param mappings    索引模板
      * @return true 成功 false 失败
      */
-    boolean createIndex(String indexName, Class<T> tClass);
+    boolean createIndex(String indexName, String mappings);
 
     /**
      * 更新索引
@@ -46,7 +46,7 @@ public interface EsService<T extends Doc> {
      * @param indexName
      * @return
      */
-    boolean updateIndex(String indexName);
+    boolean updateIndex(String indexName, String mappings);
 
     /**
      * 删除索引

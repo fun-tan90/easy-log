@@ -16,7 +16,6 @@ public interface EasyLogConstants {
     String GROUP_NAME = "easy-log-group";
 
     String GROUP_CONSUMER_NAME = "easy-log-group-consumer";
-    String INDEX_TEMPLATE_INIT_FILE = "index-template/init/{}.json";
 
-    String INDEX_TEMPLATE_UPDATE_FILE = "index-template/update/mdc.json";
+    String INDEX_MAPPING_PATH = "index_mapping/{}.json";
 }

@@ -1,11 +1,9 @@
 package com.chj.easy.log.server.common.service;
 
 import cn.hutool.core.io.IoUtil;
-import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.server.common.convention.page.es.EsPageHelper;
 import com.chj.easy.log.server.common.convention.page.es.EsPageInfo;
 import com.chj.easy.log.server.common.model.Doc;
@@ -69,11 +67,11 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
     }
 
     @Override
-    public boolean createIndex(String indexName, Class<T> tClass) {
+    public boolean createIndex(String indexName, String mappings) {
         Assert.hasLength(indexName, "indexName must not be empty");
-        Assert.notNull(tClass, "tClass must not be null");
+        Assert.hasLength(mappings, "mappings must not be empty");
         CreateIndexRequest createIndexRequest = new CreateIndexRequest(indexName);
-        createIndexRequest.source(ResourceUtil.readUtf8Str(StrUtil.format(EasyLogConstants.INDEX_TEMPLATE_INIT_FILE, tClass.getSimpleName())), XContentType.JSON);
+        createIndexRequest.source(mappings, XContentType.JSON);
         try {
             CreateIndexResponse createIndexResponse = restHighLevelClient.indices().create(createIndexRequest, RequestOptions.DEFAULT);
             return createIndexResponse.isAcknowledged() && createIndexResponse.isShardsAcknowledged();
@@ -83,10 +81,10 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
     }
 
     @Override
-    public boolean updateIndex(String indexName) {
+    public boolean updateIndex(String indexName, String mappings) {
         Assert.hasLength(indexName, "indexName must not be empty");
         PutMappingRequest putMappingRequest = new PutMappingRequest(indexName);
-        putMappingRequest.source(ResourceUtil.readUtf8Str(EasyLogConstants.INDEX_TEMPLATE_UPDATE_FILE), XContentType.JSON);
+        putMappingRequest.source(mappings, XContentType.JSON);
         try {
             AcknowledgedResponse acknowledgedResponse = restHighLevelClient.indices().putMapping(putMappingRequest, RequestOptions.DEFAULT);
             return acknowledgedResponse.isAcknowledged();

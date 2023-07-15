@@ -13,6 +13,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-crypto</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.chj</groupId>
             <artifactId>easy-log-common</artifactId>
         </dependency>
