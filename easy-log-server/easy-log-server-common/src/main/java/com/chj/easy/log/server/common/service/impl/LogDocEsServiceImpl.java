@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
  * @author 陈浩杰
  * @date 2023/7/14 13:09
  */
-@Slf4j
+@Slf4j(topic = "easy-log")
 @Service
 public class LogDocEsServiceImpl extends AbstractEsService<LogDoc> {
 
@@ -25,9 +25,9 @@ public class LogDocEsServiceImpl extends AbstractEsService<LogDoc> {
         if (!exists) {
             String mappings = ResourceUtil.readUtf8Str(StrUtil.format(EasyLogConstants.INDEX_MAPPING_PATH, LogDoc.class.getSimpleName()));
             boolean createIndex = createIndex(indexName, mappings);
-            log.info("【{}】索引创建{}", indexName, createIndex ? "成功" : "失败");
+            log.debug("【{}】索引创建{}", indexName, createIndex ? "成功" : "失败");
         } else {
-            log.info("【{}】索引已存在", indexName);
+            log.debug("【{}】索引已存在", indexName);
         }
     }
 }

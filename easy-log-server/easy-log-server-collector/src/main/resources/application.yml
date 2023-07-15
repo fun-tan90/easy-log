@@ -7,9 +7,13 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
   profiles:
-    active: dev
+    active: test
     group:
       dev:
-        - cache-iot
+        - cache
+        - el
+        - log
+      test:
+        - cache-test
         - el
         - log

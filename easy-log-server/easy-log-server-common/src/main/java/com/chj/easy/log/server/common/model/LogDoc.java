@@ -24,7 +24,7 @@ import java.util.Date;
 @Builder
 public class LogDoc implements Doc {
 
-    private transient String id;
+    private String id;
 
     private String dateTime;
 

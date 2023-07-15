@@ -2,4 +2,4 @@ logging:
   level:
     root: info
     tracer: trace
-  config: classpath:logback-tlog.xml
+    easy-log: debug

@@ -2,3 +2,4 @@ logging:
   level:
     root: info
     tracer: trace
+    easy-log: debug
