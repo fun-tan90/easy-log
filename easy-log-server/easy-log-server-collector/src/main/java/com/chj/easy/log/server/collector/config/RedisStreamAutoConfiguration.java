@@ -62,10 +62,10 @@ public class RedisStreamAutoConfiguration {
                                             StreamMessageListenerContainer<String, MapRecord<String, String, String>> streamMessageListenerContainer,
                                             RedisStreamMessageListener redisStreamMessageListener) {
         List<Subscription> subscriptions = new ArrayList<>();
-        for (int consumerNum : easyLogCollectorProperties.getConsumerNums()) {
+        for (int consumerGlobalOrder : easyLogCollectorProperties.getConsumerGlobalOrders()) {
             Subscription subscription = streamMessageListenerContainer
                     .receive(
-                            Consumer.from(EasyLogConstants.GROUP_NAME, EasyLogConstants.GROUP_CONSUMER_NAME + "-" + consumerNum),
+                            Consumer.from(EasyLogConstants.GROUP_NAME, EasyLogConstants.GROUP_CONSUMER_NAME + "-" + consumerGlobalOrder),
                             StreamOffset.create(EasyLogConstants.STREAM_KEY, ReadOffset.lastConsumed()),
                             redisStreamMessageListener);
             subscriptions.add(subscription);

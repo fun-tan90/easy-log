@@ -27,5 +27,5 @@ public class EasyLogCollectorProperties {
 
     private int insertBatchSize = 100;
 
-    private int[] consumerNums;
+    private int[] consumerGlobalOrders;
 }
