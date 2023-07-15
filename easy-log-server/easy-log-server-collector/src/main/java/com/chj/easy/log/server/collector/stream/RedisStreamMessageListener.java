@@ -5,12 +5,13 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.server.common.model.LogDoc;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.stream.MapRecord;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.stream.StreamListener;
 
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -22,12 +23,14 @@ import java.util.concurrent.TimeUnit;
  * @Date 2021/3/10.
  */
 @Slf4j(topic = EasyLogConstants.LOG_TOPIC)
-@RequiredArgsConstructor
+@Configuration
 public class RedisStreamMessageListener implements StreamListener<String, MapRecord<String, String, String>> {
 
-    private final BlockingQueue<LogDoc> logDocBlockingQueue;
+    @Resource
+    private BlockingQueue<LogDoc> logDocBlockingQueue;
 
-    private final StringRedisTemplate stringRedisTemplate;
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     @Override
     public void onMessage(MapRecord<String, String, String> entries) {

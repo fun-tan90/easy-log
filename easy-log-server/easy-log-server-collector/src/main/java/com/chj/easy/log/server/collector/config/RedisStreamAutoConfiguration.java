@@ -1,7 +1,7 @@
 package com.chj.easy.log.server.collector.config;
 
 import com.chj.easy.log.common.EasyLogManager;
-import com.chj.easy.log.server.collector.listener.EasyLogCollectorInitListener;
+import com.chj.easy.log.server.collector.listener.CollectorInitListener;
 import com.chj.easy.log.server.collector.property.EasyLogCollectorProperties;
 import com.chj.easy.log.server.collector.stream.RedisStreamMessageListener;
 import com.chj.easy.log.server.common.model.LogDoc;
@@ -9,6 +9,7 @@ import com.chj.easy.log.server.common.service.EsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.stream.MapRecord;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -25,13 +26,8 @@ import java.util.concurrent.BlockingQueue;
  */
 @Slf4j
 @AutoConfigureAfter(EasyLogCollectorAutoConfiguration.class)
+@Configuration
 public class RedisStreamAutoConfiguration {
-
-    @Bean
-    public RedisStreamMessageListener redisStreamMessageListener(BlockingQueue<LogDoc> logDocBlockingQueue,
-                                                                 StringRedisTemplate stringRedisTemplate) {
-        return new RedisStreamMessageListener(logDocBlockingQueue, stringRedisTemplate);
-    }
 
     @Bean
     public StreamMessageListenerContainer.StreamMessageListenerContainerOptions<String, MapRecord<String, String, String>> streamMessageListenerContainerOptions(EasyLogCollectorProperties easyLogCollectorProperties) {
@@ -51,20 +47,5 @@ public class RedisStreamAutoConfiguration {
                 StreamMessageListenerContainer.create(factory, streamMessageListenerContainerOptions);
         listenerContainer.start();
         return listenerContainer;
-    }
-
-    @Bean
-    public EasyLogCollectorInitListener appReadyEventProcessor(StringRedisTemplate stringRedisTemplate,
-                                                               BlockingQueue<LogDoc> logDocBlockingQueue,
-                                                               EsService<LogDoc> esService,
-                                                               EasyLogCollectorProperties easyLogCollectorProperties,
-                                                               RedisStreamMessageListener redisStreamMessageListener,
-                                                               StreamMessageListenerContainer<String, MapRecord<String, String, String>> streamMessageListenerContainer) {
-        return new EasyLogCollectorInitListener(stringRedisTemplate,
-                logDocBlockingQueue,
-                esService,
-                easyLogCollectorProperties,
-                redisStreamMessageListener,
-                streamMessageListenerContainer);
     }
 }

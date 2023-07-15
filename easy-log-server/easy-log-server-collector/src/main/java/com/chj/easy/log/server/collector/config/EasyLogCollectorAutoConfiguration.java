@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -18,7 +19,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @date 2023/7/13 8:50
  */
 @Slf4j
-@RequiredArgsConstructor
+@Configuration
 @EnableConfigurationProperties(EasyLogCollectorProperties.class)
 public class EasyLogCollectorAutoConfiguration {
 
