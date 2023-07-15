@@ -2,6 +2,7 @@ easy-log:
   es:
     address: 172.16.8.31:9200,172.16.8.31:9201,172.16.8.31:9202
   admin:
+    enable: true
     init-index-cron: 0 0 23 * * ?
   collector:
     enable: true

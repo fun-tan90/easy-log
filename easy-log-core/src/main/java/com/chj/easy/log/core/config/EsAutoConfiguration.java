@@ -11,7 +11,7 @@ import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -27,9 +27,9 @@ import java.util.Optional;
  * @author 陈浩杰
  * @date 2023/7/13 14:38
  */
-@Configuration
+@ComponentScan("com.chj.easy.log.core")
 @EnableConfigurationProperties(EasyLogEsProperties.class)
-public class EsConfig {
+public class EsAutoConfiguration {
 
     @Resource
     EasyLogEsProperties easyLogEsProperties;

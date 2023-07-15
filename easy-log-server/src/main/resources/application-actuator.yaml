@@ -1,0 +1,13 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+      base-path: /monitor
+  endpoint:
+    health:
+      show-details: always
+    shutdown:
+      enabled: true
+    httptrace:
+      enabled: true
