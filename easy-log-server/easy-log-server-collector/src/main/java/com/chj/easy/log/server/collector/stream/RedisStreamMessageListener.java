@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * @Description 监听消息
  * @Date 2021/3/10.
  */
-@Slf4j
+@Slf4j(topic = EasyLogConstants.LOG_TOPIC)
 @RequiredArgsConstructor
 public class RedisStreamMessageListener implements StreamListener<String, MapRecord<String, String, String>> {
 

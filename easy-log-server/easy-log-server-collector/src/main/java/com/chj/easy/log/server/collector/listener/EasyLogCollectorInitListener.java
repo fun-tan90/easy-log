@@ -4,14 +4,16 @@ import cn.hutool.core.date.StopWatch;
 import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.server.collector.property.EasyLogCollectorProperties;
+import com.chj.easy.log.server.collector.stream.RedisStreamMessageListener;
 import com.chj.easy.log.server.common.model.LogDoc;
 import com.chj.easy.log.server.common.service.EsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.data.redis.connection.stream.StreamInfo;
+import org.springframework.data.redis.connection.stream.*;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.stream.StreamMessageListenerContainer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +32,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 @Slf4j(topic = EasyLogConstants.LOG_TOPIC)
 @RequiredArgsConstructor
-public class AppReadyEventListener implements ApplicationListener<ApplicationReadyEvent> {
+public class EasyLogCollectorInitListener implements ApplicationListener<ApplicationReadyEvent> {
 
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
@@ -42,12 +44,16 @@ public class AppReadyEventListener implements ApplicationListener<ApplicationRea
 
     private final EasyLogCollectorProperties easyLogCollectorProperties;
 
+    private final RedisStreamMessageListener redisStreamMessageListener;
+
+    private final StreamMessageListenerContainer<String, MapRecord<String, String, String>> streamMessageListenerContainer;
+
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         if (initialized.compareAndSet(false, true)) {
             esService.createIndexIfNotExists(LogDoc.indexName());
 
-            createStreamKeyAndGroup();
+            createStreamKeyAndGroupAndConsumers();
 
             batchInsertLogDocBySchedule();
         }
@@ -70,22 +76,29 @@ public class AppReadyEventListener implements ApplicationListener<ApplicationRea
                 StopWatch stopWatch = new StopWatch("es 批量输入");
                 stopWatch.start("批量插入数据耗时");
                 int insertedSize = esService.insertBatch(LogDoc.indexName(), logDocs);
-                log.debug("es 批量输入条数【{}】", insertedSize);
+                log.debug("批量输入条数【{}】【{}】", logDocs.size(), insertedSize);
                 stopWatch.stop();
                 log.debug(stopWatch.prettyPrint(TimeUnit.MILLISECONDS));
             }
         }, 1, 100, TimeUnit.MILLISECONDS);
     }
 
-    private void createStreamKeyAndGroup() {
+    private void createStreamKeyAndGroupAndConsumers() {
         Boolean hasKey = stringRedisTemplate.hasKey(EasyLogConstants.STREAM_KEY);
         if (Boolean.FALSE.equals(hasKey)) {
             stringRedisTemplate.opsForStream().createGroup(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_NAME);
-        } else {
-            StreamInfo.XInfoGroups groups = stringRedisTemplate.opsForStream().groups(EasyLogConstants.STREAM_KEY);
-            Optional<StreamInfo.XInfoGroup> xInfoGroupOpt = groups.stream().filter(n -> n.groupName().equals(EasyLogConstants.GROUP_NAME)).findAny();
-            if (!xInfoGroupOpt.isPresent()) {
-                stringRedisTemplate.opsForStream().createGroup(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_NAME);
+        }
+        StreamInfo.XInfoGroups groups = stringRedisTemplate.opsForStream().groups(EasyLogConstants.STREAM_KEY);
+        Optional<StreamInfo.XInfoGroup> xInfoGroupOpt = groups.stream().filter(n -> n.groupName().equals(EasyLogConstants.GROUP_NAME)).findAny();
+        if (!xInfoGroupOpt.isPresent()) {
+            stringRedisTemplate.opsForStream().createGroup(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_NAME);
+            for (int consumerGlobalOrder : easyLogCollectorProperties.getConsumerGlobalOrders()) {
+                streamMessageListenerContainer
+                        .receive(
+                                Consumer.from(EasyLogConstants.GROUP_NAME, EasyLogConstants.GROUP_CONSUMER_NAME + "-" + consumerGlobalOrder),
+                                StreamOffset.create(EasyLogConstants.STREAM_KEY, ReadOffset.lastConsumed()),
+                                redisStreamMessageListener
+                        );
             }
         }
     }

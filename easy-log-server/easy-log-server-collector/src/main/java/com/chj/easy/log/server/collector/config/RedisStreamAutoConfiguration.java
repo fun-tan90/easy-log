@@ -1,24 +1,19 @@
 package com.chj.easy.log.server.collector.config;
 
 import com.chj.easy.log.common.EasyLogManager;
-import com.chj.easy.log.common.constant.EasyLogConstants;
+import com.chj.easy.log.server.collector.listener.EasyLogCollectorInitListener;
 import com.chj.easy.log.server.collector.property.EasyLogCollectorProperties;
 import com.chj.easy.log.server.collector.stream.RedisStreamMessageListener;
 import com.chj.easy.log.server.common.model.LogDoc;
+import com.chj.easy.log.server.common.service.EsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.stream.Consumer;
 import org.springframework.data.redis.connection.stream.MapRecord;
-import org.springframework.data.redis.connection.stream.ReadOffset;
-import org.springframework.data.redis.connection.stream.StreamOffset;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.stream.StreamMessageListenerContainer;
-import org.springframework.data.redis.stream.Subscription;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
 /**
@@ -33,7 +28,8 @@ import java.util.concurrent.BlockingQueue;
 public class RedisStreamAutoConfiguration {
 
     @Bean
-    public RedisStreamMessageListener redisStreamMessageListener(BlockingQueue<LogDoc> logDocBlockingQueue, StringRedisTemplate stringRedisTemplate) {
+    public RedisStreamMessageListener redisStreamMessageListener(BlockingQueue<LogDoc> logDocBlockingQueue,
+                                                                 StringRedisTemplate stringRedisTemplate) {
         return new RedisStreamMessageListener(logDocBlockingQueue, stringRedisTemplate);
     }
 
@@ -58,18 +54,17 @@ public class RedisStreamAutoConfiguration {
     }
 
     @Bean
-    public List<Subscription> subscriptions(EasyLogCollectorProperties easyLogCollectorProperties,
-                                            StreamMessageListenerContainer<String, MapRecord<String, String, String>> streamMessageListenerContainer,
-                                            RedisStreamMessageListener redisStreamMessageListener) {
-        List<Subscription> subscriptions = new ArrayList<>();
-        for (int consumerGlobalOrder : easyLogCollectorProperties.getConsumerGlobalOrders()) {
-            Subscription subscription = streamMessageListenerContainer
-                    .receive(
-                            Consumer.from(EasyLogConstants.GROUP_NAME, EasyLogConstants.GROUP_CONSUMER_NAME + "-" + consumerGlobalOrder),
-                            StreamOffset.create(EasyLogConstants.STREAM_KEY, ReadOffset.lastConsumed()),
-                            redisStreamMessageListener);
-            subscriptions.add(subscription);
-        }
-        return subscriptions;
+    public EasyLogCollectorInitListener appReadyEventProcessor(StringRedisTemplate stringRedisTemplate,
+                                                               BlockingQueue<LogDoc> logDocBlockingQueue,
+                                                               EsService<LogDoc> esService,
+                                                               EasyLogCollectorProperties easyLogCollectorProperties,
+                                                               RedisStreamMessageListener redisStreamMessageListener,
+                                                               StreamMessageListenerContainer<String, MapRecord<String, String, String>> streamMessageListenerContainer) {
+        return new EasyLogCollectorInitListener(stringRedisTemplate,
+                logDocBlockingQueue,
+                esService,
+                easyLogCollectorProperties,
+                redisStreamMessageListener,
+                streamMessageListenerContainer);
     }
 }
