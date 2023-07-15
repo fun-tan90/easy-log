@@ -10,7 +10,6 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.StreamEntryID;
-import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import java.util.concurrent.BlockingQueue;
 
@@ -69,8 +68,6 @@ public class RedisStreamRemotePushAppender extends AbstractRemotePushAppender {
                 }
                 jedis.xadd(EasyLogConstants.STREAM_KEY, StreamEntryID.NEW_ENTRY, logTransferred.toMap(), redisStreamMaxLen, false);
             }
-        } catch (JedisConnectionException e) {
-            e.printStackTrace();
         }
     }
 }

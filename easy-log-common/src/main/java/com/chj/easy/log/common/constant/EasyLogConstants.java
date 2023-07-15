@@ -18,4 +18,6 @@ public interface EasyLogConstants {
     String GROUP_CONSUMER_NAME = "easy-log-group-consumer";
 
     String INDEX_MAPPING_PATH = "index_mapping/{}.json";
+
+    String LOG_TOPIC = "easy-log";
 }

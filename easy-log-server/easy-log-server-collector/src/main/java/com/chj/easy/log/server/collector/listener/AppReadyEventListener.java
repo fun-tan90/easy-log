@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author 陈浩杰
  * @date 2023/7/13 10:15
  */
-@Slf4j
+@Slf4j(topic = EasyLogConstants.LOG_TOPIC)
 @RequiredArgsConstructor
 public class AppReadyEventListener implements ApplicationListener<ApplicationReadyEvent> {
 
@@ -70,9 +70,9 @@ public class AppReadyEventListener implements ApplicationListener<ApplicationRea
                 StopWatch stopWatch = new StopWatch("es 批量输入");
                 stopWatch.start("批量插入数据耗时");
                 int insertedSize = esService.insertBatch(LogDoc.indexName(), logDocs);
-                log.info("es 批量输入条数【{}】", insertedSize);
+                log.debug("es 批量输入条数【{}】", insertedSize);
                 stopWatch.stop();
-                log.info(stopWatch.prettyPrint(TimeUnit.MILLISECONDS));
+                log.debug(stopWatch.prettyPrint(TimeUnit.MILLISECONDS));
             }
         }, 1, 100, TimeUnit.MILLISECONDS);
     }

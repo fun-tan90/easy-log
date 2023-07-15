@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
  * @author 陈浩杰
  * @date 2023/7/14 13:09
  */
-@Slf4j(topic = "easy-log")
+@Slf4j(topic = EasyLogConstants.LOG_TOPIC)
 @Service
 public class LogDocEsServiceImpl extends AbstractEsService<LogDoc> {
 
