@@ -1,4 +1,4 @@
-package com.chj.easy.log.server.collector;
+package com.chj.easy.log.server;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,10 +12,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @date 2023/7/13 8:12
  */
 @SpringBootApplication
-public class EasyLogCollecterApplication {
+public class EasyLogApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(EasyLogCollecterApplication.class, args);
+        SpringApplication.run(EasyLogApplication.class, args);
     }
 
 }

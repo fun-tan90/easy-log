@@ -1,0 +1,57 @@
+{
+  "settings": {
+    "number_of_shards": 5,
+    "number_of_replicas": 1
+  },
+  "mappings": {
+    "dynamic": "false",
+    "properties": {
+      "id": {
+        "type": "keyword"
+      },
+      "appEnv": {
+        "type": "keyword"
+      },
+      "appName": {
+        "type": "keyword"
+      },
+      "content": {
+        "type": "text",
+        "analyzer": "ik_smart"
+      },
+      "currIp": {
+        "type": "keyword"
+      },
+      "dateTime": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss.SSS"
+      },
+      "level": {
+        "type": "keyword"
+      },
+      "lineNumber": {
+        "type": "keyword"
+      },
+      "loggerName": {
+        "type": "text",
+        "analyzer": "stop"
+      },
+      "method": {
+        "type": "text"
+      },
+      "preIp": {
+        "type": "keyword"
+      },
+      "spanId": {
+        "type": "keyword"
+      },
+      "threadName": {
+        "type": "keyword",
+        "index": false
+      },
+      "traceId": {
+        "type": "keyword"
+      }
+    }
+  }
+}

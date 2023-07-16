@@ -9,13 +9,12 @@
         <version>1.0.1</version>
     </parent>
 
-    <artifactId>easy-log-admin</artifactId>
+    <artifactId>easy-log-example</artifactId>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.chj</groupId>
-            <artifactId>easy-log-core</artifactId>
-        </dependency>
-    </dependencies>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>easy-log-example-boot2</module>
+    </modules>
 
 </project>

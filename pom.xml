@@ -16,6 +16,7 @@
         <module>easy-log-core</module>
         <module>easy-log-admin</module>
         <module>easy-log-server</module>
+        <module>easy-log-example</module>
     </modules>
 
     <properties>
