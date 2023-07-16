@@ -3,6 +3,7 @@ package com.chj.easy.log.collector.listener;
 import cn.hutool.core.date.StopWatch;
 import com.chj.easy.log.collector.property.EasyLogCollectorProperties;
 import com.chj.easy.log.collector.stream.RedisStreamMessageListener;
+import com.chj.easy.log.common.BannerPrint;
 import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.model.Doc;
@@ -58,6 +59,9 @@ public class CollectorInitListener implements ApplicationListener<ApplicationRea
     private Environment environment;
 
     @Resource
+    private EasyLogCollectorProperties easyLogCollectorProperties;
+
+    @Resource
     private StreamMessageListenerContainer<String, MapRecord<String, String, String>> streamMessageListenerContainer;
 
     @Override
@@ -71,6 +75,10 @@ public class CollectorInitListener implements ApplicationListener<ApplicationRea
             createStreamKeyAndGroupAndConsumers();
 
             batchInsertLogDocBySchedule();
+
+            if (easyLogCollectorProperties.isBanner()) {
+                BannerPrint.printCollectorBanner();
+            }
         }
     }
 

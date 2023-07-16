@@ -21,6 +21,8 @@ public class EasyLogCollectorProperties {
 
     private boolean enable = true;
 
+    private boolean banner = true;
+
     private Duration pollTimeout = Duration.ofSeconds(1);
 
     private int pullBatchSize = 100;

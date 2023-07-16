@@ -19,5 +19,7 @@ public class EasyLogAdminProperties {
 
     private boolean enable = true;
 
+    private boolean banner = true;
+
     private String initIndexCron = "0 0 23 * * ?";
 }
