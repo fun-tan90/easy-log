@@ -1,5 +1,6 @@
 package com.chj.easy.log.core.config;
 
+import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.property.EasyLogEsProperties;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -27,7 +28,7 @@ import java.util.Optional;
  * @author 陈浩杰
  * @date 2023/7/13 14:38
  */
-@ComponentScan("com.chj.easy.log.core")
+@ComponentScan(EasyLogConstants.CORE_SCAN_BASE_PACKAGES)
 @EnableConfigurationProperties(EasyLogEsProperties.class)
 public class EsAutoConfiguration {
 

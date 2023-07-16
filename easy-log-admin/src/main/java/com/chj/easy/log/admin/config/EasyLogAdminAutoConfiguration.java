@@ -1,11 +1,11 @@
 package com.chj.easy.log.admin.config;
 
 import com.chj.easy.log.admin.property.EasyLogAdminProperties;
+import com.chj.easy.log.common.constant.EasyLogConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
@@ -17,7 +17,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @Slf4j
 @ConditionalOnProperty(value = "easy-log.admin.enable", havingValue = "true")
-@ComponentScan("com.chj.easy.log.admin")
+@ComponentScan(EasyLogConstants.ADMIN_SCAN_BASE_PACKAGES)
 @EnableScheduling
 @EnableConfigurationProperties(EasyLogAdminProperties.class)
 public class EasyLogAdminAutoConfiguration {

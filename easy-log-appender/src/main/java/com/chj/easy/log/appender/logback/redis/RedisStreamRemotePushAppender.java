@@ -59,6 +59,13 @@ public class RedisStreamRemotePushAppender extends AbstractRemotePushAppender {
     }
 
     @Override
+    protected void closeRemotePushClient() {
+        if (!this.jedisPool.isClosed()) {
+            this.jedisPool.close();
+        }
+    }
+
+    @Override
     public void push(BlockingQueue<LogTransferred> queue) {
         try (Jedis jedis = this.jedisPool.getResource()) {
             while (queue.remainingCapacity() != -1) {

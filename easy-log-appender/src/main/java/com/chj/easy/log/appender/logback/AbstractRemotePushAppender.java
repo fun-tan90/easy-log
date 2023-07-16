@@ -53,13 +53,14 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
         initRemotePushClient();
         this.queue = new LinkedBlockingQueue<>(queueSize);
 
-        this.scheduledFuture = EasyLogManager.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
-            push(queue);
-        }, 1, 50, TimeUnit.MILLISECONDS);
+        this.scheduledFuture = EasyLogManager.EASY_LOG_SCHEDULED_EXECUTOR
+                .scheduleWithFixedDelay(() -> push(queue), 1, 50, TimeUnit.MILLISECONDS);
         super.start();
     }
 
     protected abstract void initRemotePushClient();
+
+    protected abstract void closeRemotePushClient();
 
     protected abstract void push(BlockingQueue<LogTransferred> queue);
 
@@ -68,7 +69,10 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
         if (!isStarted()) {
             return;
         }
+        closeRemotePushClient();
+
         this.scheduledFuture.cancel(true);
+
         super.stop();
     }
 

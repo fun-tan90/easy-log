@@ -14,6 +14,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.data.redis.connection.stream.*;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.stream.StreamMessageListenerContainer;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @date 2023/7/13 10:15
  */
 @Slf4j(topic = EasyLogConstants.LOG_TOPIC)
+@Component
 public class CollectorInitListener implements ApplicationListener<ApplicationReadyEvent> {
 
     private final AtomicBoolean initialized = new AtomicBoolean(false);

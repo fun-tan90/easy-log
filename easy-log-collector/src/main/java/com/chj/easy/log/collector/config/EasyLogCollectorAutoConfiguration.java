@@ -1,14 +1,14 @@
 package com.chj.easy.log.collector.config;
 
-import com.chj.easy.log.collector.listener.CollectorInitListener;
 import com.chj.easy.log.collector.property.EasyLogCollectorProperties;
-import com.chj.easy.log.collector.stream.RedisStreamMessageListener;
 import com.chj.easy.log.common.EasyLogManager;
+import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.model.LogDoc;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.stream.MapRecord;
 import org.springframework.data.redis.stream.StreamMessageListenerContainer;
@@ -25,6 +25,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 @Slf4j
 @ConditionalOnProperty(value = "easy-log.collector.enable", havingValue = "true")
+@ComponentScan(EasyLogConstants.COLLECTOR_SCAN_BASE_PACKAGES)
 @EnableConfigurationProperties(EasyLogCollectorProperties.class)
 public class EasyLogCollectorAutoConfiguration {
 
@@ -51,15 +52,5 @@ public class EasyLogCollectorAutoConfiguration {
                 StreamMessageListenerContainer.create(factory, streamMessageListenerContainerOptions);
         listenerContainer.start();
         return listenerContainer;
-    }
-
-    @Bean
-    public RedisStreamMessageListener redisStreamMessageListener() {
-        return new RedisStreamMessageListener();
-    }
-
-    @Bean
-    public CollectorInitListener collectorInitListener() {
-        return new CollectorInitListener();
     }
 }
