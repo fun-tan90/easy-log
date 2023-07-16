@@ -23,7 +23,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author 陈浩杰
  * @date 2023/7/13 8:50
  */
-@Slf4j
+@Slf4j(topic = EasyLogConstants.LOG_TOPIC)
 @ConditionalOnProperty(value = "easy-log.collector.enable", havingValue = "true")
 @ComponentScan(EasyLogConstants.COLLECTOR_SCAN_BASE_PACKAGES)
 @EnableConfigurationProperties(EasyLogCollectorProperties.class)
@@ -42,6 +42,7 @@ public class EasyLogCollectorAutoConfiguration {
                 .pollTimeout(easyLogCollectorProperties.getPollTimeout())
                 .batchSize(easyLogCollectorProperties.getPullBatchSize())
                 .executor(EasyLogManager.EASY_LOG_FIXED_THREAD_POOL)
+                .errorHandler(e -> log.error("StreamMessageListenerContainer errorHandler {}", e.getMessage()))
                 .build();
     }
 

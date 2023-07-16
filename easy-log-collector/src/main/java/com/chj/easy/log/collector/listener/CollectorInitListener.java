@@ -11,6 +11,7 @@ import com.chj.easy.log.core.service.EsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.core.env.Environment;
 import org.springframework.data.redis.connection.stream.*;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.stream.StreamMessageListenerContainer;
@@ -54,12 +55,18 @@ public class CollectorInitListener implements ApplicationListener<ApplicationRea
     private RedisStreamMessageListener redisStreamMessageListener;
 
     @Resource
+    private Environment environment;
+
+    @Resource
     private StreamMessageListenerContainer<String, MapRecord<String, String, String>> streamMessageListenerContainer;
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         if (initialized.compareAndSet(false, true)) {
-            esService.createIndexIfNotExists(LogDoc.indexName());
+            Boolean enable = environment.getProperty("easy-log.admin.enable", Boolean.class);
+            if (Boolean.FALSE.equals(enable)) {
+                esService.createIndexIfNotExists(LogDoc.indexName());
+            }
 
             createStreamKeyAndGroupAndConsumers();
 
