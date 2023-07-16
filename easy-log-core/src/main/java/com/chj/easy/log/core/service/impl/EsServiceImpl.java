@@ -1,12 +1,16 @@
-package com.chj.easy.log.core.service;
+package com.chj.easy.log.core.service.impl;
 
 import cn.hutool.core.io.IoUtil;
+import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.convention.page.es.EsPageHelper;
 import com.chj.easy.log.core.convention.page.es.EsPageInfo;
 import com.chj.easy.log.core.model.Doc;
+import com.chj.easy.log.core.model.LogDoc;
+import com.chj.easy.log.core.service.EsService;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkItemResponse;
@@ -34,6 +38,7 @@ import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -49,11 +54,24 @@ import java.util.stream.Collectors;
  * @author 陈浩杰
  * @date 2023/7/14 13:38
  */
-@Slf4j
-public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
+@Slf4j(topic = EasyLogConstants.LOG_TOPIC)
+@Service
+public class EsServiceImpl implements EsService {
 
     @Resource
     RestHighLevelClient restHighLevelClient;
+
+    @Override
+    public void createIndexIfNotExists(String indexName) {
+        boolean exists = exists(indexName);
+        if (!exists) {
+            String mappings = ResourceUtil.readUtf8Str(StrUtil.format(EasyLogConstants.INDEX_MAPPING_PATH, LogDoc.class.getSimpleName()));
+            boolean createIndex = createIndex(indexName, mappings);
+            log.debug("【{}】索引创建{}", indexName, createIndex ? "成功" : "失败");
+        } else {
+            log.debug("【{}】索引已存在", indexName);
+        }
+    }
 
     @Override
     public boolean exists(String indexName) {
@@ -120,7 +138,7 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
     }
 
     @Override
-    public int insertOne(String indexName, T entity) {
+    public int insertOne(String indexName, Doc entity) {
         Assert.hasLength(indexName, "indexName must not be empty");
         Assert.notNull(entity, "entity must not be null");
         IndexRequest indexRequest = new IndexRequest(indexName);
@@ -146,7 +164,7 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
     }
 
     @Override
-    public int insertBatch(String indexName, List<T> entities) {
+    public int insertBatch(String indexName, List<Doc> entities) {
         Assert.hasLength(indexName, "indexName must not be empty");
         Assert.notEmpty(entities, "entities must not be empty");
         BulkRequest bulkRequest = new BulkRequest();
@@ -178,7 +196,7 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
     }
 
     @Override
-    public EsPageInfo<T> paging(String indexName, Integer pageNum, Integer pageSize, SearchSourceBuilder searchSourceBuilder, Class<T> tClass) {
+    public EsPageInfo<Doc> paging(String indexName, Integer pageNum, Integer pageSize, SearchSourceBuilder searchSourceBuilder, Class<Doc> tClass) {
         Assert.hasLength(indexName, "indexName must not be empty");
         Assert.notNull(searchSourceBuilder, "SearchSourceBuilder must not be null");
         Assert.notNull(tClass, "tClass must not be null");
@@ -197,7 +215,7 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
 
         try {
             SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
-            List<T> rows = analyticSearchResponseForHits(searchResponse, tClass);
+            List<Doc> rows = analyticSearchResponseForHits(searchResponse, tClass);
             long total = analyticSearchResponseForTotalSize(searchResponse);
             return EsPageHelper.getPageInfo(rows, total, pageNum, pageSize);
         } catch (IOException e) {
@@ -212,7 +230,7 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
         return searchHits.getTotalHits().value;
     }
 
-    private List<T> analyticSearchResponseForHits(SearchResponse searchResponse, Class<T> tClass) {
+    private List<Doc> analyticSearchResponseForHits(SearchResponse searchResponse, Class<Doc> tClass) {
         SearchHits searchHits = Optional.ofNullable(searchResponse)
                 .map(SearchResponse::getHits)
                 .orElseThrow(() -> new RuntimeException("SearchRequest failed"));
@@ -224,7 +242,7 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
                                 Optional<Text> fragmentOpt = Arrays.stream(v.getFragments()).findFirst();
                                 fragmentOpt.ifPresent(value -> row.putOnce(k, value));
                             });
-                    T entity = row.toBean(tClass);
+                    Doc entity = row.toBean(tClass);
                     entity.setIndexId(searchHit.getId());
                     return entity;
                 })
@@ -258,7 +276,7 @@ public abstract class AbstractEsService<T extends Doc> implements EsService<T> {
 
 
     @Override
-    public String executeDsl(String indexName, String dsl) {
+    public String executeSearchDsl(String indexName, String dsl) {
         Assert.hasLength(indexName, "indexName must not be empty");
         Assert.hasLength(dsl, "dsl must not be empty");
         Request request = new Request("GET", indexName + "/_search");

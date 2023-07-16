@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -19,13 +20,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @date 2023/7/13 10:15
  */
 @Slf4j
-@Configuration
+@Component
 public class AdminInitListener implements ApplicationListener<ApplicationReadyEvent> {
 
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
     @Resource
-    private EsService<LogDoc> esService;
+    private EsService esService;
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {

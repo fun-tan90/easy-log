@@ -16,10 +16,13 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+
 /**
- * @author Huhailong
- * @Description 监听消息
- * @Date 2021/3/10.
+ * description TODO
+ * company 铁人科技
+ *
+ * @author 陈浩杰
+ * @date 2023/7/16 8:40
  */
 @Slf4j(topic = EasyLogConstants.LOG_TOPIC)
 public class RedisStreamMessageListener implements StreamListener<String, MapRecord<String, String, String>> {

@@ -14,7 +14,7 @@ import java.util.Map;
  * @author 陈浩杰
  * @date 2023/7/14 10:59
  */
-public interface EsService<T extends Doc> {
+public interface EsService {
 
     /**
      * 创建索引
@@ -71,7 +71,7 @@ public interface EsService<T extends Doc> {
      * @param entity    单个实体
      * @return 插入条数
      */
-    int insertOne(String indexName, T entity);
+    int insertOne(String indexName, Doc entity);
 
     /**
      * 批量插入
@@ -80,7 +80,7 @@ public interface EsService<T extends Doc> {
      * @param entities  实体集合
      * @return 成功插入条数
      */
-    int insertBatch(String indexName, List<T> entities);
+    int insertBatch(String indexName, List<Doc> entities);
 
     /**
      * 分页查询
@@ -92,7 +92,7 @@ public interface EsService<T extends Doc> {
      * @param tClass              实体类型
      * @return 指定的返回类型
      */
-    EsPageInfo<T> paging(String indexName, Integer pageNum, Integer pageSize, SearchSourceBuilder searchSourceBuilder, Class<T> tClass);
+    EsPageInfo<Doc> paging(String indexName, Integer pageNum, Integer pageSize, SearchSourceBuilder searchSourceBuilder, Class<Doc> tClass);
 
 
     /**
@@ -111,5 +111,5 @@ public interface EsService<T extends Doc> {
      * @param dsl       dsl语句
      * @return 执行结果
      */
-    String executeDsl(String indexName, String dsl);
+    String executeSearchDsl(String indexName, String dsl);
 }

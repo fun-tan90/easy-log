@@ -5,6 +5,7 @@ import com.chj.easy.log.collector.property.EasyLogCollectorProperties;
 import com.chj.easy.log.collector.stream.RedisStreamMessageListener;
 import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
+import com.chj.easy.log.core.model.Doc;
 import com.chj.easy.log.core.model.LogDoc;
 import com.chj.easy.log.core.service.EsService;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +43,7 @@ public class CollectorInitListener implements ApplicationListener<ApplicationRea
     private BlockingQueue<LogDoc> logDocBlockingQueue;
 
     @Resource
-    private EsService<LogDoc> esService;
+    private EsService esService;
 
     @Resource
     private EasyLogCollectorProperties easyLogCollectorProperties;
@@ -66,7 +67,7 @@ public class CollectorInitListener implements ApplicationListener<ApplicationRea
 
     private void batchInsertLogDocBySchedule() {
         EasyLogManager.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
-            List<LogDoc> logDocs = new ArrayList<>();
+            List<Doc> logDocs = new ArrayList<>();
             while (logDocBlockingQueue.remainingCapacity() != -1) {
                 LogDoc logDoc = logDocBlockingQueue.poll();
                 if (logDoc == null) {
