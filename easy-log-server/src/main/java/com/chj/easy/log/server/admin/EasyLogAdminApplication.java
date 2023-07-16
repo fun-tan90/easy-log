@@ -1,4 +1,4 @@
-package com.chj.easy.log.server;
+package com.chj.easy.log.server.admin;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,10 +12,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @date 2023/7/13 8:12
  */
 @SpringBootApplication
-public class EasyLogApplication {
+public class EasyLogAdminApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(EasyLogApplication.class, args);
+        SpringApplication.run(EasyLogAdminApplication.class, args);
     }
 
 }
