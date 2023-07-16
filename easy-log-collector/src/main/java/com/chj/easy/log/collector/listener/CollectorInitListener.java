@@ -59,9 +59,6 @@ public class CollectorInitListener implements ApplicationListener<ApplicationRea
     private Environment environment;
 
     @Resource
-    private EasyLogCollectorProperties easyLogCollectorProperties;
-
-    @Resource
     private StreamMessageListenerContainer<String, MapRecord<String, String, String>> streamMessageListenerContainer;
 
     @Override
