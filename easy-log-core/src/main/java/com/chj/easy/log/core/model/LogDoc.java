@@ -58,6 +58,10 @@ public class LogDoc implements Doc {
         return EasyLogConstants.INDEX_FIXED_PREFIX + DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN);
     }
 
+    public static String indexName(String date) {
+        return EasyLogConstants.INDEX_FIXED_PREFIX + date;
+    }
+
     public static String newIndexName() {
         return EasyLogConstants.INDEX_FIXED_PREFIX + DateUtil.format(DateUtil.offsetDay(new Date(), 1), DatePattern.NORM_DATE_PATTERN);
     }

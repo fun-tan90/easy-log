@@ -196,7 +196,7 @@ public class EsServiceImpl implements EsService {
     }
 
     @Override
-    public EsPageInfo<Doc> paging(String indexName, Integer pageNum, Integer pageSize, SearchSourceBuilder searchSourceBuilder, Class<Doc> tClass) {
+    public EsPageInfo<Doc> paging(String indexName, Integer pageNum, Integer pageSize, SearchSourceBuilder searchSourceBuilder, Class<? extends Doc> tClass) {
         Assert.hasLength(indexName, "indexName must not be empty");
         Assert.notNull(searchSourceBuilder, "SearchSourceBuilder must not be null");
         Assert.notNull(tClass, "tClass must not be null");
@@ -208,7 +208,6 @@ public class EsServiceImpl implements EsService {
 
         searchSourceBuilder.from(from);
         searchSourceBuilder.size(size);
-
 
         SearchRequest searchRequest = new SearchRequest(indexName);
         searchRequest.source(searchSourceBuilder);
@@ -230,7 +229,7 @@ public class EsServiceImpl implements EsService {
         return searchHits.getTotalHits().value;
     }
 
-    private List<Doc> analyticSearchResponseForHits(SearchResponse searchResponse, Class<Doc> tClass) {
+    private List<Doc> analyticSearchResponseForHits(SearchResponse searchResponse, Class<? extends Doc> tClass) {
         SearchHits searchHits = Optional.ofNullable(searchResponse)
                 .map(SearchResponse::getHits)
                 .orElseThrow(() -> new RuntimeException("SearchRequest failed"));
@@ -249,7 +248,6 @@ public class EsServiceImpl implements EsService {
                 .collect(Collectors.toList());
     }
 
-
     @Override
     public Map<String, List<String>> aggregation(String indexName, SearchSourceBuilder searchSourceBuilder) {
         SearchRequest searchRequest = new SearchRequest(indexName);
@@ -259,7 +257,6 @@ public class EsServiceImpl implements EsService {
             SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
             Aggregations aggregations = searchResponse.getAggregations();
             Map<String, Aggregation> aggregationsMap = aggregations.getAsMap();
-            System.out.println(aggregationsMap);
             Map<String, List<String>> mapList = new HashMap<>();
             aggregationsMap.forEach((k, v) -> {
                 Terms terms = (Terms) v;
@@ -273,7 +270,6 @@ public class EsServiceImpl implements EsService {
             throw new RuntimeException(StrUtil.format("aggregation failed, {}", e));
         }
     }
-
 
     @Override
     public String executeSearchDsl(String indexName, String dsl) {

@@ -1,13 +1,12 @@
 package com.chj.easy.log.admin.service.impl;
 
-import com.chj.easy.log.admin.model.CaptchaGenerateCmd;
+import com.chj.easy.log.admin.model.cmd.CaptchaGenerateCmd;
 import com.chj.easy.log.admin.service.SysCaptchaService;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.convention.enums.IErrorCode;
 import com.chj.easy.log.core.convention.exception.ClientException;
 import com.wf.captcha.ArithmeticCaptcha;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationContext;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  * @author chj
  * @date 2021年08月04日 8:49
  */
-@Slf4j
+@Slf4j(topic = EasyLogConstants.LOG_TOPIC)
 @Service
 public class SysCaptchaServiceImpl implements SysCaptchaService {
 
@@ -32,6 +31,7 @@ public class SysCaptchaServiceImpl implements SysCaptchaService {
         captcha.setLen(captchaGenerateCmd.getLen());
         // 获取运算的结果：5
         String result = captcha.text();
+        log.debug("验证码值为 {}", captcha.getArithmeticString());
         stringRedisTemplate.opsForValue().set(EasyLogConstants.CAPTCHA_IMG + captchaGenerateCmd.getCaptchaKey(), result, captchaGenerateCmd.getSurvival(), TimeUnit.MINUTES);
         return captcha.toBase64();
     }

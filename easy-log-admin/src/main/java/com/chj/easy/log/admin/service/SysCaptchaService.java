@@ -1,7 +1,7 @@
 package com.chj.easy.log.admin.service;
 
 
-import com.chj.easy.log.admin.model.CaptchaGenerateCmd;
+import com.chj.easy.log.admin.model.cmd.CaptchaGenerateCmd;
 
 /**
  * @author chj

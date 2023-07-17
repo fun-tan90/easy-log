@@ -1,8 +1,8 @@
 package com.chj.easy.log.admin.rest;
 
 import cn.dev33.satoken.stp.StpUtil;
-import com.chj.easy.log.admin.model.CaptchaGenerateCmd;
-import com.chj.easy.log.admin.model.SysUserLoginCmd;
+import com.chj.easy.log.admin.model.cmd.CaptchaGenerateCmd;
+import com.chj.easy.log.admin.model.cmd.SysUserLoginCmd;
 import com.chj.easy.log.admin.service.SysCaptchaService;
 import com.chj.easy.log.admin.service.SysUserService;
 import com.chj.easy.log.core.convention.Res;

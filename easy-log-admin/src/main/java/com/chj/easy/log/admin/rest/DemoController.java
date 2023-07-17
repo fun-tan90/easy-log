@@ -26,16 +26,4 @@ import java.util.Map;
 @RestController
 @RequestMapping("/demo")
 public class DemoController {
-
-    @Resource
-    private EsService esService;
-
-    @PostMapping
-    public Res<Map<String, List<String>>> aggregation(String indexName, int size, @RequestBody List<String> terms) {
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        for (String term : terms) {
-            searchSourceBuilder.aggregation(AggregationBuilders.terms(term).field(term).size(size));
-        }
-        return Res.ok(esService.aggregation(indexName, searchSourceBuilder));
-    }
 }

@@ -1,7 +1,7 @@
 package com.chj.easy.log.admin.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
-import com.chj.easy.log.admin.model.SysUserLoginCmd;
+import com.chj.easy.log.admin.model.cmd.SysUserLoginCmd;
 import com.chj.easy.log.admin.property.EasyLogAdminProperties;
 import com.chj.easy.log.admin.service.SysCaptchaService;
 import com.chj.easy.log.admin.service.SysUserService;

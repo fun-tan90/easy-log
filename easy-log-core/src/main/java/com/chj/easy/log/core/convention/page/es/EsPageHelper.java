@@ -1,6 +1,7 @@
 package com.chj.easy.log.core.convention.page.es;
 
 import com.chj.easy.log.core.model.Doc;
+import com.chj.easy.log.core.model.LogDoc;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -26,8 +27,8 @@ public class EsPageHelper {
      * @param <T>      数据类型
      * @return 分页信息
      */
-    public static EsPageInfo<Doc> getPageInfo(List<Doc> list, Long total, Integer pageNum, Integer pageSize) {
-        EsPageInfo<Doc> pageInfo = new EsPageInfo<>(list);
+    public static <T> EsPageInfo<T> getPageInfo(List<T> list, Long total, Integer pageNum, Integer pageSize) {
+        EsPageInfo<T> pageInfo = new EsPageInfo<>(list);
         pageInfo.setTotal(total);
         pageInfo.setPageNum(pageNum);
         pageInfo.setPageSize(pageSize);

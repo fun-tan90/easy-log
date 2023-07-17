@@ -1,7 +1,7 @@
 package com.chj.easy.log.admin.service;
 
 
-import com.chj.easy.log.admin.model.SysUserLoginCmd;
+import com.chj.easy.log.admin.model.cmd.SysUserLoginCmd;
 
 /**
  * description TODO

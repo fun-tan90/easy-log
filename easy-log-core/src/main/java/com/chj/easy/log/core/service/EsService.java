@@ -2,6 +2,7 @@ package com.chj.easy.log.core.service;
 
 import com.chj.easy.log.core.convention.page.es.EsPageInfo;
 import com.chj.easy.log.core.model.Doc;
+import com.chj.easy.log.core.model.LogDoc;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import java.util.List;
@@ -35,7 +36,7 @@ public interface EsService {
      * 创建索引
      *
      * @param indexName 索引名称
-     * @param mappings    索引模板
+     * @param mappings  索引模板
      * @return true 成功 false 失败
      */
     boolean createIndex(String indexName, String mappings);
@@ -92,11 +93,11 @@ public interface EsService {
      * @param tClass              实体类型
      * @return 指定的返回类型
      */
-    EsPageInfo<Doc> paging(String indexName, Integer pageNum, Integer pageSize, SearchSourceBuilder searchSourceBuilder, Class<Doc> tClass);
+    EsPageInfo<Doc> paging(String indexName, Integer pageNum, Integer pageSize, SearchSourceBuilder searchSourceBuilder, Class<? extends Doc> tClass);
 
 
     /**
-     * keyword类型聚合查询
+     * 多条件聚合查询
      *
      * @param indexName
      * @param searchSourceBuilder

@@ -1,4 +1,4 @@
-package com.chj.easy.log.admin.model;
+package com.chj.easy.log.admin.model.cmd;
 
 import lombok.Data;
 

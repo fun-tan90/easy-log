@@ -52,7 +52,7 @@
     <appender name="REDIS_STREAM_TEST" class="com.chj.easy.log.appender.logback.redis.RedisStreamRemotePushAppender">
         <enable>true</enable>
         <appName>easy-log-example-boot2</appName>
-        <appEnv>dev</appEnv>
+        <appEnv>prod</appEnv>
         <queueSize>1024</queueSize>
         <redisMode>single</redisMode>
         <redisAddress>114.217.55.239:6379</redisAddress>
@@ -65,6 +65,6 @@
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="ASYNC_FILE"/>
-        <appender-ref ref="REDIS_STREAM"/>
+        <appender-ref ref="REDIS_STREAM_TEST"/>
     </root>
 </configuration>
