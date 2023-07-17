@@ -1,0 +1,152 @@
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "term": {
+            "appEnv": {
+              "value": "appEnv",
+              "boost": 1
+            }
+          }
+        },
+        {
+          "range": {
+            "dateTime": {
+              "from": "startDateTime",
+              "to": "endDateTime",
+              "include_lower": true,
+              "include_upper": false,
+              "boost": 1
+            }
+          }
+        },
+        {
+          "bool": {
+            "should": [
+              {
+                "term": {
+                  "appName": {
+                    "value": "appNameList1",
+                    "boost": 1
+                  }
+                }
+              },
+              {
+                "term": {
+                  "appName": {
+                    "value": "appNameList2",
+                    "boost": 1
+                  }
+                }
+              }
+            ],
+            "adjust_pure_negative": true,
+            "boost": 1
+          }
+        },
+        {
+          "bool": {
+            "should": [
+              {
+                "term": {
+                  "level": {
+                    "value": "levelList1",
+                    "boost": 1
+                  }
+                }
+              },
+              {
+                "term": {
+                  "level": {
+                    "value": "levelList2",
+                    "boost": 1
+                  }
+                }
+              }
+            ],
+            "adjust_pure_negative": true,
+            "boost": 1
+          }
+        },
+        {
+          "term": {
+            "traceId": {
+              "value": "traceId",
+              "boost": 1
+            }
+          }
+        },
+        {
+          "term": {
+            "loggerName": {
+              "value": "loggerName",
+              "boost": 1
+            }
+          }
+        },
+        {
+          "term": {
+            "lineNumber": {
+              "value": "lineNumber",
+              "boost": 1
+            }
+          }
+        },
+        {
+          "bool": {
+            "should": [
+              {
+                "term": {
+                  "currIp": {
+                    "value": "ipList",
+                    "boost": 1
+                  }
+                }
+              },
+              {
+                "term": {
+                  "currIp": {
+                    "value": "ipList3",
+                    "boost": 1
+                  }
+                }
+              }
+            ],
+            "adjust_pure_negative": true,
+            "boost": 1
+          }
+        },
+        {
+          "match": {
+            "content": {
+              "query": "content",
+              "operator": "OR",
+              "prefix_length": 0,
+              "max_expansions": 50,
+              "fuzzy_transpositions": true,
+              "lenient": false,
+              "zero_terms_query": "NONE",
+              "auto_generate_synonyms_phrase_query": true,
+              "boost": 1
+            }
+          }
+        }
+      ],
+      "adjust_pure_negative": true,
+      "boost": 1
+    }
+  },
+  "sort": [
+    {
+      "descList": {
+        "order": "desc"
+      }
+    },
+    {
+      "ascList": {
+        "order": "asc"
+      }
+    }
+  ]
+}

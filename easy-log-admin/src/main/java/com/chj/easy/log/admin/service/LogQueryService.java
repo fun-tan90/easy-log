@@ -7,6 +7,8 @@ import com.chj.easy.log.admin.model.cmd.LogQueryPageCmd;
 import com.chj.easy.log.admin.model.cmd.LogQuerySelectCmd;
 import com.chj.easy.log.core.convention.page.es.EsPageInfo;
 import com.chj.easy.log.core.model.Doc;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
@@ -28,47 +30,59 @@ public interface LogQueryService {
 
     default SearchSourceBuilder generateSearchSource(BaseLogQueryCmd logQueryPageCmd) {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        List<QueryBuilder> mustClauses = boolQueryBuilder.must();
         String appEnv = logQueryPageCmd.getAppEnv();
-        searchSourceBuilder.query(QueryBuilders.termQuery("appEnv", appEnv));
+        mustClauses.add(QueryBuilders.termQuery("appEnv", appEnv));
+
         String startDateTime = logQueryPageCmd.getStartDateTime();
         String endDateTime = logQueryPageCmd.getEndDateTime();
-        searchSourceBuilder.query(QueryBuilders.rangeQuery("dateTime").gte(startDateTime).lt(endDateTime));
+        mustClauses.add(QueryBuilders.rangeQuery("dateTime").gte(startDateTime).lt(endDateTime));
+
 
         List<String> appNameList = logQueryPageCmd.getAppNameList();
         if (!CollectionUtils.isEmpty(appNameList)) {
+            BoolQueryBuilder appNameBool = QueryBuilders.boolQuery();
             for (String appName : appNameList) {
-                searchSourceBuilder.query(QueryBuilders.boolQuery().should(QueryBuilders.termQuery("appName", appName)));
+                appNameBool.should(QueryBuilders.termQuery("appName", appName));
             }
+            boolQueryBuilder.must(appNameBool);
         }
 
         List<String> levelList = logQueryPageCmd.getLevelList();
         if (!CollectionUtils.isEmpty(levelList)) {
+            BoolQueryBuilder levelBool = QueryBuilders.boolQuery();
             for (String level : levelList) {
-                searchSourceBuilder.query(QueryBuilders.boolQuery().should(QueryBuilders.termQuery("level", level)));
+                levelBool.should(QueryBuilders.termQuery("level", level));
             }
+            boolQueryBuilder.must(levelBool);
         }
         String traceId = logQueryPageCmd.getTraceId();
         if (StringUtils.hasLength(traceId)) {
-            searchSourceBuilder.query(QueryBuilders.termQuery("traceId", traceId));
+            mustClauses.add(QueryBuilders.termQuery("traceId", traceId));
         }
         String loggerName = logQueryPageCmd.getLoggerName();
         if (StringUtils.hasLength(traceId)) {
-            searchSourceBuilder.query(QueryBuilders.termQuery("loggerName", loggerName));
+            mustClauses.add(QueryBuilders.termQuery("loggerName", loggerName));
         }
         String lineNumber = logQueryPageCmd.getLineNumber();
         if (StringUtils.hasLength(lineNumber)) {
-            searchSourceBuilder.query(QueryBuilders.termQuery("lineNumber", lineNumber));
+            mustClauses.add(QueryBuilders.termQuery("lineNumber", lineNumber));
         }
         List<String> ipList = logQueryPageCmd.getIpList();
         if (!CollectionUtils.isEmpty(ipList)) {
+            BoolQueryBuilder ipBool = QueryBuilders.boolQuery();
             for (String ip : ipList) {
-                searchSourceBuilder.query(QueryBuilders.boolQuery().should(QueryBuilders.termQuery("currIp", ip)));
+                ipBool.should(QueryBuilders.termQuery("currIp", ip));
             }
+            boolQueryBuilder.must(ipBool);
         }
         String content = logQueryPageCmd.getContent();
         if (StringUtils.hasLength(content)) {
-            searchSourceBuilder.query(QueryBuilders.matchQuery("content", content));
+            mustClauses.add(QueryBuilders.matchQuery("content", content));
         }
+
+        searchSourceBuilder.query(boolQueryBuilder);
 
         List<String> descList = logQueryPageCmd.getDescList();
         if (!CollectionUtils.isEmpty(descList)) {

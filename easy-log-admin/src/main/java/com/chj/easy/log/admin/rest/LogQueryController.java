@@ -1,12 +1,14 @@
 package com.chj.easy.log.admin.rest;
 
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
+import com.chj.easy.log.admin.model.cmd.BaseLogQueryCmd;
 import com.chj.easy.log.admin.model.cmd.LogQueryPageCmd;
 import com.chj.easy.log.admin.model.cmd.LogQuerySelectCmd;
 import com.chj.easy.log.admin.service.LogQueryService;
 import com.chj.easy.log.core.convention.Res;
 import com.chj.easy.log.core.convention.page.es.EsPageInfo;
 import com.chj.easy.log.core.model.Doc;
-import com.chj.easy.log.core.model.LogDoc;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +31,11 @@ public class LogQueryController {
 
     @Resource
     LogQueryService logQueryService;
+
+    @PostMapping("/dsl")
+    public Res<JSONObject> dsl(@RequestBody @Validated BaseLogQueryCmd baseLogQueryCmd) {
+        return Res.ok(JSONUtil.parseObj(logQueryService.generateSearchSource(baseLogQueryCmd).toString()));
+    }
 
     @PostMapping("/query-select")
     public Res<Map<String, List<String>>> querySelect(@RequestBody @Validated LogQuerySelectCmd logQuerySelectCmd) {
