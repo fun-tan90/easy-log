@@ -33,11 +33,10 @@
         "type": "keyword"
       },
       "loggerName": {
-        "type": "text",
-        "analyzer": "stop"
+        "type": "keyword"
       },
       "method": {
-        "type": "text"
+        "type": "keyword"
       },
       "preIp": {
         "type": "keyword"
