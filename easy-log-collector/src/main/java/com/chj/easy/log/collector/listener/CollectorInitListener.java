@@ -12,6 +12,7 @@ import com.chj.easy.log.core.service.EsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.env.Environment;
 import org.springframework.data.redis.connection.stream.*;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -72,10 +73,6 @@ public class CollectorInitListener implements ApplicationListener<ApplicationRea
             createStreamKeyAndGroupAndConsumers();
 
             batchInsertLogDocBySchedule();
-
-            if (easyLogCollectorProperties.isBanner()) {
-                BannerPrint.printCollectorBanner();
-            }
         }
     }
 

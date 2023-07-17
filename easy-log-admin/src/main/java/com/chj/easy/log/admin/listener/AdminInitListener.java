@@ -1,7 +1,5 @@
 package com.chj.easy.log.admin.listener;
 
-import com.chj.easy.log.admin.property.EasyLogAdminProperties;
-import com.chj.easy.log.common.BannerPrint;
 import com.chj.easy.log.core.model.LogDoc;
 import com.chj.easy.log.core.service.EsService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,19 +27,10 @@ public class AdminInitListener implements ApplicationListener<ApplicationReadyEv
     @Resource
     private EsService esService;
 
-    @Resource
-    private EasyLogAdminProperties easyLogAdminProperties;
-
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         if (initialized.compareAndSet(false, true)) {
             esService.createIndexIfNotExists(LogDoc.indexName());
-
-            if (easyLogAdminProperties.isBanner()) {
-                BannerPrint.printAdminBanner();
-            }
         }
     }
-
-
 }
