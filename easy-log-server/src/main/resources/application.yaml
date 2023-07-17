@@ -11,6 +11,6 @@ spring:
     group:
       dev:
         - actuator
-        - cache
+        - cache-test
         - el
         - log
