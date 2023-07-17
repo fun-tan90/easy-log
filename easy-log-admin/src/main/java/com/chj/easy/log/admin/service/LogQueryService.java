@@ -31,14 +31,12 @@ public interface LogQueryService {
     default SearchSourceBuilder generateSearchSource(BaseLogQueryCmd logQueryPageCmd) {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-        List<QueryBuilder> mustClauses = boolQueryBuilder.must();
         String appEnv = logQueryPageCmd.getAppEnv();
-        mustClauses.add(QueryBuilders.termQuery("appEnv", appEnv));
+        boolQueryBuilder.must(QueryBuilders.termQuery("appEnv", appEnv));
 
         String startDateTime = logQueryPageCmd.getStartDateTime();
         String endDateTime = logQueryPageCmd.getEndDateTime();
-        mustClauses.add(QueryBuilders.rangeQuery("dateTime").gte(startDateTime).lt(endDateTime));
-
+        boolQueryBuilder.must((QueryBuilders.rangeQuery("dateTime").gte(startDateTime + ".000").lt(endDateTime + ".999")));
 
         List<String> appNameList = logQueryPageCmd.getAppNameList();
         if (!CollectionUtils.isEmpty(appNameList)) {
@@ -59,15 +57,15 @@ public interface LogQueryService {
         }
         String traceId = logQueryPageCmd.getTraceId();
         if (StringUtils.hasLength(traceId)) {
-            mustClauses.add(QueryBuilders.termQuery("traceId", traceId));
+            boolQueryBuilder.must(QueryBuilders.termQuery("traceId", traceId));
         }
         String loggerName = logQueryPageCmd.getLoggerName();
         if (StringUtils.hasLength(traceId)) {
-            mustClauses.add(QueryBuilders.termQuery("loggerName", loggerName));
+            boolQueryBuilder.must(QueryBuilders.termQuery("loggerName", loggerName));
         }
         String lineNumber = logQueryPageCmd.getLineNumber();
         if (StringUtils.hasLength(lineNumber)) {
-            mustClauses.add(QueryBuilders.termQuery("lineNumber", lineNumber));
+            boolQueryBuilder.must(QueryBuilders.termQuery("lineNumber", lineNumber));
         }
         List<String> ipList = logQueryPageCmd.getIpList();
         if (!CollectionUtils.isEmpty(ipList)) {
@@ -79,7 +77,7 @@ public interface LogQueryService {
         }
         String content = logQueryPageCmd.getContent();
         if (StringUtils.hasLength(content)) {
-            mustClauses.add(QueryBuilders.matchQuery("content", content));
+            boolQueryBuilder.must(QueryBuilders.matchQuery("content", content));
         }
 
         searchSourceBuilder.query(boolQueryBuilder);
@@ -96,7 +94,7 @@ public interface LogQueryService {
                 searchSourceBuilder.sort(SortBuilders.fieldSort(asc).order(SortOrder.ASC));
             }
         }
-        System.out.println(JSONUtil.toJsonPrettyStr(searchSourceBuilder.toString()));
+        System.out.println(searchSourceBuilder);
         return searchSourceBuilder;
     }
 
