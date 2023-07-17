@@ -26,4 +26,6 @@ public interface EasyLogConstants {
     String INDEX_MAPPING_PATH = "index_mapping/{}.json";
 
     String LOG_TOPIC = "easy-log";
+
+    String CAPTCHA_IMG = "CAPTCHA_IMG:";
 }

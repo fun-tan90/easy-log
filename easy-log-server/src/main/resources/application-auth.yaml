@@ -1,0 +1,43 @@
+sa-token:
+  # token名称 (同时也是cookie名称)
+  token-name: Authorization
+  # token有效期，单位s 默认30天, -1代表永不过期
+  timeout: 2592000
+  # 是否启用动态 activeTimeout 功能，如不需要请设置为 false，节省缓存请求次数
+  dynamic-active-timeout: true
+  # token临时有效期 (指定时间内无操作就视为token过期) 单位: 秒
+  active-timeout: 1800
+  # 是否允许同一账号并发登录 (为true时允许一起登录, 为false时新登录挤掉旧登录)
+  is-concurrent: true
+  # 在多人登录同一账号时，是否共用一个token (为true时所有登录共用一个token, 为false时每次登录新建一个token)
+  is-share: true
+  # 同一账号最大登录数量，-1代表不限 （只有在 isConcurrent=true, isShare=false 时此配置才有效）
+  max-login-count: -1
+  # 是否尝试从请求体里读取token
+  is-read-body: false
+  # 是否尝试从cookie里读取token
+  is-read-cookie: false
+  # 是否尝试从header里读取token
+  is-read-header: true
+  # token风格
+  token-style: simple-uuid
+  # 默认数据持久组件实现类中，每次清理过期数据间隔的时间 （单位: 秒） ，默认值30秒，设置为-1代表不启动定时清理
+  data-refresh-period: 60
+  # 是否打开自动续签 （如果此值为true, 框架会在每次直接或间接调用 getLoginId() 时进行一次过期检查与续签操作）
+  auto-renew: true
+  # token前缀
+  token-prefix: Bearer
+  # 是否在初始化配置时打印版本字符画
+  is-print: false
+  # 是否输出操作日志
+  is-log: true
+  alone-redis:
+    # 连接超时时间（毫秒）
+    timeout: 5000ms
+    # Redis数据库索引（默认为0）
+    database: ${spring.redis.database}
+    # Redis服务器地址
+    host: ${spring.redis.host}
+    # Redis服务器连接端口
+    port: ${spring.redis.port}
+    password: ${spring.redis.password}

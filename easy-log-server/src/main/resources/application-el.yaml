@@ -4,6 +4,8 @@ easy-log:
   admin:
     enable: true
     init-index-cron: 0 0 23 * * ?
+    username: admin
+    password: 123456
   collector:
     enable: true
     poll-timeout: 1s
