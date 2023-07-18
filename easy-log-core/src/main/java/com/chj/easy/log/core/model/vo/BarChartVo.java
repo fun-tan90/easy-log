@@ -1,10 +1,9 @@
-package com.chj.easy.log.admin.model.vo;
+package com.chj.easy.log.core.model.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,20 +15,20 @@ import java.util.List;
  */
 @Data
 @Builder
-public class LogQueryBarChartVo {
+public class BarChartVo {
 
     private String key;
 
     private long count;
 
-    private List<BarDetail> barDetailList;
+    private List<OneBarDetail> oneBarDetailList;
 
     @Data
     @AllArgsConstructor
-    public static class BarDetail {
+    public static class OneBarDetail {
 
-        private String subKey;
+        private String key;
 
-        private long subCount;
+        private long count;
     }
 }

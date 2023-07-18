@@ -2,7 +2,7 @@ package com.chj.easy.log.core.service;
 
 import com.chj.easy.log.core.convention.page.es.EsPageInfo;
 import com.chj.easy.log.core.model.Doc;
-import com.chj.easy.log.core.model.LogDoc;
+import com.chj.easy.log.core.model.vo.BarChartVo;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import java.util.List;
@@ -104,6 +104,16 @@ public interface EsService {
      * @return
      */
     Map<String, List<String>> aggregation(String indexName, SearchSourceBuilder searchSourceBuilder);
+
+
+    /**
+     * 时间范围柱状图查询
+     *
+     * @param indexName
+     * @param searchSourceBuilder
+     * @return
+     */
+    List<BarChartVo> dateHistogramBarChart(String indexName, String dateHistogramName, String termsName, SearchSourceBuilder searchSourceBuilder);
 
     /**
      * 原生查询

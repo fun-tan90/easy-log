@@ -17,9 +17,9 @@ import javax.validation.constraints.NotNull;
 @EqualsAndHashCode(callSuper = true)
 public class LogQueryBarChartCmd extends BaseLogQueryCmd {
 
-    @NotNull
-    @NotEmpty
-    private String field;
+    private String dateHistogramField = "dateTime";
+
+    private String termsField = "level";
 
     @NotNull
     @NotEmpty
@@ -28,8 +28,4 @@ public class LogQueryBarChartCmd extends BaseLogQueryCmd {
     @NotNull
     @NotEmpty
     private String format = "yyyy-MM-dd HH:mm";
-
-    @NotNull
-    @NotEmpty
-    private String subField;
 }

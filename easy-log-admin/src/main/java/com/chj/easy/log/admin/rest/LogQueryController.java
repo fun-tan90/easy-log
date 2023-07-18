@@ -6,11 +6,11 @@ import com.chj.easy.log.admin.model.cmd.BaseLogQueryCmd;
 import com.chj.easy.log.admin.model.cmd.LogQueryBarChartCmd;
 import com.chj.easy.log.admin.model.cmd.LogQueryPageCmd;
 import com.chj.easy.log.admin.model.cmd.LogQuerySelectCmd;
-import com.chj.easy.log.admin.model.vo.LogQueryBarChartVo;
 import com.chj.easy.log.admin.service.LogQueryService;
 import com.chj.easy.log.core.convention.Res;
 import com.chj.easy.log.core.convention.page.es.EsPageInfo;
 import com.chj.easy.log.core.model.Doc;
+import com.chj.easy.log.core.model.vo.BarChartVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,7 +50,7 @@ public class LogQueryController {
     }
 
     @PostMapping("/bar-chart")
-    public Res<List<LogQueryBarChartVo>> barChart(@RequestBody @Validated LogQueryBarChartCmd logQueryBarChartCmd) {
+    public Res<List<BarChartVo>> barChart(@RequestBody @Validated LogQueryBarChartCmd logQueryBarChartCmd) {
         return Res.ok(logQueryService.barChart(logQueryBarChartCmd));
     }
 }

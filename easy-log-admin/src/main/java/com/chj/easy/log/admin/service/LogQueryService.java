@@ -5,9 +5,9 @@ import com.chj.easy.log.admin.model.cmd.BaseLogQueryCmd;
 import com.chj.easy.log.admin.model.cmd.LogQueryBarChartCmd;
 import com.chj.easy.log.admin.model.cmd.LogQueryPageCmd;
 import com.chj.easy.log.admin.model.cmd.LogQuerySelectCmd;
-import com.chj.easy.log.admin.model.vo.LogQueryBarChartVo;
 import com.chj.easy.log.core.convention.page.es.EsPageInfo;
 import com.chj.easy.log.core.model.Doc;
+import com.chj.easy.log.core.model.vo.BarChartVo;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -118,5 +118,5 @@ public interface LogQueryService {
      * 柱状图
      * @param logQueryBarChartCmd
      */
-    List<LogQueryBarChartVo> barChart(LogQueryBarChartCmd logQueryBarChartCmd);
+    List<BarChartVo> barChart(LogQueryBarChartCmd logQueryBarChartCmd);
 }

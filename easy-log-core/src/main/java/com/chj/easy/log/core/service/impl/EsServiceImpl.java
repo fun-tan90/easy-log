@@ -10,6 +10,7 @@ import com.chj.easy.log.core.convention.page.es.EsPageHelper;
 import com.chj.easy.log.core.convention.page.es.EsPageInfo;
 import com.chj.easy.log.core.model.Doc;
 import com.chj.easy.log.core.model.LogDoc;
+import com.chj.easy.log.core.model.vo.BarChartVo;
 import com.chj.easy.log.core.service.EsService;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -36,6 +37,7 @@ import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation;
+import org.elasticsearch.search.aggregations.bucket.histogram.ParsedDateHistogram;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.stereotype.Service;
@@ -268,6 +270,27 @@ public class EsServiceImpl implements EsService {
             return mapList;
         } catch (IOException e) {
             throw new RuntimeException(StrUtil.format("aggregation failed, {}", e));
+        }
+    }
+
+    @Override
+    public List<BarChartVo> dateHistogramBarChart(String indexName, String dateHistogramName, String termsName, SearchSourceBuilder searchSourceBuilder) {
+        SearchRequest searchRequest = new SearchRequest(indexName);
+        searchRequest.source(searchSourceBuilder);
+        try {
+            SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+            ParsedDateHistogram dateHistogram = searchResponse.getAggregations().get(dateHistogramName);
+            return dateHistogram.getBuckets().stream().map(bucket -> {
+                Terms aggregation = bucket.getAggregations().get(termsName);
+                List<? extends Terms.Bucket> buckets = aggregation.getBuckets();
+                List<BarChartVo.OneBarDetail> oneBarDetailList = buckets.stream().map(n -> new BarChartVo.OneBarDetail(n.getKeyAsString(), n.getDocCount())).collect(Collectors.toList());
+                return BarChartVo.builder()
+                        .key(bucket.getKeyAsString())
+                        .count(bucket.getDocCount())
+                        .oneBarDetailList(oneBarDetailList).build();
+            }).collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new RuntimeException(StrUtil.format("barChart failed, {}", e));
         }
     }
 
