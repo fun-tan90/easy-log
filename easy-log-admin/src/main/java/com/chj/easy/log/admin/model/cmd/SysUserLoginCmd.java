@@ -33,6 +33,8 @@ public class SysUserLoginCmd {
     @NotBlank
     private String password;
 
+    private boolean rememberMe = true;
+
     @NotNull
     @NotBlank
     private String captchaKey;

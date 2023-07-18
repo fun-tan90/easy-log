@@ -37,7 +37,7 @@ public class SysUserServiceImpl implements SysUserService {
         if (!easyLogAdminProperties.getUsername().equals(username) || !easyLogAdminProperties.getPassword().equals(password)) {
             return IErrorCode.AUTH_1001001.getMessage();
         }
-        StpUtil.login(username);
+        StpUtil.login(username, sysUserLoginCmd.isRememberMe());
         return AuthConstant.TOKEN_PREFIX + StpUtil.getTokenValue();
     }
 }
