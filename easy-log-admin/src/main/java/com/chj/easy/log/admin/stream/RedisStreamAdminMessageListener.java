@@ -87,7 +87,7 @@ public class RedisStreamAdminMessageListener implements StreamListener<String, M
                     }
                 }
             } finally {
-                stringRedisTemplate.opsForStream().acknowledge(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_COLLECTOR_NAME, recordId);
+                stringRedisTemplate.opsForStream().acknowledge(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_ADMIN_NAME, recordId);
             }
         }
     }

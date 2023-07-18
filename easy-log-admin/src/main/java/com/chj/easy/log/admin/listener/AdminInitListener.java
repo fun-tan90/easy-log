@@ -5,16 +5,13 @@ import com.chj.easy.log.admin.stream.RedisStreamAdminMessageListener;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.model.LogDoc;
 import com.chj.easy.log.core.service.EsService;
+import com.chj.easy.log.core.service.RedisStreamService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.data.redis.connection.stream.*;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.stream.StreamMessageListenerContainer;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
@@ -32,16 +29,13 @@ public class AdminInitListener implements ApplicationListener<ApplicationReadyEv
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
     @Resource
-    private StringRedisTemplate stringRedisTemplate;
-
-    @Resource
     private EsService esService;
 
     @Resource
     private RedisStreamAdminMessageListener redisStreamAdminMessageListener;
 
     @Resource
-    private StreamMessageListenerContainer<String, MapRecord<String, String, String>> streamMessageListenerContainer;
+    private RedisStreamService redisStreamService;
 
     @Resource
     private EasyLogAdminProperties easyLogAdminProperties;
@@ -51,25 +45,11 @@ public class AdminInitListener implements ApplicationListener<ApplicationReadyEv
         if (initialized.compareAndSet(false, true)) {
             esService.createIndexIfNotExists(LogDoc.indexName());
 
-            createStreamKeyAndGroupAndConsumers();
+            String streamKey = EasyLogConstants.STREAM_KEY;
+            String groupName = EasyLogConstants.GROUP_ADMIN_NAME;
+            String consumerNamePrefix = EasyLogConstants.GROUP_ADMIN_CONSUMER_NAME + "-";
+            int[] consumerGlobalOrders = easyLogAdminProperties.getConsumerGlobalOrders();
+            redisStreamService.initStream(streamKey, groupName, consumerNamePrefix, consumerGlobalOrders, redisStreamAdminMessageListener);
         }
-    }
-
-    private void createStreamKeyAndGroupAndConsumers() {
-        Boolean hasKey = stringRedisTemplate.hasKey(EasyLogConstants.STREAM_KEY);
-        if (Boolean.FALSE.equals(hasKey)) {
-            stringRedisTemplate.opsForStream().createGroup(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_COLLECTOR_NAME);
-        }
-        StreamInfo.XInfoGroups groups = stringRedisTemplate.opsForStream().groups(EasyLogConstants.STREAM_KEY);
-        Optional<StreamInfo.XInfoGroup> xInfoGroupOpt = groups.stream().filter(n -> n.groupName().equals(EasyLogConstants.GROUP_COLLECTOR_NAME)).findAny();
-        if (!xInfoGroupOpt.isPresent()) {
-            stringRedisTemplate.opsForStream().createGroup(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_ADMIN_NAME);
-        }
-        streamMessageListenerContainer
-                .receive(
-                        Consumer.from(EasyLogConstants.GROUP_ADMIN_NAME, EasyLogConstants.GROUP_ADMIN_CONSUMER_NAME),
-                        StreamOffset.create(EasyLogConstants.STREAM_KEY, ReadOffset.lastConsumed()),
-                        redisStreamAdminMessageListener
-                );
     }
 }
