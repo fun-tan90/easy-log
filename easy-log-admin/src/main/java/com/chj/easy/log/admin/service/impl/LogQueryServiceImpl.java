@@ -18,6 +18,7 @@ import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInter
 import org.elasticsearch.search.aggregations.bucket.histogram.LongBounds;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -40,7 +41,10 @@ public class LogQueryServiceImpl implements LogQueryService {
     @Override
     public Map<String, List<String>> queryDropBox(LogDropBoxCmd logDropBoxCmd) {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(QueryBuilders.termQuery("appEnv", logDropBoxCmd.getAppEnv()));
+        String appEnv = logDropBoxCmd.getAppEnv();
+        if (StringUtils.hasLength(appEnv)) {
+            searchSourceBuilder.query(QueryBuilders.termQuery("appEnv", appEnv));
+        }
         for (String condition : logDropBoxCmd.getSelectKeys()) {
             searchSourceBuilder.aggregation(
                     AggregationBuilders

@@ -21,8 +21,6 @@ public class LogDropBoxCmd {
     @NotBlank
     private String date;
 
-    @NotNull
-    @NotBlank
     private String appEnv;
 
     @NotNull
