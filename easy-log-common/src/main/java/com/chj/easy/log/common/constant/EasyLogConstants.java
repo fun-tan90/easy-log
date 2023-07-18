@@ -18,7 +18,9 @@ public interface EasyLogConstants {
     String INDEX_FIXED_PREFIX = "daily-easy-log-";
 
     String STREAM_KEY = "easy-log";
+
     String GROUP_ADMIN_NAME = "easy-log-admin-group";
+
     String GROUP_ADMIN_CONSUMER_NAME = "easy-log-admin-group-consumer";
 
     String GROUP_COLLECTOR_NAME = "easy-log-collector-group";
