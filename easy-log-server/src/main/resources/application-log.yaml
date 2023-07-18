@@ -1,5 +1,6 @@
 logging:
   level:
     root: info
-    tracer: trace
+#    tracer: trace
     easy-log-admin: debug
+    easy-log-collector: debug
