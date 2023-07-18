@@ -16,7 +16,7 @@ sa-token:
   # 是否尝试从请求体里读取token
   is-read-body: false
   # 是否尝试从cookie里读取token
-  is-read-cookie: false
+  is-read-cookie: true
   # 是否尝试从header里读取token
   is-read-header: true
   # token风格
