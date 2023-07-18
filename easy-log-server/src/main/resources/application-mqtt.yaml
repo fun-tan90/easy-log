@@ -8,6 +8,6 @@ mqtt:
       enable: true
       username: mica
       password: mica
-    debug: true
+    debug: false
     stat-enable: false
     web-port: 8083
