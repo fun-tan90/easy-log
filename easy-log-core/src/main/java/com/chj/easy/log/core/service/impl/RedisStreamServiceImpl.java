@@ -45,13 +45,8 @@ public class RedisStreamServiceImpl implements RedisStreamService {
         if (!xInfoGroupOpt.isPresent()) {
             stringRedisTemplate.opsForStream().createGroup(streamKey, groupName);
         }
-        StreamInfo.XInfoConsumers consumers = stringRedisTemplate.opsForStream().consumers(streamKey, groupName);
-        List<String> consumerNames = consumers.stream().map(StreamInfo.XInfoConsumer::consumerName).collect(Collectors.toList());
         for (int consumerGlobalOrder : consumerGlobalOrders) {
             String consumerName = consumerNamePrefix + consumerGlobalOrder;
-            if (consumerNames.contains(consumerName)) {
-                continue;
-            }
             streamMessageListenerContainer
                     .receive(
                             Consumer.from(groupName, consumerName),
