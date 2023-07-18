@@ -1,6 +1,7 @@
 package com.chj.easy.log.admin.service.impl;
 
 import com.chj.easy.log.admin.model.cmd.CaptchaGenerateCmd;
+import com.chj.easy.log.admin.property.EasyLogAdminProperties;
 import com.chj.easy.log.admin.service.SysCaptchaService;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.convention.enums.IErrorCode;
@@ -22,6 +23,9 @@ import java.util.concurrent.TimeUnit;
 public class SysCaptchaServiceImpl implements SysCaptchaService {
 
     @Resource
+    EasyLogAdminProperties easyLogAdminProperties;
+
+    @Resource
     StringRedisTemplate stringRedisTemplate;
 
     @Override
@@ -38,13 +42,16 @@ public class SysCaptchaServiceImpl implements SysCaptchaService {
 
     @Override
     public void validate(String captchaKey, String captchaValue) {
+        if (!easyLogAdminProperties.isValidateCaptcha()) {
+            return;
+        }
         String captchaRightValue = stringRedisTemplate.opsForValue().get(EasyLogConstants.CAPTCHA_IMG + captchaKey);
         if (captchaRightValue == null) {
             throw new ClientException(IErrorCode.AUTH_1001002);
         }
         try {
             if (!captchaRightValue.equalsIgnoreCase(captchaValue.trim())) {
-                throw new ClientException(IErrorCode.AUTH_1001002);
+                throw new ClientException(IErrorCode.AUTH_1001004);
             }
         } finally {
             stringRedisTemplate.delete(EasyLogConstants.CAPTCHA_IMG + captchaKey);

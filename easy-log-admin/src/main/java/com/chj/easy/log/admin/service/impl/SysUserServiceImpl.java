@@ -1,12 +1,13 @@
 package com.chj.easy.log.admin.service.impl;
 
+import cn.dev33.satoken.stp.SaLoginModel;
 import cn.dev33.satoken.stp.StpUtil;
 import com.chj.easy.log.admin.model.cmd.SysUserLoginCmd;
 import com.chj.easy.log.admin.property.EasyLogAdminProperties;
 import com.chj.easy.log.admin.service.SysCaptchaService;
 import com.chj.easy.log.admin.service.SysUserService;
-import com.chj.easy.log.core.convention.constants.AuthConstant;
 import com.chj.easy.log.core.convention.enums.IErrorCode;
+import com.chj.easy.log.core.convention.exception.ClientException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -35,9 +36,14 @@ public class SysUserServiceImpl implements SysUserService {
         String username = sysUserLoginCmd.getUsername();
         String password = sysUserLoginCmd.getPassword();
         if (!easyLogAdminProperties.getUsername().equals(username) || !easyLogAdminProperties.getPassword().equals(password)) {
-            return IErrorCode.AUTH_1001001.getMessage();
+            throw new ClientException(IErrorCode.AUTH_1001001);
         }
-        StpUtil.login(username, sysUserLoginCmd.isRememberMe());
-        return AuthConstant.TOKEN_PREFIX + StpUtil.getTokenValue();
+        boolean rememberMe = sysUserLoginCmd.isRememberMe();
+        SaLoginModel saLoginModel = new SaLoginModel();
+        if (rememberMe) {
+            saLoginModel.setTimeout(7 * 24 * 3600);
+        }
+        StpUtil.login(username, saLoginModel.setIsLastingCookie(rememberMe));
+        return StpUtil.getTokenValue();
     }
 }

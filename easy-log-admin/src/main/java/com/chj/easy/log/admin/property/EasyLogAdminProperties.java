@@ -21,6 +21,8 @@ public class EasyLogAdminProperties {
 
     private boolean banner = true;
 
+    private boolean validateCaptcha = true;
+
     private String initIndexCron = "0 0 23 * * ?";
 
     private String username = "admin";

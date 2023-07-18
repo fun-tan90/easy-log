@@ -33,7 +33,10 @@ public class SysUserLoginCmd {
     @NotBlank
     private String password;
 
-    private boolean rememberMe = true;
+    /**
+     * 记住我
+     */
+    private boolean rememberMe;
 
     @NotNull
     @NotBlank

@@ -6,7 +6,7 @@ import com.chj.easy.log.admin.model.cmd.SysUserLoginCmd;
 import com.chj.easy.log.admin.service.SysCaptchaService;
 import com.chj.easy.log.admin.service.SysUserService;
 import com.chj.easy.log.core.convention.Res;
-import com.chj.easy.log.core.convention.constants.AuthConstant;
+import com.chj.easy.log.core.convention.enums.IErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,8 +43,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public Res<String> login(@RequestBody @Validated SysUserLoginCmd userLoginCmd) {
-        String basicAuth = sysUserService.basicAuth(userLoginCmd);
-        return basicAuth.startsWith(AuthConstant.TOKEN_PREFIX) ? Res.ok(basicAuth) : Res.error(basicAuth);
+        return Res.ok(sysUserService.basicAuth(userLoginCmd));
     }
 
     @GetMapping("/isLogin")
@@ -55,11 +54,11 @@ public class AuthController {
     }
 
     @GetMapping("/logout")
-    public Res<String> logout() {
+    public Res<Void> logout() {
         if (StpUtil.isLogin()) {
             StpUtil.logout();
-            return Res.ok("注销登录成功");
+            return Res.ok();
         }
-        return Res.error("尚未登录或已登出");
+        return Res.error(IErrorCode.AUTH_1001006);
     }
 }

@@ -6,6 +6,7 @@ easy-log:
     init-index-cron: 0 0 23 * * ?
     username: admin
     password: 123456
+    validate-captcha: false
   collector:
     enable: true
     poll-timeout: 1s
