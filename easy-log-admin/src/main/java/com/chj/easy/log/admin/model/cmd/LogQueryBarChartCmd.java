@@ -1,10 +1,10 @@
 package com.chj.easy.log.admin.model.cmd;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 /**
  * description TODO
@@ -14,19 +14,22 @@ import java.util.List;
  * @date 2023/7/17 15:55
  */
 @Data
-public class LogQuerySelectCmd {
+@EqualsAndHashCode(callSuper = true)
+public class LogQueryBarChartCmd extends BaseLogQueryCmd {
 
     @NotNull
     @NotEmpty
-    private String date;
+    private String field;
 
     @NotNull
     @NotEmpty
-    private String appEnv;
+    private String calendarInterval = "1m";
 
     @NotNull
     @NotEmpty
-    private List<String> selectKeys;
+    private String format = "yyyy-MM-dd HH:mm";
 
-    private int size = 100;
+    @NotNull
+    @NotEmpty
+    private String subField;
 }

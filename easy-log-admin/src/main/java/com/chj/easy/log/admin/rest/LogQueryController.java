@@ -3,8 +3,10 @@ package com.chj.easy.log.admin.rest;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.admin.model.cmd.BaseLogQueryCmd;
+import com.chj.easy.log.admin.model.cmd.LogQueryBarChartCmd;
 import com.chj.easy.log.admin.model.cmd.LogQueryPageCmd;
 import com.chj.easy.log.admin.model.cmd.LogQuerySelectCmd;
+import com.chj.easy.log.admin.model.vo.LogQueryBarChartVo;
 import com.chj.easy.log.admin.service.LogQueryService;
 import com.chj.easy.log.core.convention.Res;
 import com.chj.easy.log.core.convention.page.es.EsPageInfo;
@@ -45,5 +47,10 @@ public class LogQueryController {
     @PostMapping("/paging")
     public Res<EsPageInfo<Doc>> paging(@RequestBody @Validated LogQueryPageCmd logQueryPageCmd) {
         return Res.ok(logQueryService.paging(logQueryPageCmd));
+    }
+
+    @PostMapping("/bar-chart")
+    public Res<List<LogQueryBarChartVo>> barChart(@RequestBody @Validated LogQueryBarChartCmd logQueryBarChartCmd) {
+        return Res.ok(logQueryService.barChart(logQueryBarChartCmd));
     }
 }

@@ -37,7 +37,7 @@ public class EasyLogAdminAutoConfiguration {
                 .addInclude("/**")
                 .addExclude("/favicon.ico", "/captcha", "/login")
                 .setAuth(obj -> {
-                    SaRouter.match("/**", StpUtil::checkLogin);
+//                    SaRouter.match("/**", StpUtil::checkLogin);
                 })
                 .setError(e -> {
                     SaHolder.getResponse().setHeader("Content-Type", "application/json;charset=UTF-8");
