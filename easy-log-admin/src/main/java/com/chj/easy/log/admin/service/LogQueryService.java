@@ -1,13 +1,17 @@
 package com.chj.easy.log.admin.service;
 
 
-import com.chj.easy.log.admin.model.cmd.*;
+import com.chj.easy.log.admin.model.cmd.BaseLogQueryCmd;
+import com.chj.easy.log.admin.model.cmd.LogDropBoxCmd;
+import com.chj.easy.log.admin.model.cmd.LogQueryCmd;
+import com.chj.easy.log.core.convention.exception.ClientException;
 import com.chj.easy.log.core.convention.page.es.EsPageInfo;
 import com.chj.easy.log.core.model.Doc;
 import com.chj.easy.log.core.model.vo.BarChartVo;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.util.CollectionUtils;
@@ -27,6 +31,7 @@ public interface LogQueryService {
 
     default SearchSourceBuilder generateSearchSource(BaseLogQueryCmd logQueryPageCmd) {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        HighlightBuilder highlightBuilder = new HighlightBuilder();
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         String appEnv = logQueryPageCmd.getAppEnv();
         boolQueryBuilder.must(QueryBuilders.termQuery("appEnv", appEnv));
@@ -55,6 +60,7 @@ public interface LogQueryService {
         String traceId = logQueryPageCmd.getTraceId();
         if (StringUtils.hasLength(traceId)) {
             boolQueryBuilder.must(QueryBuilders.termQuery("traceId", traceId));
+            highlightBuilder.field("traceId");
         }
         String loggerName = logQueryPageCmd.getLoggerName();
         if (StringUtils.hasLength(loggerName)) {
@@ -75,23 +81,29 @@ public interface LogQueryService {
         String content = logQueryPageCmd.getContent();
         if (StringUtils.hasLength(content)) {
             boolQueryBuilder.must(QueryBuilders.matchQuery("content", content));
+            highlightBuilder.field("content");
         }
 
         searchSourceBuilder.query(boolQueryBuilder);
+        searchSourceBuilder.highlighter(highlightBuilder);
 
         List<String> descList = logQueryPageCmd.getDescList();
+        List<String> ascList = logQueryPageCmd.getAscList();
+        if (!CollectionUtils.isEmpty(descList) && !CollectionUtils.isEmpty(ascList)) {
+            if (descList.stream().anyMatch(ascList::contains)) {
+                throw new ClientException("升序和降序不能包含同一个字段");
+            }
+        }
         if (!CollectionUtils.isEmpty(descList)) {
             for (String desc : descList) {
                 searchSourceBuilder.sort(SortBuilders.fieldSort(desc).order(SortOrder.DESC));
             }
         }
-        List<String> ascList = logQueryPageCmd.getAscList();
         if (!CollectionUtils.isEmpty(ascList)) {
             for (String asc : ascList) {
                 searchSourceBuilder.sort(SortBuilders.fieldSort(asc).order(SortOrder.ASC));
             }
         }
-        System.out.println(searchSourceBuilder);
         return searchSourceBuilder;
     }
 
