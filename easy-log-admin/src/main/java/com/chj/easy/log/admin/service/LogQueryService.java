@@ -1,10 +1,7 @@
 package com.chj.easy.log.admin.service;
 
 
-import com.chj.easy.log.admin.model.cmd.BaseLogQueryCmd;
-import com.chj.easy.log.admin.model.cmd.LogQueryBarChartCmd;
-import com.chj.easy.log.admin.model.cmd.LogQueryPageCmd;
-import com.chj.easy.log.admin.model.cmd.LogQuerySelectCmd;
+import com.chj.easy.log.admin.model.cmd.*;
 import com.chj.easy.log.core.convention.page.es.EsPageInfo;
 import com.chj.easy.log.core.model.Doc;
 import com.chj.easy.log.core.model.vo.BarChartVo;
@@ -36,7 +33,7 @@ public interface LogQueryService {
 
         String startDateTime = logQueryPageCmd.getStartDateTime();
         String endDateTime = logQueryPageCmd.getEndDateTime();
-        boolQueryBuilder.must((QueryBuilders.rangeQuery("dateTime").gte(startDateTime + ".000").lt(endDateTime + ".999")));
+        boolQueryBuilder.must((QueryBuilders.rangeQuery("dateTime").gte(startDateTime).lt(endDateTime)));
 
         List<String> appNameList = logQueryPageCmd.getAppNameList();
         if (!CollectionUtils.isEmpty(appNameList)) {
@@ -101,22 +98,23 @@ public interface LogQueryService {
     /**
      * 查询下拉框
      *
-     * @param logQuerySelectCmd
+     * @param logDropBoxCmd
      * @return
      */
-    Map<String, List<String>> querySelect(LogQuerySelectCmd logQuerySelectCmd);
+    Map<String, List<String>> queryDropBox(LogDropBoxCmd logDropBoxCmd);
 
     /**
      * 分页查询
      *
-     * @param logQueryPageCmd
+     * @param logQueryCmd
      * @return
      */
-    EsPageInfo<Doc> paging(LogQueryPageCmd logQueryPageCmd);
+    EsPageInfo<Doc> paging(LogQueryCmd logQueryCmd);
 
     /**
      * 柱状图
-     * @param logQueryBarChartCmd
+     *
+     * @param logQueryCmd
      */
-    List<BarChartVo> barChart(LogQueryBarChartCmd logQueryBarChartCmd);
+    List<BarChartVo> barChart(LogQueryCmd logQueryCmd);
 }

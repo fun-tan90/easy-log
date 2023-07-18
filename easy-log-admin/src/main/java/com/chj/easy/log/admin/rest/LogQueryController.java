@@ -2,10 +2,7 @@ package com.chj.easy.log.admin.rest;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.chj.easy.log.admin.model.cmd.BaseLogQueryCmd;
-import com.chj.easy.log.admin.model.cmd.LogQueryBarChartCmd;
-import com.chj.easy.log.admin.model.cmd.LogQueryPageCmd;
-import com.chj.easy.log.admin.model.cmd.LogQuerySelectCmd;
+import com.chj.easy.log.admin.model.cmd.*;
 import com.chj.easy.log.admin.service.LogQueryService;
 import com.chj.easy.log.core.convention.Res;
 import com.chj.easy.log.core.convention.page.es.EsPageInfo;
@@ -39,18 +36,18 @@ public class LogQueryController {
         return Res.ok(JSONUtil.parseObj(logQueryService.generateSearchSource(baseLogQueryCmd).toString()));
     }
 
-    @PostMapping("/query-select")
-    public Res<Map<String, List<String>>> querySelect(@RequestBody @Validated LogQuerySelectCmd logQuerySelectCmd) {
-        return Res.ok(logQueryService.querySelect(logQuerySelectCmd));
+    @PostMapping("/query-drop-box")
+    public Res<Map<String, List<String>>> queryDropBox(@RequestBody @Validated LogDropBoxCmd logDropBoxCmd) {
+        return Res.ok(logQueryService.queryDropBox(logDropBoxCmd));
     }
 
     @PostMapping("/paging")
-    public Res<EsPageInfo<Doc>> paging(@RequestBody @Validated LogQueryPageCmd logQueryPageCmd) {
-        return Res.ok(logQueryService.paging(logQueryPageCmd));
+    public Res<EsPageInfo<Doc>> paging(@RequestBody @Validated LogQueryCmd logQueryCmd) {
+        return Res.ok(logQueryService.paging(logQueryCmd));
     }
 
     @PostMapping("/bar-chart")
-    public Res<List<BarChartVo>> barChart(@RequestBody @Validated LogQueryBarChartCmd logQueryBarChartCmd) {
-        return Res.ok(logQueryService.barChart(logQueryBarChartCmd));
+    public Res<List<BarChartVo>> barChart(@RequestBody @Validated LogQueryCmd logQueryCmd) {
+        return Res.ok(logQueryService.barChart(logQueryCmd));
     }
 }

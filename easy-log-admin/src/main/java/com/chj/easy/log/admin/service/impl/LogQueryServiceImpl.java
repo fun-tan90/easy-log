@@ -1,9 +1,9 @@
 package com.chj.easy.log.admin.service.impl;
 
 import cn.hutool.core.date.DateUtil;
-import com.chj.easy.log.admin.model.cmd.LogQueryBarChartCmd;
-import com.chj.easy.log.admin.model.cmd.LogQueryPageCmd;
-import com.chj.easy.log.admin.model.cmd.LogQuerySelectCmd;
+import com.chj.easy.log.admin.model.cmd.BaseLogQueryCmd;
+import com.chj.easy.log.admin.model.cmd.LogQueryCmd;
+import com.chj.easy.log.admin.model.cmd.LogDropBoxCmd;
 import com.chj.easy.log.admin.service.LogQueryService;
 import com.chj.easy.log.core.convention.page.es.EsPageInfo;
 import com.chj.easy.log.core.model.Doc;
@@ -38,52 +38,54 @@ public class LogQueryServiceImpl implements LogQueryService {
     EsService esService;
 
     @Override
-    public Map<String, List<String>> querySelect(LogQuerySelectCmd logQuerySelectCmd) {
+    public Map<String, List<String>> queryDropBox(LogDropBoxCmd logDropBoxCmd) {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(QueryBuilders.termQuery("appEnv", logQuerySelectCmd.getAppEnv()));
-        for (String condition : logQuerySelectCmd.getSelectKeys()) {
+        searchSourceBuilder.query(QueryBuilders.termQuery("appEnv", logDropBoxCmd.getAppEnv()));
+        for (String condition : logDropBoxCmd.getSelectKeys()) {
             searchSourceBuilder.aggregation(
                     AggregationBuilders
                             .terms(condition)
                             .field(condition)
-                            .size(logQuerySelectCmd.getSize())
+                            .size(logDropBoxCmd.getSize())
                             .order(BucketOrder.key(true))
             );
         }
-        return esService.aggregation(LogDoc.indexName(logQuerySelectCmd.getDate()), searchSourceBuilder);
+        return esService.aggregation(LogDoc.indexName(logDropBoxCmd.getDate()), searchSourceBuilder);
     }
 
     @Override
-    public EsPageInfo<Doc> paging(LogQueryPageCmd logQueryPageCmd) {
-        SearchSourceBuilder searchSourceBuilder = generateSearchSource(logQueryPageCmd);
-        return esService.paging(LogDoc.indexName(logQueryPageCmd.getDate()), logQueryPageCmd.getPageNum(), logQueryPageCmd.getPageSize(), searchSourceBuilder, LogDoc.class);
+    public EsPageInfo<Doc> paging(LogQueryCmd logQueryCmd) {
+        SearchSourceBuilder searchSourceBuilder = generateSearchSource(logQueryCmd.getBaseParam());
+        return esService.paging(LogDoc.indexName(logQueryCmd.getBaseParam().getDate()), logQueryCmd.getPageParam().getPageNum(), logQueryCmd.getPageParam().getPageSize(), searchSourceBuilder, LogDoc.class);
     }
 
     @Override
-    public List<BarChartVo> barChart(LogQueryBarChartCmd logQueryBarChartCmd) {
-        SearchSourceBuilder searchSourceBuilder = generateSearchSource(logQueryBarChartCmd);
-        String dateHistogramName = logQueryBarChartCmd.getDateHistogramField();
-        String termsName = logQueryBarChartCmd.getTermsField();
+    public List<BarChartVo> barChart(LogQueryCmd logQueryCmd) {
+        BaseLogQueryCmd baseParam = logQueryCmd.getBaseParam();
+        SearchSourceBuilder searchSourceBuilder = generateSearchSource(baseParam);
+        LogQueryCmd.BarChartParam barChartParam = logQueryCmd.getBarChartParam();
+        String dateHistogramName = barChartParam.getDateHistogramField();
+        String termsName = barChartParam.getTermsField();
         searchSourceBuilder
                 .size(0)
                 .aggregation(
                         AggregationBuilders
                                 .dateHistogram(dateHistogramName)
-                                .field(logQueryBarChartCmd.getDateHistogramField())
-                                .calendarInterval(new DateHistogramInterval(logQueryBarChartCmd.getCalendarInterval()))
+                                .field(barChartParam.getDateHistogramField())
+                                .calendarInterval(new DateHistogramInterval(barChartParam.getCalendarInterval()))
                                 .offset("+8h")
-                                .format(logQueryBarChartCmd.getFormat())
+                                .format(barChartParam.getFormat())
                                 .minDocCount(0)
-                                .extendedBounds(new LongBounds(DateUtil.parse(logQueryBarChartCmd.getStartDateTime() + ".000").getTime(), DateUtil.parse(logQueryBarChartCmd.getStartDateTime() + ".999").getTime()))
+                                .extendedBounds(new LongBounds(DateUtil.parse(baseParam.getStartDateTime()).getTime(), DateUtil.parse(baseParam.getStartDateTime()).getTime()))
                                 .subAggregation(
                                         AggregationBuilders
                                                 .terms(termsName)
-                                                .field(logQueryBarChartCmd.getTermsField())
+                                                .field(barChartParam.getTermsField())
                                                 .size(5)
                                                 .minDocCount(0)
                                                 .order(BucketOrder.key(true))
                                 )
                 );
-        return esService.dateHistogramBarChart(LogDoc.indexName(logQueryBarChartCmd.getDate()), dateHistogramName, termsName, searchSourceBuilder);
+        return esService.dateHistogramBarChart(LogDoc.indexName(baseParam.getDate()), dateHistogramName, termsName, searchSourceBuilder);
     }
 }

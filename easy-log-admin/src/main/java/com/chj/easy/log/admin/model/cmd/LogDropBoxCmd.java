@@ -14,7 +14,7 @@ import java.util.List;
  * @date 2023/7/17 15:55
  */
 @Data
-public class LogQuerySelectCmd {
+public class LogDropBoxCmd {
 
     @NotNull
     @NotEmpty
