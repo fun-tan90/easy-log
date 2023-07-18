@@ -2,6 +2,7 @@ package com.chj.easy.log.admin.model.cmd;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -38,11 +39,11 @@ public class LogQueryCmd {
         private String termsField = "level";
 
         @NotNull
-        @NotEmpty
+        @NotBlank
         private String calendarInterval = "1m";
 
         @NotNull
-        @NotEmpty
+        @NotBlank
         private String format = "yyyy-MM-dd HH:mm";
     }
 }

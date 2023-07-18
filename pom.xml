@@ -36,6 +36,7 @@
         <easy-captcha.version>1.6.2</easy-captcha.version>
         <mybatis-flex.version>1.4.3</mybatis-flex.version>
         <tlog.version>1.5.0</tlog.version>
+        <mica-mqtt.version>2.2.2</mica-mqtt.version>
     </properties>
 
     <dependencies>
@@ -195,6 +196,12 @@
                 <groupId>com.yomahub</groupId>
                 <artifactId>tlog-all-spring-boot-starter</artifactId>
                 <version>${tlog.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.dreamlu</groupId>
+                <artifactId>mica-mqtt-server-spring-boot-starter</artifactId>
+                <version>${mica-mqtt.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

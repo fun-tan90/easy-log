@@ -84,6 +84,15 @@ public interface EsService {
     int insertBatch(String indexName, List<Doc> entities);
 
     /**
+     * 分词
+     *
+     * @param analyzer
+     * @param content
+     * @return
+     */
+    List<String> analyze(String analyzer, String content);
+
+    /**
      * 分页查询
      *
      * @param indexName           索引名称

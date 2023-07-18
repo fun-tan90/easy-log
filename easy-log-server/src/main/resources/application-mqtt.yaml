@@ -1,0 +1,13 @@
+mqtt:
+  server:
+    enabled: true
+    port: 1883
+    name: Easy-Log-Mqtt-Server
+    heartbeat-timeout: 20000
+    auth:
+      enable: true
+      username: mica
+      password: mica
+    debug: true
+    stat-enable: false
+    web-port: 8083

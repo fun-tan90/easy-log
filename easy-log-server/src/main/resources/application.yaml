@@ -15,3 +15,4 @@ spring:
         - cache-test
         - el
         - log
+        - mqtt

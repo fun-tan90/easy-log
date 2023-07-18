@@ -2,8 +2,8 @@ package com.chj.easy.log.admin.model.cmd;
 
 import lombok.Data;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -15,11 +15,12 @@ import java.util.List;
  * @date 2023/7/17 15:55
  */
 @Data
-public class BaseLogQueryCmd {
+public class LogRealTimeFilterCmd {
 
     @NotNull
     @NotBlank
-    private String date;
+    @Min(value = 8)
+    private String mqttClientId;
 
     @NotNull
     @NotBlank
@@ -29,25 +30,13 @@ public class BaseLogQueryCmd {
 
     private List<String> levelList;
 
-    private String traceId;
-
     private String loggerName;
 
     private String lineNumber;
 
     private List<String> ipList;
 
+    private String analyzer = "ik_max_word";
+
     private String content;
-
-    private List<String> ascList;
-
-    private List<String> descList;
-
-    @NotNull
-    @NotEmpty
-    private String startDateTime;
-
-    @NotNull
-    @NotEmpty
-    private String endDateTime;
 }

@@ -2,6 +2,7 @@ package com.chj.easy.log.admin.model.cmd;
 
 import lombok.Data;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -20,6 +21,7 @@ public class CaptchaGenerateCmd {
      */
     @NotNull
     @NotBlank
+    @Min(value = 8)
     private String captchaKey;
 
     private Integer width = 130;

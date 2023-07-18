@@ -26,10 +26,7 @@ import org.elasticsearch.client.Request;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.client.indices.CreateIndexRequest;
-import org.elasticsearch.client.indices.CreateIndexResponse;
-import org.elasticsearch.client.indices.GetIndexRequest;
-import org.elasticsearch.client.indices.PutMappingRequest;
+import org.elasticsearch.client.indices.*;
 import org.elasticsearch.common.text.Text;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.rest.RestStatus;
@@ -194,6 +191,17 @@ public class EsServiceImpl implements EsService {
             return totalSuccess;
         } catch (IOException e) {
             throw new RuntimeException(StrUtil.format("insertBatch failed, {}", e));
+        }
+    }
+
+    @Override
+    public List<String> analyze(String analyzer, String content) {
+        AnalyzeRequest analyzeRequest = AnalyzeRequest.withGlobalAnalyzer(analyzer, content);
+        try {
+            AnalyzeResponse analyzeResponse = restHighLevelClient.indices().analyze(analyzeRequest, RequestOptions.DEFAULT);
+            return analyzeResponse.getTokens().stream().map(AnalyzeResponse.AnalyzeToken::getTerm).collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new RuntimeException(StrUtil.format("analyze failed, {}", e));
         }
     }
 

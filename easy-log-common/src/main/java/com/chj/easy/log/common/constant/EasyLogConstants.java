@@ -31,4 +31,10 @@ public interface EasyLogConstants {
     String LOG_TOPIC_ADMIN = "easy-log-admin";
 
     String CAPTCHA_IMG = "CAPTCHA_IMG:";
+
+    String MQTT_ONLINE_CLIENTS = "MQTT_ONLINE_CLIENTS";
+
+    String REAL_TIME_FILTER_RULES = "REAL_TIME_FILTER_RULES:";
+
+    String AFTER_FILTER_TOPIC = "easy-log/after-filter";
 }

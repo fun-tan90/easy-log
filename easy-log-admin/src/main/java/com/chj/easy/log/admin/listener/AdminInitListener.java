@@ -65,13 +65,11 @@ public class AdminInitListener implements ApplicationListener<ApplicationReadyEv
         if (!xInfoGroupOpt.isPresent()) {
             stringRedisTemplate.opsForStream().createGroup(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_ADMIN_NAME);
         }
-        for (int consumerGlobalOrder : easyLogAdminProperties.getConsumerGlobalOrders()) {
-            streamMessageListenerContainer
-                    .receive(
-                            Consumer.from(EasyLogConstants.GROUP_ADMIN_NAME, EasyLogConstants.GROUP_ADMIN_CONSUMER_NAME + "-" + consumerGlobalOrder),
-                            StreamOffset.create(EasyLogConstants.STREAM_KEY, ReadOffset.lastConsumed()),
-                            redisStreamAdminMessageListener
-                    );
-        }
+        streamMessageListenerContainer
+                .receive(
+                        Consumer.from(EasyLogConstants.GROUP_ADMIN_NAME, EasyLogConstants.GROUP_ADMIN_CONSUMER_NAME),
+                        StreamOffset.create(EasyLogConstants.STREAM_KEY, ReadOffset.lastConsumed()),
+                        redisStreamAdminMessageListener
+                );
     }
 }
