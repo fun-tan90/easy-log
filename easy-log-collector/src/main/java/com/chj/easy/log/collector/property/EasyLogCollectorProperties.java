@@ -23,10 +23,6 @@ public class EasyLogCollectorProperties {
 
     private boolean banner = true;
 
-    private Duration pollTimeout = Duration.ofSeconds(1);
-
-    private int pullBatchSize = 100;
-
     private int queueCapacity = 1024;
 
     private int insertBatchSize = 100;

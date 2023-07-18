@@ -2,8 +2,7 @@ package com.chj.easy.log.collector.listener;
 
 import cn.hutool.core.date.StopWatch;
 import com.chj.easy.log.collector.property.EasyLogCollectorProperties;
-import com.chj.easy.log.collector.stream.RedisStreamMessageListener;
-import com.chj.easy.log.common.BannerPrint;
+import com.chj.easy.log.collector.stream.RedisStreamCollectorMessageListener;
 import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.model.Doc;
@@ -12,7 +11,6 @@ import com.chj.easy.log.core.service.EsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.env.Environment;
 import org.springframework.data.redis.connection.stream.*;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -35,7 +33,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author 陈浩杰
  * @date 2023/7/13 10:15
  */
-@Slf4j(topic = EasyLogConstants.LOG_TOPIC)
+@Slf4j(topic = EasyLogConstants.LOG_TOPIC_COLLECTOR)
 @Component
 public class CollectorInitListener implements ApplicationListener<ApplicationReadyEvent> {
 
@@ -54,7 +52,7 @@ public class CollectorInitListener implements ApplicationListener<ApplicationRea
     private EasyLogCollectorProperties easyLogCollectorProperties;
 
     @Resource
-    private RedisStreamMessageListener redisStreamMessageListener;
+    private RedisStreamCollectorMessageListener redisStreamCollectorMessageListener;
 
     @Resource
     private Environment environment;
@@ -103,19 +101,19 @@ public class CollectorInitListener implements ApplicationListener<ApplicationRea
     private void createStreamKeyAndGroupAndConsumers() {
         Boolean hasKey = stringRedisTemplate.hasKey(EasyLogConstants.STREAM_KEY);
         if (Boolean.FALSE.equals(hasKey)) {
-            stringRedisTemplate.opsForStream().createGroup(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_NAME);
+            stringRedisTemplate.opsForStream().createGroup(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_COLLECTOR_NAME);
         }
         StreamInfo.XInfoGroups groups = stringRedisTemplate.opsForStream().groups(EasyLogConstants.STREAM_KEY);
-        Optional<StreamInfo.XInfoGroup> xInfoGroupOpt = groups.stream().filter(n -> n.groupName().equals(EasyLogConstants.GROUP_NAME)).findAny();
+        Optional<StreamInfo.XInfoGroup> xInfoGroupOpt = groups.stream().filter(n -> n.groupName().equals(EasyLogConstants.GROUP_COLLECTOR_NAME)).findAny();
         if (!xInfoGroupOpt.isPresent()) {
-            stringRedisTemplate.opsForStream().createGroup(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_NAME);
+            stringRedisTemplate.opsForStream().createGroup(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_COLLECTOR_NAME);
         }
         for (int consumerGlobalOrder : easyLogCollectorProperties.getConsumerGlobalOrders()) {
             streamMessageListenerContainer
                     .receive(
-                            Consumer.from(EasyLogConstants.GROUP_NAME, EasyLogConstants.GROUP_CONSUMER_NAME + "-" + consumerGlobalOrder),
+                            Consumer.from(EasyLogConstants.GROUP_COLLECTOR_NAME, EasyLogConstants.GROUP_COLLECTOR_CONSUMER_NAME + "-" + consumerGlobalOrder),
                             StreamOffset.create(EasyLogConstants.STREAM_KEY, ReadOffset.lastConsumed()),
-                            redisStreamMessageListener
+                            redisStreamCollectorMessageListener
                     );
         }
     }

@@ -1,16 +1,18 @@
 easy-log:
   es:
     address: 172.16.8.31:9200,172.16.8.31:9201,172.16.8.31:9202
+  stream:
+    poll-timeout: 1s
+    pull-batch-size: 100
   admin:
     enable: true
     init-index-cron: 0 0 23 * * ?
     username: admin
     password: 123456
     validate-captcha: false
+    consumer-global-orders: 1,2,3,4
   collector:
     enable: true
-    poll-timeout: 1s
-    pull-batch-size: 100
     insert-batch-size: 100
     consumer-global-orders: 1,2,3,4
     queue-capacity: 1024

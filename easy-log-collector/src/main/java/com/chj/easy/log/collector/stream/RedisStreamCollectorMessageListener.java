@@ -25,9 +25,9 @@ import java.util.concurrent.TimeUnit;
  * @author 陈浩杰
  * @date 2023/7/16 8:40
  */
-@Slf4j(topic = EasyLogConstants.LOG_TOPIC)
+@Slf4j(topic = EasyLogConstants.LOG_TOPIC_COLLECTOR)
 @Component
-public class RedisStreamMessageListener implements StreamListener<String, MapRecord<String, String, String>> {
+public class RedisStreamCollectorMessageListener implements StreamListener<String, MapRecord<String, String, String>> {
 
     @Resource
     private BlockingQueue<LogDoc> logDocBlockingQueue;
@@ -65,7 +65,7 @@ public class RedisStreamMessageListener implements StreamListener<String, MapRec
             } catch (InterruptedException e) {
                 log.error("Interrupted while appending LogDoc to LogDocBlockingQueue", e);
             } finally {
-                stringRedisTemplate.opsForStream().acknowledge(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_NAME, recordId);
+                stringRedisTemplate.opsForStream().acknowledge(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_COLLECTOR_NAME, recordId);
             }
         }
     }

@@ -1,7 +1,9 @@
 package com.chj.easy.log.core.config;
 
+import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.property.EasyLogEsProperties;
+import com.chj.easy.log.core.property.EasyLogStreamProperties;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -13,6 +15,9 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.stream.MapRecord;
+import org.springframework.data.redis.stream.StreamMessageListenerContainer;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -29,8 +34,8 @@ import java.util.Optional;
  * @date 2023/7/13 14:38
  */
 @ComponentScan(EasyLogConstants.CORE_SCAN_BASE_PACKAGES)
-@EnableConfigurationProperties(EasyLogEsProperties.class)
-public class EsAutoConfiguration {
+@EnableConfigurationProperties({EasyLogEsProperties.class, EasyLogStreamProperties.class})
+public class EasyLogCoreAutoConfiguration {
 
     @Resource
     EasyLogEsProperties easyLogEsProperties;
@@ -84,5 +89,27 @@ public class EsAutoConfiguration {
             return requestConfigBuilder;
         });
         return new RestHighLevelClient(builder);
+    }
+
+    @Bean
+    public StreamMessageListenerContainer.StreamMessageListenerContainerOptions<String, MapRecord<String, String, String>> streamMessageListenerContainerOptions(EasyLogStreamProperties easyLogStreamProperties) {
+        return StreamMessageListenerContainer
+                .StreamMessageListenerContainerOptions
+                .builder()
+                .pollTimeout(easyLogStreamProperties.getPollTimeout())
+                .batchSize(easyLogStreamProperties.getPullBatchSize())
+                .executor(EasyLogManager.EASY_LOG_FIXED_THREAD_POOL)
+                .errorHandler(e -> {
+                })
+                .build();
+    }
+
+    @Bean
+    public StreamMessageListenerContainer<String, MapRecord<String, String, String>> streamMessageListenerContainer(RedisConnectionFactory factory,
+                                                                                                                    StreamMessageListenerContainer.StreamMessageListenerContainerOptions<String, MapRecord<String, String, String>> streamMessageListenerContainerOptions) {
+        StreamMessageListenerContainer<String, MapRecord<String, String, String>> listenerContainer =
+                StreamMessageListenerContainer.create(factory, streamMessageListenerContainerOptions);
+        listenerContainer.start();
+        return listenerContainer;
     }
 }

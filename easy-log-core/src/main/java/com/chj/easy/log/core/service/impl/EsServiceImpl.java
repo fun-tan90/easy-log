@@ -56,7 +56,7 @@ import java.util.stream.Collectors;
  * @author 陈浩杰
  * @date 2023/7/14 13:38
  */
-@Slf4j(topic = EasyLogConstants.LOG_TOPIC)
+@Slf4j(topic = EasyLogConstants.LOG_TOPIC_COLLECTOR)
 @Service
 public class EsServiceImpl implements EsService {
 
