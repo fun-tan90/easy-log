@@ -1,0 +1,1 @@
+import{a as o,o as t,h as s,i as e}from"./index.c2fb29d9.js";const a={class:"md:flex"},n=e("template",null,[e("div",null,"1")],-1),c=[n],d=o({props:{loading:{type:Boolean}},setup(l){return(_,p)=>(t(),s("div",a,c))}});export{d as default};
