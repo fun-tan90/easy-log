@@ -12,5 +12,5 @@ import com.chj.easy.log.admin.model.cmd.LogRealTimeFilterCmd;
  */
 public interface LogRealTimeFilterService {
 
-    void subscribe(LogRealTimeFilterCmd logRealTimeFilterCmd);
+    long subscribe(LogRealTimeFilterCmd logRealTimeFilterCmd);
 }

@@ -34,9 +34,10 @@ public class LogRealTimeFilterServiceImpl implements LogRealTimeFilterService {
     EsService esService;
 
     @Override
-    public void subscribe(LogRealTimeFilterCmd logRealTimeFilterCmd) {
+    public long subscribe(LogRealTimeFilterCmd logRealTimeFilterCmd) {
         Map<String, Object> realTimeFilterRules = new HashMap<>();
-        realTimeFilterRules.put("timeStamp#gle", String.valueOf(System.currentTimeMillis()));
+        long timestamp = System.currentTimeMillis();
+        realTimeFilterRules.put("timeStamp#gle", String.valueOf(timestamp));
         String appEnv = logRealTimeFilterCmd.getAppEnv();
         if (StringUtils.hasLength(appEnv)) {
             realTimeFilterRules.put("appEnv#eq", appEnv);
@@ -67,5 +68,6 @@ public class LogRealTimeFilterServiceImpl implements LogRealTimeFilterService {
             realTimeFilterRules.put("content#should", String.join("%", ikSmartWord));
         }
         stringRedisTemplate.opsForValue().set(EasyLogConstants.REAL_TIME_FILTER_RULES + logRealTimeFilterCmd.getMqttClientId(), JSONUtil.toJsonStr(realTimeFilterRules));
+        return timestamp;
     }
 }

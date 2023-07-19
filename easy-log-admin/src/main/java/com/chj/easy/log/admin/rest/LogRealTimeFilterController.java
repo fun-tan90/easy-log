@@ -25,8 +25,7 @@ public class LogRealTimeFilterController {
     LogRealTimeFilterService logRealTimeFilterService;
 
     @PostMapping("/subscribe")
-    public Res<Void> subscribe(@RequestBody @Validated LogRealTimeFilterCmd logRealTimeFilterCmd) {
-        logRealTimeFilterService.subscribe(logRealTimeFilterCmd);
-        return Res.ok();
+    public Res<Long> subscribe(@RequestBody @Validated LogRealTimeFilterCmd logRealTimeFilterCmd) {
+        return Res.ok(logRealTimeFilterService.subscribe(logRealTimeFilterCmd));
     }
 }
