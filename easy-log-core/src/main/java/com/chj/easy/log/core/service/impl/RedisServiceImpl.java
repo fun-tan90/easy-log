@@ -15,10 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * description TODO
@@ -76,7 +74,19 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public Map<String, Integer> slidingWindowCount(List<String> keys) {
-        return null;
+    public Map<String, Integer> slidingWindowCount(String keyPrefix) {
+        DefaultRedisScript<String> actual = Singleton.get(EasyLogConstants.SLIDING_WINDOW_COUNT_PATH, () -> {
+            DefaultRedisScript<String> redisScript = new DefaultRedisScript<>();
+            redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource(EasyLogConstants.SLIDING_WINDOW_COUNT_PATH)));
+            redisScript.setResultType(String.class);
+            return redisScript;
+        });
+        String execute = stringRedisTemplate.execute(actual, Collections.singletonList(keyPrefix));
+        if (StringUtils.hasLength(execute)) {
+            return Arrays.stream(execute.split(",")).collect(Collectors.toMap(
+                    n -> n.split("#")[0].replace(keyPrefix, ""),
+                    m -> Integer.parseInt(m.split("#")[1])));
+        }
+        return new HashMap<>();
     }
 }

@@ -1,6 +1,16 @@
-local res = {}
+local prefix = KEYS[1];
+local redisKeys = redis.call('keys', prefix .. '*');
 
-for i, v in ipairs(KEYS) do
-    res[v] = redis.call('zcard', v)
+local res = '';
+
+if (not redisKeys)
+then
+    return res;
+end ;
+
+for i, v in ipairs(redisKeys) do
+    local count = redis.call('zcard', v)
+    res = res .. ',' .. v .. '#' .. count
 end
-return res..''
+
+return string.sub(res, 2)

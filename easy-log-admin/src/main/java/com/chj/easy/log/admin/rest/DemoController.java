@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * description TODO
@@ -39,6 +39,14 @@ public class DemoController {
 
     @GetMapping("sliding-window")
     public int slidingWindow() {
-        return redisService.slidingWindow("info", 15);
+        redisService.slidingWindow("S_W:LOG_INPUT_SPEED:DEBUG", 15);
+        redisService.slidingWindow("S_W:LOG_INPUT_SPEED:DEBUG", 15);
+        redisService.slidingWindow("S_W:LOG_INPUT_SPEED:ERROR", 15);
+        return redisService.slidingWindow("S_W:LOG_INPUT_SPEED:INFO", 15);
+    }
+
+    @GetMapping("sliding-window-count")
+    public Map<String, Integer> slidingWindowCount() {
+        return redisService.slidingWindowCount("S_W:LOG_INPUT_SPEED:");
     }
 }

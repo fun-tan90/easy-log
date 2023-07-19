@@ -19,5 +19,5 @@ public interface RedisService {
 
     int slidingWindow(String key, int period);
 
-    Map<String,Integer> slidingWindowCount(List<String> keys);
+    Map<String,Integer> slidingWindowCount(String keyPrefix);
 }
