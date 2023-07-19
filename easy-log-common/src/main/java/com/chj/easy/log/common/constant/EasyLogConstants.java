@@ -10,6 +10,7 @@ public interface EasyLogConstants {
     String EASY_LOG_VERSION = "1.0.1";
 
     String COLLECTOR_SCAN_BASE_PACKAGES = "com.chj.easy.log.collector";
+
     String COMPUTE_SCAN_BASE_PACKAGES = "com.chj.easy.log.compute";
 
     String ADMIN_SCAN_BASE_PACKAGES = "com.chj.easy.log.admin";
@@ -25,6 +26,7 @@ public interface EasyLogConstants {
     String GROUP_COMPUTE_CONSUMER_NAME = "easy-log-compute-group-consumer";
 
     String GROUP_COLLECTOR_NAME = "easy-log-collector-group";
+
     String GROUP_COLLECTOR_CONSUMER_NAME = "easy-log-collector-group-consumer";
 
     String INDEX_MAPPING_PATH = "index_mapping/{}.json";
@@ -42,5 +44,6 @@ public interface EasyLogConstants {
     String REAL_TIME_FILTER_RULES = "REAL_TIME_FILTER_RULES:";
 
     String AFTER_FILTER_TOPIC = "easy-log/after-filter";
-    String INPUT_SPEED_TOPIC = "easy-log/input-speed";
+
+    String INPUT_SPEED_TOPIC = "easy-log/stats-log-input-speed";
 }

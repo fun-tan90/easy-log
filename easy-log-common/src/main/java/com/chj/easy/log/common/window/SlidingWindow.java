@@ -1,8 +1,7 @@
 package com.chj.easy.log.common.window;
 
 import cn.hutool.core.date.SystemClock;
-import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -13,19 +12,24 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author 陈浩杰
  * @date 2023/7/18 22:05
  */
+@Getter
 public class SlidingWindow {
+
     /**
      * 循环队列，就是装多个窗口用，该数量是windowSize的2倍
      */
     private AtomicInteger[] timeSlices;
+
     /**
      * 队列的总长度
      */
     private final int timeSliceSize;
+
     /**
      * 每个时间片的时长，以毫秒为单位
      */
     private final int timeMillisPerSlice;
+
     /**
      * 共有多少个时间片（即窗口长度）
      */
@@ -35,6 +39,7 @@ public class SlidingWindow {
      * 该滑窗的起始创建时间，也就是第一个数据
      */
     private long beginTimestamp;
+
     /**
      * 最后一个数据的时间戳
      */
@@ -76,7 +81,7 @@ public class SlidingWindow {
     /**
      * 增加count个数量
      */
-    public SwRes addCount(int count) {
+    public int addCount(int count) {
         //当前自己所在的位置，是哪个小时间窗
         int index = locationIndex();
         //然后清空自己前面windowSize到2*windowSize之间的数据格的数据
@@ -90,11 +95,28 @@ public class SlidingWindow {
         for (int i = 1; i < windowSize; i++) {
             sum += timeSlices[(index - i + timeSliceSize) % timeSliceSize].get();
         }
-        System.out.println(sum + "---" + index);
 
         lastAddTimestamp = SystemClock.now();
 
-        return SwRes.builder().index(index).sum(sum).build();
+        return sum;
+    }
+
+    public int getWindowSum() {
+        //当前自己所在的位置，是哪个小时间窗
+        int index = locationIndex();
+        //然后清空自己前面windowSize到2*windowSize之间的数据格的数据
+        //譬如1秒分4个窗口，那么数组共计8个窗口
+        //当前index为5时，就清空6、7、8、1。然后把2、3、4、5的加起来就是该窗口内的总和
+        clearFromIndex(index);
+        int sum = 0;
+        // 在当前时间片里继续+1
+        sum += timeSlices[index].get();
+        //加上前面几个时间片
+        for (int i = 1; i < windowSize; i++) {
+            sum += timeSlices[(index - i + timeSliceSize) % timeSliceSize].get();
+        }
+        lastAddTimestamp = SystemClock.now();
+        return sum;
     }
 
     private void clearFromIndex(int index) {
@@ -105,12 +127,5 @@ public class SlidingWindow {
             }
             timeSlices[j].set(0);
         }
-    }
-
-    @Data
-    @Builder
-    public static class SwRes {
-        private int index;
-        private int sum;
     }
 }

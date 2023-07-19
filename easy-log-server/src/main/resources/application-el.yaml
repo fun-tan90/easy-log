@@ -15,6 +15,7 @@ easy-log:
     enable: true
     banner: true
     consumer-global-order: 1
+    stats-log-speed-cron: 0/2 * * * * ?
   collector:
     enable: true
     banner: true

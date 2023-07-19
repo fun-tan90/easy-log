@@ -1,5 +1,7 @@
 package com.chj.easy.log.compute.stream;
 
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.common.EasyLogManager;
@@ -19,6 +21,7 @@ import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -32,7 +35,7 @@ import java.util.concurrent.CompletableFuture;
 @Component
 public class RedisStreamComputeMessageListener implements StreamListener<String, MapRecord<String, String, String>> {
 
-    public static final SlidingWindow SLIDING_WINDOW = new SlidingWindow(1000, 5);
+    public static final Map<String, SlidingWindow> SLIDING_WINDOW_MAP = new ConcurrentHashMap<>(16);
 
     @Resource
     StringRedisTemplate stringRedisTemplate;
@@ -45,7 +48,7 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
         if (entries != null) {
             String recordId = entries.getId().getValue();
             Map<String, String> logMap = entries.getValue();
-            CompletableFuture<Void> cfAll = CompletableFuture.allOf(logCollectSpeed(), logAlarm(logMap), logRealTimeFilter(logMap));
+            CompletableFuture<Void> cfAll = CompletableFuture.allOf(logInputSpeed(logMap), logAlarm(logMap), logRealTimeFilter(logMap));
             cfAll.thenAccept(r -> {
                 stringRedisTemplate.opsForStream().acknowledge(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_COMPUTE_NAME, recordId);
             }).exceptionally(e -> {
@@ -59,13 +62,9 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
     /**
      * 日志收集速率
      */
-    private CompletableFuture<Void> logCollectSpeed() {
-        return CompletableFuture.runAsync(() -> {
-            SlidingWindow.SwRes swRes = SLIDING_WINDOW.addCount(1);
-            if (swRes.getIndex() % 5 == 0) {
-                mqttServerTemplate.publishAll(EasyLogConstants.INPUT_SPEED_TOPIC, String.valueOf(swRes.getSum()).getBytes(StandardCharsets.UTF_8), MqttQoS.AT_MOST_ONCE);
-            }
-        }, EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);
+    private CompletableFuture<Void> logInputSpeed(Map<String, String> logMap) {
+        String level = logMap.get("level");
+        return CompletableFuture.runAsync(() -> EasyLogManager.logInputSpeed(level, 1), EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);
     }
 
     /**
@@ -75,8 +74,19 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
      */
     private CompletableFuture<Void> logAlarm(Map<String, String> logMap) {
         return CompletableFuture.runAsync(() -> {
-            long sum = SLIDING_WINDOW.addCount(1).getSum();
-            log.info("{}超过阈值", sum > 10 ? "已" : "未");
+            String level = logMap.get("level");
+            if ("error".equalsIgnoreCase(level)) {
+                String appName = logMap.get("appName");
+                SlidingWindow slidingWindow = SLIDING_WINDOW_MAP.getOrDefault(appName, new SlidingWindow(1000, 5));
+                SLIDING_WINDOW_MAP.put(appName, slidingWindow);
+                int sum = slidingWindow.addCount(1);
+                long beginTimestamp = slidingWindow.getBeginTimestamp();
+                long lastAddTimestamp = slidingWindow.getLastAddTimestamp();
+                log.info("【{}-{}】,{}超过阈值",
+                        DateUtil.format(new Date(beginTimestamp), DatePattern.NORM_DATETIME_FORMAT),
+                        DateUtil.format(new Date(lastAddTimestamp), DatePattern.NORM_DATETIME_FORMAT),
+                        sum > 1 ? "已" : "未");
+            }
         }, EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);
     }
 
