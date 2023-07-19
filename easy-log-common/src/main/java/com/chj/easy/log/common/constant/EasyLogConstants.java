@@ -46,4 +46,8 @@ public interface EasyLogConstants {
     String AFTER_FILTER_TOPIC = "easy-log/after-filter";
 
     String INPUT_SPEED_TOPIC = "easy-log/stats-log-input-speed";
+
+    String SLIDING_WINDOW_PATH = "lua/slidingWindow.lua";
+
+    String SLIDING_WINDOW_COUNT_PATH = "lua/slidingWindowCount.lua";
 }

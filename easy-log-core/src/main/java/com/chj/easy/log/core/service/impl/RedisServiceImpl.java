@@ -1,17 +1,24 @@
 package com.chj.easy.log.core.service.impl;
 
-import com.chj.easy.log.core.service.RedisStreamService;
+import cn.hutool.core.lang.Singleton;
+import com.chj.easy.log.common.constant.EasyLogConstants;
+import com.chj.easy.log.core.service.RedisService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.connection.stream.*;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.stream.StreamListener;
 import org.springframework.data.redis.stream.StreamMessageListenerContainer;
+import org.springframework.scripting.support.ResourceScriptSource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * description TODO
@@ -22,7 +29,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class RedisStreamServiceImpl implements RedisStreamService {
+public class RedisServiceImpl implements RedisService {
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
@@ -54,5 +61,22 @@ public class RedisStreamServiceImpl implements RedisStreamService {
                             streamListener
                     );
         }
+    }
+
+    @Override
+    public int slidingWindow(String key, int period) {
+        DefaultRedisScript<String> actual = Singleton.get(EasyLogConstants.SLIDING_WINDOW_PATH, () -> {
+            DefaultRedisScript<String> redisScript = new DefaultRedisScript<>();
+            redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource(EasyLogConstants.SLIDING_WINDOW_PATH)));
+            redisScript.setResultType(String.class);
+            return redisScript;
+        });
+        String execute = stringRedisTemplate.execute(actual, Collections.singletonList(key), String.valueOf(period), String.valueOf(System.currentTimeMillis()));
+        return Integer.parseInt(StringUtils.hasLength(execute) ? execute : "0");
+    }
+
+    @Override
+    public Map<String, Integer> slidingWindowCount(List<String> keys) {
+        return null;
     }
 }

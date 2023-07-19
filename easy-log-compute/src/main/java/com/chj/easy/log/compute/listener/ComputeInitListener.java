@@ -5,7 +5,7 @@ import com.chj.easy.log.compute.property.EasyLogComputeProperties;
 import com.chj.easy.log.compute.stream.RedisStreamComputeMessageListener;
 import com.chj.easy.log.core.model.LogDoc;
 import com.chj.easy.log.core.service.EsService;
-import com.chj.easy.log.core.service.RedisStreamService;
+import com.chj.easy.log.core.service.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
@@ -35,7 +35,7 @@ public class ComputeInitListener implements ApplicationListener<ApplicationReady
     private RedisStreamComputeMessageListener redisStreamComputeMessageListener;
 
     @Resource
-    private RedisStreamService redisStreamService;
+    private RedisService redisService;
 
     @Resource
     private EasyLogComputeProperties easyLogComputeProperties;
@@ -49,7 +49,7 @@ public class ComputeInitListener implements ApplicationListener<ApplicationReady
             String groupName = EasyLogConstants.GROUP_COMPUTE_NAME;
             String consumerNamePrefix = EasyLogConstants.GROUP_COMPUTE_CONSUMER_NAME + "-";
             int[] consumerGlobalOrders = {easyLogComputeProperties.getConsumerGlobalOrder()};
-            redisStreamService.initStream(streamKey, groupName, consumerNamePrefix, consumerGlobalOrders, redisStreamComputeMessageListener);
+            redisService.initStream(streamKey, groupName, consumerNamePrefix, consumerGlobalOrders, redisStreamComputeMessageListener);
         }
     }
 }
