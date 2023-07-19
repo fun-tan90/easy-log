@@ -31,6 +31,7 @@ public class MqttConnectStatusListener implements IMqttConnectStatusListener {
     @Override
     public void offline(ChannelContext context, String clientId, String username, String reason) {
         stringRedisTemplate.opsForSet().remove(EasyLogConstants.MQTT_ONLINE_CLIENTS, clientId);
-        stringRedisTemplate.delete(EasyLogConstants.REAL_TIME_FILTER_RULES + clientId);
+        //TODO
+        //stringRedisTemplate.delete(EasyLogConstants.REAL_TIME_FILTER_RULES + clientId);
     }
 }

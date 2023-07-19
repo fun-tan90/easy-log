@@ -21,5 +21,5 @@ public class EasyLogComputeProperties {
 
     private boolean banner = true;
 
-    private int[] consumerGlobalOrders;
+    private int consumerGlobalOrder;
 }

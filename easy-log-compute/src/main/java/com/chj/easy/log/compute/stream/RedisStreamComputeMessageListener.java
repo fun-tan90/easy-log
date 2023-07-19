@@ -32,7 +32,7 @@ import java.util.concurrent.CompletableFuture;
 @Component
 public class RedisStreamComputeMessageListener implements StreamListener<String, MapRecord<String, String, String>> {
 
-    public static final SlidingWindow SLIDING_WINDOW = new SlidingWindow(1000, 5, 8);
+    public static final SlidingWindow SLIDING_WINDOW = new SlidingWindow(1000, 5);
 
     @Resource
     StringRedisTemplate stringRedisTemplate;
@@ -45,7 +45,7 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
         if (entries != null) {
             String recordId = entries.getId().getValue();
             Map<String, String> logMap = entries.getValue();
-            CompletableFuture<Void> cfAll = CompletableFuture.allOf(logAlarm(logMap), logRealTimeFilter(logMap));
+            CompletableFuture<Void> cfAll = CompletableFuture.allOf(logCollectSpeed(), logAlarm(logMap), logRealTimeFilter(logMap));
             cfAll.thenAccept(r -> {
                 stringRedisTemplate.opsForStream().acknowledge(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_COMPUTE_NAME, recordId);
             }).exceptionally(e -> {
@@ -57,14 +57,26 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
     }
 
     /**
+     * 日志收集速率
+     */
+    private CompletableFuture<Void> logCollectSpeed() {
+        return CompletableFuture.runAsync(() -> {
+            SlidingWindow.SwRes swRes = SLIDING_WINDOW.addCount(1);
+            if (swRes.getIndex() % 5 == 0) {
+                mqttServerTemplate.publishAll(EasyLogConstants.INPUT_SPEED_TOPIC, String.valueOf(swRes.getSum()).getBytes(StandardCharsets.UTF_8), MqttQoS.AT_MOST_ONCE);
+            }
+        }, EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);
+    }
+
+    /**
      * 日志告警
      *
      * @param logMap
      */
     private CompletableFuture<Void> logAlarm(Map<String, String> logMap) {
         return CompletableFuture.runAsync(() -> {
-            boolean res = SLIDING_WINDOW.addCount(1);
-            log.info("{}超过阈值", res ? "已" : "未");
+            long sum = SLIDING_WINDOW.addCount(1).getSum();
+            log.info("{}超过阈值", sum > 10 ? "已" : "未");
         }, EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);
     }
 

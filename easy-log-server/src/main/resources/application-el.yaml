@@ -6,15 +6,18 @@ easy-log:
     pull-batch-size: 100
   admin:
     enable: true
+    banner: true
     init-index-cron: 0 0 23 * * ?
     username: admin
     password: 123456
     validate-captcha: false
   compute:
     enable: true
-    consumer-global-orders: 1
+    banner: true
+    consumer-global-order: 1
   collector:
     enable: true
+    banner: true
     insert-batch-size: 100
     consumer-global-orders: 1,2,3,4
     queue-capacity: 1024

@@ -1,6 +1,8 @@
 package com.chj.easy.log.common.window;
 
 import cn.hutool.core.date.SystemClock;
+import lombok.Builder;
+import lombok.Data;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -28,10 +30,7 @@ public class SlidingWindow {
      * 共有多少个时间片（即窗口长度）
      */
     private final int windowSize;
-    /**
-     * 在一个完整窗口期内允许通过的最大阈值
-     */
-    private final int threshold;
+
     /**
      * 该滑窗的起始创建时间，也就是第一个数据
      */
@@ -41,26 +40,9 @@ public class SlidingWindow {
      */
     private long lastAddTimestamp;
 
-    public static void main(String[] args) {
-        //1秒一个时间片，窗口共5个
-        SlidingWindow window = new SlidingWindow(1000, 5, 8);
-        for (int i = 0; i < 100; i++) {
-            System.out.println(window.addCount(2));
-
-            window.print();
-            System.out.println("--------------------------");
-            try {
-                Thread.sleep(102);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public SlidingWindow(int timeMillisPerSlice, int windowSize, int threshold) {
+    public SlidingWindow(int timeMillisPerSlice, int windowSize) {
         this.timeMillisPerSlice = timeMillisPerSlice;
         this.windowSize = windowSize;
-        this.threshold = threshold;
         // 保证存储在至少两个window
         this.timeSliceSize = windowSize * 2;
         reset();
@@ -79,37 +61,28 @@ public class SlidingWindow {
         timeSlices = localTimeSlices;
     }
 
-    private void print() {
-        for (AtomicInteger integer : timeSlices) {
-            System.out.print(integer + "-");
-        }
-    }
-
     /**
      * 计算当前所在的时间片的位置
      */
     private int locationIndex() {
         long now = SystemClock.now();
         //如果当前的key已经超出一整个时间片了，那么就直接初始化就行了，不用去计算了
-        if (now - lastAddTimestamp > timeMillisPerSlice * windowSize) {
+        if (now - lastAddTimestamp > (long) timeMillisPerSlice * windowSize) {
             reset();
         }
-
         return (int) (((now - beginTimestamp) / timeMillisPerSlice) % timeSliceSize);
     }
 
     /**
      * 增加count个数量
      */
-    public boolean addCount(int count) {
+    public SwRes addCount(int count) {
         //当前自己所在的位置，是哪个小时间窗
         int index = locationIndex();
-//        System.out.println("index:" + index);
         //然后清空自己前面windowSize到2*windowSize之间的数据格的数据
         //譬如1秒分4个窗口，那么数组共计8个窗口
         //当前index为5时，就清空6、7、8、1。然后把2、3、4、5的加起来就是该窗口内的总和
         clearFromIndex(index);
-
         int sum = 0;
         // 在当前时间片里继续+1
         sum += timeSlices[index].addAndGet(count);
@@ -117,11 +90,11 @@ public class SlidingWindow {
         for (int i = 1; i < windowSize; i++) {
             sum += timeSlices[(index - i + timeSliceSize) % timeSliceSize].get();
         }
-        System.out.println(sum + "---" + threshold);
+        System.out.println(sum + "---" + index);
 
         lastAddTimestamp = SystemClock.now();
 
-        return sum >= threshold;
+        return SwRes.builder().index(index).sum(sum).build();
     }
 
     private void clearFromIndex(int index) {
@@ -132,5 +105,12 @@ public class SlidingWindow {
             }
             timeSlices[j].set(0);
         }
+    }
+
+    @Data
+    @Builder
+    public static class SwRes {
+        private int index;
+        private int sum;
     }
 }

@@ -48,7 +48,7 @@ public class ComputeInitListener implements ApplicationListener<ApplicationReady
             String streamKey = EasyLogConstants.STREAM_KEY;
             String groupName = EasyLogConstants.GROUP_COMPUTE_NAME;
             String consumerNamePrefix = EasyLogConstants.GROUP_COMPUTE_CONSUMER_NAME + "-";
-            int[] consumerGlobalOrders = easyLogComputeProperties.getConsumerGlobalOrders();
+            int[] consumerGlobalOrders = {easyLogComputeProperties.getConsumerGlobalOrder()};
             redisStreamService.initStream(streamKey, groupName, consumerNamePrefix, consumerGlobalOrders, redisStreamComputeMessageListener);
         }
     }

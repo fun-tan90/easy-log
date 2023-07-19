@@ -3,4 +3,5 @@ logging:
     root: info
 #    tracer: trace
     easy-log-admin: debug
+    easy-log-compute: debug
     easy-log-collector: debug

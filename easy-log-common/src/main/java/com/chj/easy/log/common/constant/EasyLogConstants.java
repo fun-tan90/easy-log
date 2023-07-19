@@ -42,4 +42,5 @@ public interface EasyLogConstants {
     String REAL_TIME_FILTER_RULES = "REAL_TIME_FILTER_RULES:";
 
     String AFTER_FILTER_TOPIC = "easy-log/after-filter";
+    String INPUT_SPEED_TOPIC = "easy-log/input-speed";
 }
