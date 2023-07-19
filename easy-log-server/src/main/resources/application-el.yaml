@@ -10,7 +10,9 @@ easy-log:
     username: admin
     password: 123456
     validate-captcha: false
-    consumer-global-orders: 1,2,3,4
+  compute:
+    enable: true
+    consumer-global-orders: 1
   collector:
     enable: true
     insert-batch-size: 100

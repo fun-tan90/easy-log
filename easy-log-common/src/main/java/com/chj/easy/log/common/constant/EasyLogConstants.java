@@ -10,6 +10,7 @@ public interface EasyLogConstants {
     String EASY_LOG_VERSION = "1.0.1";
 
     String COLLECTOR_SCAN_BASE_PACKAGES = "com.chj.easy.log.collector";
+    String COMPUTE_SCAN_BASE_PACKAGES = "com.chj.easy.log.compute";
 
     String ADMIN_SCAN_BASE_PACKAGES = "com.chj.easy.log.admin";
 
@@ -19,9 +20,9 @@ public interface EasyLogConstants {
 
     String STREAM_KEY = "easy-log";
 
-    String GROUP_ADMIN_NAME = "easy-log-admin-group";
+    String GROUP_COMPUTE_NAME = "easy-log-compute-group";
 
-    String GROUP_ADMIN_CONSUMER_NAME = "easy-log-admin-group-consumer";
+    String GROUP_COMPUTE_CONSUMER_NAME = "easy-log-compute-group-consumer";
 
     String GROUP_COLLECTOR_NAME = "easy-log-collector-group";
     String GROUP_COLLECTOR_CONSUMER_NAME = "easy-log-collector-group-consumer";
@@ -29,6 +30,8 @@ public interface EasyLogConstants {
     String INDEX_MAPPING_PATH = "index_mapping/{}.json";
 
     String LOG_TOPIC_COLLECTOR = "easy-log-collector";
+
+    String LOG_TOPIC_COMPUTE = "easy-log-compute";
 
     String LOG_TOPIC_ADMIN = "easy-log-admin";
 

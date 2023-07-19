@@ -1,4 +1,4 @@
-package com.chj.easy.log.admin.stream;
+package com.chj.easy.log.compute.stream;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -30,7 +30,7 @@ import java.util.concurrent.CompletableFuture;
  */
 @Slf4j(topic = EasyLogConstants.LOG_TOPIC_ADMIN)
 @Component
-public class RedisStreamAdminMessageListener implements StreamListener<String, MapRecord<String, String, String>> {
+public class RedisStreamComputeMessageListener implements StreamListener<String, MapRecord<String, String, String>> {
 
     public static final SlidingWindow SLIDING_WINDOW = new SlidingWindow(1000, 5, 8);
 
@@ -47,10 +47,10 @@ public class RedisStreamAdminMessageListener implements StreamListener<String, M
             Map<String, String> logMap = entries.getValue();
             CompletableFuture<Void> cfAll = CompletableFuture.allOf(logAlarm(logMap), logRealTimeFilter(logMap));
             cfAll.thenAccept(r -> {
-                stringRedisTemplate.opsForStream().acknowledge(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_ADMIN_NAME, recordId);
+                stringRedisTemplate.opsForStream().acknowledge(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_COMPUTE_NAME, recordId);
             }).exceptionally(e -> {
                 e.printStackTrace();
-                stringRedisTemplate.opsForStream().acknowledge(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_ADMIN_NAME, recordId);
+                stringRedisTemplate.opsForStream().acknowledge(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_COMPUTE_NAME, recordId);
                 return null;
             });
         }
@@ -119,6 +119,7 @@ public class RedisStreamAdminMessageListener implements StreamListener<String, M
                 for (String clientId : clientIds) {
                     mqttServerTemplate.publish(clientId, EasyLogConstants.AFTER_FILTER_TOPIC, logBytes, MqttQoS.AT_MOST_ONCE);
                 }
+                log.info("日志过滤已完成，待发送客户端个数{}", clientIds.size());
             }
         }, EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);
     }

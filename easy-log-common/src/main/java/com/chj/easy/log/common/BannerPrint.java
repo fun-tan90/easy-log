@@ -48,6 +48,31 @@ public class BannerPrint {
     /**
      * Print banner.
      */
+    public static void printComputeBanner() {
+        String banner = "\n" +
+                "                              _                             _           _       \n" +
+                "                             | |                           | |         (_)      \n" +
+                "   ___  __ _ ___ _   _ ______| | ___   __ _ ______ __ _  __| |_ __ ___  _ _ __  \n" +
+                "  / _ \\/ _` / __| | | |______| |/ _ \\ / _` |______/ _` |/ _` | '_ ` _ \\| | '_ \\ \n" +
+                " |  __/ (_| \\__ \\ |_| |      | | (_) | (_| |     | (_| | (_| | | | | | | | | | |\n" +
+                "  \\___|\\__,_|___/\\__, |      |_|\\___/ \\__, |      \\__,_|\\__,_|_| |_| |_|_|_| |_|\n" +
+                "                  __/ |                __/ |                                    \n" +
+                "                 |___/                |___/                                     \n";
+
+        String version = getVersion();
+        version = (version != null) ? " jdk (v" + version + ")" : "no version.";
+
+        StringBuilder padding = new StringBuilder();
+        while (padding.length() < STRAP_LINE_SIZE - (version.length() + PROJECT_NAME.length())) {
+            padding.append(" ");
+        }
+        System.out.println(AnsiOutput.toString(banner, AnsiColor.GREEN, PROJECT_NAME, AnsiColor.DEFAULT,
+                padding.toString(), AnsiStyle.FAINT, version, "\n", GITEE));
+    }
+
+    /**
+     * Print banner.
+     */
     public static void printAdminBanner() {
         String banner = "\n" +
                 "                              _                             _           _       \n" +

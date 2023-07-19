@@ -18,6 +18,10 @@
         </dependency>
         <dependency>
             <groupId>com.chj</groupId>
+            <artifactId>easy-log-compute</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.chj</groupId>
             <artifactId>easy-log-admin</artifactId>
         </dependency>
 

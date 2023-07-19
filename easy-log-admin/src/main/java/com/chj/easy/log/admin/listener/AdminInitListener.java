@@ -1,11 +1,7 @@
 package com.chj.easy.log.admin.listener;
 
-import com.chj.easy.log.admin.property.EasyLogAdminProperties;
-import com.chj.easy.log.admin.stream.RedisStreamAdminMessageListener;
-import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.model.LogDoc;
 import com.chj.easy.log.core.service.EsService;
-import com.chj.easy.log.core.service.RedisStreamService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
@@ -31,25 +27,10 @@ public class AdminInitListener implements ApplicationListener<ApplicationReadyEv
     @Resource
     private EsService esService;
 
-    @Resource
-    private RedisStreamAdminMessageListener redisStreamAdminMessageListener;
-
-    @Resource
-    private RedisStreamService redisStreamService;
-
-    @Resource
-    private EasyLogAdminProperties easyLogAdminProperties;
-
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         if (initialized.compareAndSet(false, true)) {
             esService.createIndexIfNotExists(LogDoc.indexName());
-
-            String streamKey = EasyLogConstants.STREAM_KEY;
-            String groupName = EasyLogConstants.GROUP_ADMIN_NAME;
-            String consumerNamePrefix = EasyLogConstants.GROUP_ADMIN_CONSUMER_NAME + "-";
-            int[] consumerGlobalOrders = easyLogAdminProperties.getConsumerGlobalOrders();
-            redisStreamService.initStream(streamKey, groupName, consumerNamePrefix, consumerGlobalOrders, redisStreamAdminMessageListener);
         }
     }
 }

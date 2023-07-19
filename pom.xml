@@ -17,6 +17,7 @@
         <module>easy-log-admin</module>
         <module>easy-log-server</module>
         <module>easy-log-example</module>
+        <module>easy-log-compute</module>
     </modules>
 
     <properties>
@@ -75,6 +76,11 @@
             <dependency>
                 <groupId>com.chj</groupId>
                 <artifactId>easy-log-collector</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.chj</groupId>
+                <artifactId>easy-log-compute</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

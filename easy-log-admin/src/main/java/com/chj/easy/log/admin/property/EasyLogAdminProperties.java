@@ -28,6 +28,4 @@ public class EasyLogAdminProperties {
     private String username = "admin";
 
     private String password = "123456";
-
-    private int[] consumerGlobalOrders;
 }
