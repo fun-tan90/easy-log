@@ -23,5 +23,5 @@ public class EasyLogComputeProperties {
 
     private int consumerGlobalOrder;
 
-    private String statsLogSpeedCron = "0/5 * * * * ?";
+    private String statsLogSpeedCron = "0/2 * * * * ?";
 }

@@ -22,12 +22,12 @@ import java.util.Map;
  */
 @Slf4j
 @Component
-public class StatsLogInputSpeedJob {
+public class EasyLogComputeJob {
 
     @Resource
     MqttServerTemplate mqttServerTemplate;
 
-    @Scheduled(cron = "${easy-log.compute.stats-log-speed-cron}")
+    @Scheduled(cron = "${easy-log.compute.stats-log-speed-cron:0/2 * * * * ?}")
     public void statsLogInputSpeed() {
         Map<String, Integer> statsLogInputSpeed = EasyLogManager.statsLogInputSpeed();
         mqttServerTemplate.publishAll(EasyLogConstants.INPUT_SPEED_TOPIC, JSONUtil.toJsonStr(statsLogInputSpeed).getBytes(StandardCharsets.UTF_8), MqttQoS.AT_MOST_ONCE);

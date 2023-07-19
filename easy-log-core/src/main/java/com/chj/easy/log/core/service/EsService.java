@@ -3,6 +3,7 @@ package com.chj.easy.log.core.service;
 import com.chj.easy.log.core.convention.page.es.EsPageInfo;
 import com.chj.easy.log.core.model.Doc;
 import com.chj.easy.log.core.model.vo.BarChartVo;
+import com.chj.easy.log.core.model.vo.IndexManagementVo;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import java.util.List;
@@ -132,4 +133,11 @@ public interface EsService {
      * @return 执行结果
      */
     String executeSearchDsl(String indexName, String dsl);
+
+    /**
+     * 索引管理
+     *
+     * @param indexNamePattern
+     */
+    List<IndexManagementVo> indexManagement(String indexNamePattern);
 }

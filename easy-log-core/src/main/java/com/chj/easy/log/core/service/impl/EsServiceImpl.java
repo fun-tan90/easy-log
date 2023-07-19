@@ -11,6 +11,7 @@ import com.chj.easy.log.core.convention.page.es.EsPageInfo;
 import com.chj.easy.log.core.model.Doc;
 import com.chj.easy.log.core.model.LogDoc;
 import com.chj.easy.log.core.model.vo.BarChartVo;
+import com.chj.easy.log.core.model.vo.IndexManagementVo;
 import com.chj.easy.log.core.service.EsService;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -39,10 +40,13 @@ import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -312,7 +316,39 @@ public class EsServiceImpl implements EsService {
             Response response = restHighLevelClient.getLowLevelClient().performRequest(request);
             return IoUtil.readUtf8(response.getEntity().getContent());
         } catch (IOException e) {
-            throw new RuntimeException(StrUtil.format("executeDsl failed, {}", e));
+            throw new RuntimeException(StrUtil.format("executeSearchDsl failed, {}", e));
+        }
+    }
+
+    @Override
+    public List<IndexManagementVo> indexManagement(String indexNamePattern) {
+        Request request = new Request("GET", "/_cat/indices/" + indexNamePattern);
+        try {
+            Response response = restHighLevelClient.getLowLevelClient().performRequest(request);
+            InputStream inputStream = response.getEntity().getContent();
+            List<String> lines = new ArrayList<>();
+            IoUtil.readLines(inputStream, Charset.defaultCharset(), lines);
+            if (!CollectionUtils.isEmpty(lines)) {
+                return lines.stream().map(n -> {
+                    String[] items = n.split(" ");
+                    List<String> properties = Arrays.stream(items).filter(StringUtils::hasLength).collect(Collectors.toList());
+                    return IndexManagementVo.builder()
+                            .health(properties.get(0))
+                            .status(properties.get(1))
+                            .index(properties.get(2))
+                            .uuid(properties.get(3))
+                            .pri(properties.get(4))
+                            .rep(properties.get(5))
+                            .docsCount(properties.get(6))
+                            .docsDeleted(properties.get(7))
+                            .storeSize(properties.get(8))
+                            .priStoreSize(properties.get(9))
+                            .build();
+                }).collect(Collectors.toList());
+            }
+            return new ArrayList<>();
+        } catch (IOException e) {
+            throw new RuntimeException(StrUtil.format("indexManagement failed, {}", e));
         }
     }
 }

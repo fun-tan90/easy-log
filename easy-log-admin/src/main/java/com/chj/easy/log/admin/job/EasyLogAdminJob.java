@@ -17,12 +17,12 @@ import javax.annotation.Resource;
  */
 @Slf4j
 @Component
-public class EsIndexInitJob {
+public class EasyLogAdminJob {
 
     @Resource
     private EsService esService;
 
-    @Scheduled(cron = "${easy-log.admin.init-index-cron}")
+    @Scheduled(cron = "${easy-log.admin.init-index-cron:0 0 23 * * ?}")
     public void createLogDocIndexTask() {
         String newIndexName = LogDoc.newIndexName();
         esService.createIndexIfNotExists(newIndexName);
