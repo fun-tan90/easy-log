@@ -53,8 +53,8 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
         initRemotePushClient();
         this.queue = new LinkedBlockingQueue<>(queueSize);
 
-        this.scheduledFuture = EasyLogManager.EASY_LOG_SCHEDULED_EXECUTOR
-                .scheduleWithFixedDelay(() -> push(queue), 1, 50, TimeUnit.MILLISECONDS);
+//        this.scheduledFuture = EasyLogManager.EASY_LOG_SCHEDULED_EXECUTOR
+//                .scheduleWithFixedDelay(() -> push(queue), 1, 0, TimeUnit.MILLISECONDS);
         super.start();
     }
 
@@ -63,6 +63,7 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
     protected abstract void closeRemotePushClient();
 
     protected abstract void push(BlockingQueue<LogTransferred> queue);
+    protected abstract void push(LogTransferred logTransferred);
 
     @Override
     public void stop() {
@@ -82,14 +83,15 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
             return;
         }
         LogTransferred logTransferred = transferLog(logEvent);
-        try {
-            boolean offered = this.queue.offer(logTransferred, eventDelayLimit.getMilliseconds(), TimeUnit.MILLISECONDS);
-            if (!offered) {
-                addWarn("Dropping event due to timeout limit of [" + eventDelayLimit + "] being exceeded");
-            }
-        } catch (InterruptedException e) {
-            addError("Interrupted while appending event to AbstractRemotePushAppender", e);
-        }
+        push(logTransferred);
+//        try {
+//            boolean offered = this.queue.offer(logTransferred, eventDelayLimit.getMilliseconds(), TimeUnit.MILLISECONDS);
+//            if (!offered) {
+//                addWarn("Dropping event due to timeout limit of [" + eventDelayLimit + "] being exceeded");
+//            }
+//        } catch (InterruptedException e) {
+//            addError("Interrupted while appending event to AbstractRemotePushAppender", e);
+//        }
     }
 
     /**

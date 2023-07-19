@@ -77,4 +77,11 @@ public class RedisStreamRemotePushAppender extends AbstractRemotePushAppender {
             }
         }
     }
+
+    @Override
+    public void push(LogTransferred logTransferred) {
+        try (Jedis jedis = this.jedisPool.getResource()) {
+            jedis.xadd(EasyLogConstants.STREAM_KEY, StreamEntryID.NEW_ENTRY, logTransferred.toMap(), redisStreamMaxLen, false);
+        }
+    }
 }
