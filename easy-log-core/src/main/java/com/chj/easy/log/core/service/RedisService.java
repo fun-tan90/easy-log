@@ -1,9 +1,9 @@
 package com.chj.easy.log.core.service;
 
+import com.chj.easy.log.core.model.SlidingWindow;
 import org.springframework.data.redis.connection.stream.MapRecord;
 import org.springframework.data.redis.stream.StreamListener;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,7 +17,7 @@ public interface RedisService {
 
     void initStream(String streamKey, String groupName, String consumerNamePrefix, int[] consumerGlobalOrders, StreamListener<String, MapRecord<String, String, String>> streamListener);
 
-    int slidingWindow(String key, int period);
+    SlidingWindow slidingWindow(String key, long timestamp, int period);
 
-    Map<String,Integer> slidingWindowCount(String keyPrefix);
+    Map<String, Integer> slidingWindowCount(String keyPrefix);
 }

@@ -22,4 +22,4 @@ redis.call("zadd", key, tostring(currentMs), currentMs);
 redis.call("expire", key, expire);
 
 --返回key的次数
-return current .. ''
+return current .. '#' .. windowStartMs .. '#' .. currentMs

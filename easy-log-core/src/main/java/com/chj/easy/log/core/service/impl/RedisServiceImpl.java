@@ -2,6 +2,7 @@ package com.chj.easy.log.core.service.impl;
 
 import cn.hutool.core.lang.Singleton;
 import com.chj.easy.log.common.constant.EasyLogConstants;
+import com.chj.easy.log.core.model.SlidingWindow;
 import com.chj.easy.log.core.service.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
@@ -62,15 +63,23 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public int slidingWindow(String key, int period) {
+    public SlidingWindow slidingWindow(String key, long timestamp, int period) {
         DefaultRedisScript<String> actual = Singleton.get(EasyLogConstants.SLIDING_WINDOW_PATH, () -> {
             DefaultRedisScript<String> redisScript = new DefaultRedisScript<>();
             redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource(EasyLogConstants.SLIDING_WINDOW_PATH)));
             redisScript.setResultType(String.class);
             return redisScript;
         });
-        String execute = stringRedisTemplate.execute(actual, Collections.singletonList(key), String.valueOf(period), String.valueOf(System.currentTimeMillis()));
-        return Integer.parseInt(StringUtils.hasLength(execute) ? execute : "0");
+        String execute = stringRedisTemplate.execute(actual, Collections.singletonList(key), String.valueOf(period), String.valueOf(timestamp));
+        if (StringUtils.hasLength(execute)) {
+            String[] split = execute.split("#");
+            return SlidingWindow.builder()
+                    .windowCount(Integer.parseInt(split[0]))
+                    .windowStart(Long.parseLong(split[1]))
+                    .windowEnd(Long.parseLong(split[2]))
+                    .build();
+        }
+        return SlidingWindow.builder().build();
     }
 
     @Override

@@ -4,6 +4,7 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
+import com.chj.easy.log.core.model.SlidingWindow;
 import com.chj.easy.log.core.service.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import net.dreamlu.iot.mqtt.codec.MqttQoS;
@@ -28,7 +29,7 @@ import java.util.concurrent.CompletableFuture;
  * @author 陈浩杰
  * @date 2023/7/16 8:40
  */
-@Slf4j(topic = EasyLogConstants.LOG_TOPIC_ADMIN)
+@Slf4j(topic = EasyLogConstants.LOG_TOPIC_COMPUTE)
 @Component
 public class RedisStreamComputeMessageListener implements StreamListener<String, MapRecord<String, String, String>> {
 
@@ -55,7 +56,8 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
      */
     private CompletableFuture<Void> logInputSpeed(Map<String, String> logMap) {
         String level = logMap.get("level");
-        return CompletableFuture.runAsync(() -> redisService.slidingWindow("S_W:LOG_INPUT_SPEED:" + level, 5), EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);
+        String timeStamp = logMap.get("timeStamp");
+        return CompletableFuture.runAsync(() -> redisService.slidingWindow("S_W:LOG_INPUT_SPEED:" + level, Long.parseLong(timeStamp), 5), EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);
     }
 
     /**
@@ -66,9 +68,11 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
     private CompletableFuture<Void> logAlarm(Map<String, String> logMap) {
         return CompletableFuture.runAsync(() -> {
             String level = logMap.get("level");
-            if ("error".equalsIgnoreCase(level)) {
+            if ("info" .equalsIgnoreCase(level)) {
                 String appName = logMap.get("appName");
-                int slidingWindowCount = redisService.slidingWindow("S_W:LOG_ALARM:" + appName, 5);
+                String timeStamp = logMap.get("timeStamp");
+                SlidingWindow slidingWindow = redisService.slidingWindow("S_W:LOG_ALARM:" + appName, Long.parseLong(timeStamp), 5);
+                log.info("\n{}", JSONUtil.toJsonPrettyStr(slidingWindow));
             }
         }, EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);
     }
@@ -96,19 +100,19 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
                         String ruleWay = split[1];
                         String logVal = logMap.get(ruleKey);
                         String ruleVal = realTimeFilterRules.getStr(realTimeFilterRule);
-                        if ("eq".equals(ruleWay)) {
+                        if ("eq" .equals(ruleWay)) {
                             if (!logVal.equals(ruleVal)) {
                                 clientIdsIterator.remove();
                                 break;
                             }
-                        } else if ("should".equals(ruleWay)) {
+                        } else if ("should" .equals(ruleWay)) {
                             List<String> list = Arrays.asList(ruleVal.split("%"));
                             Optional<String> any = list.stream().filter(logVal::contains).findAny();
                             if (!any.isPresent()) {
                                 clientIdsIterator.remove();
                                 break;
                             }
-                        } else if ("gle".equals(ruleWay)) {
+                        } else if ("gle" .equals(ruleWay)) {
                             if (Long.parseLong(ruleVal) > Long.parseLong(logVal)) {
                                 clientIdsIterator.remove();
                                 break;

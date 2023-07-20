@@ -2,6 +2,7 @@ package com.chj.easy.log.admin.rest;
 
 
 import com.chj.easy.log.core.convention.Res;
+import com.chj.easy.log.core.model.SlidingWindow;
 import com.chj.easy.log.core.service.EsService;
 import com.chj.easy.log.core.service.RedisService;
 import lombok.extern.slf4j.Slf4j;
@@ -38,11 +39,11 @@ public class DemoController {
     }
 
     @GetMapping("sliding-window")
-    public int slidingWindow() {
-        redisService.slidingWindow("S_W:LOG_INPUT_SPEED:DEBUG", 15);
-        redisService.slidingWindow("S_W:LOG_INPUT_SPEED:DEBUG", 15);
-        redisService.slidingWindow("S_W:LOG_INPUT_SPEED:ERROR", 15);
-        return redisService.slidingWindow("S_W:LOG_INPUT_SPEED:INFO", 15);
+    public SlidingWindow slidingWindow() {
+        redisService.slidingWindow("S_W:LOG_INPUT_SPEED:DEBUG", System.currentTimeMillis(), 15);
+        redisService.slidingWindow("S_W:LOG_INPUT_SPEED:DEBUG", System.currentTimeMillis(), 15);
+        redisService.slidingWindow("S_W:LOG_INPUT_SPEED:ERROR", System.currentTimeMillis(), 15);
+        return redisService.slidingWindow("S_W:LOG_INPUT_SPEED:INFO", System.currentTimeMillis(), 15);
     }
 
     @GetMapping("sliding-window-count")
