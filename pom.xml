@@ -36,7 +36,7 @@
         <sa-token.version>1.35.0.RC</sa-token.version>
         <easy-captcha.version>1.6.2</easy-captcha.version>
         <mybatis-flex.version>1.4.3</mybatis-flex.version>
-        <tlog.version>1.5.0</tlog.version>
+        <tlog.version>1.5.1</tlog.version>
         <mica-mqtt.version>2.2.2</mica-mqtt.version>
     </properties>
 
