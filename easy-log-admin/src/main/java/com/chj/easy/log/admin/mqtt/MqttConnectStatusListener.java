@@ -1,4 +1,4 @@
-package com.chj.easy.log.compute.mqtt;
+package com.chj.easy.log.admin.mqtt;
 
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import lombok.extern.slf4j.Slf4j;

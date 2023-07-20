@@ -22,6 +22,4 @@ public class EasyLogComputeProperties {
     private boolean banner = true;
 
     private int consumerGlobalOrder;
-
-    private String statsLogSpeedCron = "0/2 * * * * ?";
 }

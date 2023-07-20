@@ -8,6 +8,7 @@ easy-log:
     enable: true
     banner: true
     init-index-cron: 0 0 23 * * ?
+    stats-log-speed-cron: 0/2 * * * * ?
     username: admin
     password: 123456
     validate-captcha: false
@@ -15,7 +16,6 @@ easy-log:
     enable: true
     banner: true
     consumer-global-order: 1
-    stats-log-speed-cron: 0/2 * * * * ?
   collector:
     enable: true
     banner: true

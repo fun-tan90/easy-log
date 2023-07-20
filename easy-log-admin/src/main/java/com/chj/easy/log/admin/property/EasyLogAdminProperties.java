@@ -25,6 +25,8 @@ public class EasyLogAdminProperties {
 
     private String initIndexCron = "0 0 23 * * ?";
 
+    private String statsLogSpeedCron = "0/2 * * * * ?";
+
     private String username = "admin";
 
     private String password = "123456";
