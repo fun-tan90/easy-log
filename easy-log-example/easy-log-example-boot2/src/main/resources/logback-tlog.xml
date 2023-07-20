@@ -53,7 +53,8 @@
         <enable>true</enable>
         <appName>easy-log-example-boot2</appName>
         <appEnv>prod</appEnv>
-        <queueSize>1024</queueSize>
+        <maxPushSize>100</maxPushSize>
+        <queueSize>10240</queueSize>
         <redisMode>single</redisMode>
         <redisAddress>114.217.55.239:6379</redisAddress>
         <redisDb>3</redisDb>

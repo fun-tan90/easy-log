@@ -41,7 +41,9 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
 
     private String appEnv = "default";
 
-    private int queueSize = 1024;
+    private int maxPushSize = 100;
+
+    private int queueSize = 10240;
 
     private Duration eventDelayLimit = new Duration(100);
 
@@ -52,9 +54,9 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
         }
         initRemotePushClient();
         this.queue = new LinkedBlockingQueue<>(queueSize);
-
-//        this.scheduledFuture = EasyLogManager.EASY_LOG_SCHEDULED_EXECUTOR
-//                .scheduleWithFixedDelay(() -> push(queue), 1, 0, TimeUnit.MILLISECONDS);
+        this.scheduledFuture = EasyLogManager.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
+            push(queue, maxPushSize);
+        }, 5, 50, TimeUnit.MILLISECONDS);
         super.start();
     }
 
@@ -62,17 +64,18 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
 
     protected abstract void closeRemotePushClient();
 
-    protected abstract void push(BlockingQueue<LogTransferred> queue);
-    protected abstract void push(LogTransferred logTransferred);
+    protected abstract void push(BlockingQueue<LogTransferred> queue, int maxPushSize);
 
     @Override
     public void stop() {
         if (!isStarted()) {
             return;
         }
-        closeRemotePushClient();
+        if (!scheduledFuture.isCancelled()) {
+            scheduledFuture.cancel(true);
+        }
 
-        this.scheduledFuture.cancel(true);
+        closeRemotePushClient();
 
         super.stop();
     }
@@ -83,15 +86,9 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
             return;
         }
         LogTransferred logTransferred = transferLog(logEvent);
-        push(logTransferred);
-//        try {
-//            boolean offered = this.queue.offer(logTransferred, eventDelayLimit.getMilliseconds(), TimeUnit.MILLISECONDS);
-//            if (!offered) {
-//                addWarn("Dropping event due to timeout limit of [" + eventDelayLimit + "] being exceeded");
-//            }
-//        } catch (InterruptedException e) {
-//            addError("Interrupted while appending event to AbstractRemotePushAppender", e);
-//        }
+        if (!this.queue.offer(logTransferred)) {
+            addError("Easy-Log BlockingQueue add failed");
+        }
     }
 
     /**

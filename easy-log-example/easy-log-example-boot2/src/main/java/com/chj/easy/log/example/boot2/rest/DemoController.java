@@ -1,6 +1,7 @@
 package com.chj.easy.log.example.boot2.rest;
 
 
+import com.chj.easy.log.common.EasyLogManager;
 import com.yomahub.tlog.core.annotation.TLogAspect;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,16 +22,14 @@ public class DemoController {
     @TLogAspect({"id"})
     public String index(String id) {
 //        MDC.put("name","陈浩杰");
-
-        log.error("error is {}", id);
-        log.warn("warn is {}", id);
-        log.info("warn is {}", id);
-        log.debug("debug is {}", id);
-
-        log.error("hello error");
-        log.warn("hello warn");
-        log.info("hello info");
-        log.debug("hello debug");
-        return "";
+        for (int i = 0; i < 12; i++) {
+            EasyLogManager.EASY_LOG_FIXED_THREAD_POOL.execute(() -> {
+                log.error("error is {} {}", id, Thread.currentThread().getName());
+                log.warn("warn is {} {}", id, Thread.currentThread().getName());
+                log.info("info is {} {}", id, Thread.currentThread().getName());
+                log.debug("debug is {} {}", id, Thread.currentThread().getName());
+            });
+        }
+        return id;
     }
 }
