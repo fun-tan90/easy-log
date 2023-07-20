@@ -6,7 +6,6 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.ThrowableProxy;
 import ch.qos.logback.core.AppenderBase;
 import cn.hutool.core.exceptions.ExceptionUtil;
-import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.model.LogTransferred;
 import com.chj.easy.log.core.appender.RedisFactory;
 import com.yomahub.tlog.context.TLogContext;
@@ -14,12 +13,12 @@ import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.helpers.MessageFormatter;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.exceptions.JedisException;
 
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 /**
  * description TODO
@@ -30,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Getter
 @Setter
-public class RedisAppender extends AppenderBase<ILoggingEvent> {
+public class EasyLogRedisAppender extends AppenderBase<ILoggingEvent> {
 
     private BlockingQueue<LogTransferred> queue;
 
@@ -71,11 +70,11 @@ public class RedisAppender extends AppenderBase<ILoggingEvent> {
             return;
         }
         this.jedisPool = RedisFactory.getJedisPool(redisMode, redisAddress, redisPass, redisDb, redisPoolMaxIdle, redisPoolMaxTotal, redisConnectionTimeout);
+        if (!RedisFactory.ping()) {
+            throw new JedisException("Could not get a resource from the jedis pool");
+        }
         this.queue = new ArrayBlockingQueue<>(queueSize);
-        // 仅启动单线推送消息，避免多线程下日志乱序问题
-        this.scheduledFuture = EasyLogManager.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
-            RedisFactory.push(queue, jedisPool, maxPushSize, redisStreamMaxLen);
-        }, 5, 100, TimeUnit.MILLISECONDS);
+        RedisFactory.schedulePush(queue, jedisPool, maxPushSize, redisStreamMaxLen);
         super.start();
     }
 

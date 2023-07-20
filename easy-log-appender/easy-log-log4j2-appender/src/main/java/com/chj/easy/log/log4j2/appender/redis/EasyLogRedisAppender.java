@@ -2,7 +2,6 @@ package com.chj.easy.log.log4j2.appender.redis;
 
 
 import cn.hutool.core.exceptions.ExceptionUtil;
-import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.model.LogTransferred;
 import com.chj.easy.log.core.appender.RedisFactory;
 import com.yomahub.tlog.context.TLogContext;
@@ -11,22 +10,20 @@ import lombok.Setter;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.*;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
-import org.apache.logging.log4j.core.appender.mom.kafka.KafkaAppender;
-import org.apache.logging.log4j.core.appender.mom.kafka.KafkaManager;
 import org.apache.logging.log4j.core.config.Property;
-import org.apache.logging.log4j.core.config.plugins.*;
+import org.apache.logging.log4j.core.config.plugins.Plugin;
+import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
+import org.apache.logging.log4j.core.config.plugins.PluginBuilderFactory;
 import org.apache.logging.log4j.core.impl.ThrowableProxy;
 import org.apache.logging.log4j.message.Message;
 import org.slf4j.helpers.MessageFormatter;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.exceptions.JedisException;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 /**
  * description TODO
@@ -35,10 +32,10 @@ import java.util.concurrent.TimeUnit;
  * @author 陈浩杰
  * @date 2023/7/12 18:16
  */
-@Plugin(name = RedisAppender.PLUGIN_NAME, category = Core.CATEGORY_NAME, elementType = Appender.ELEMENT_TYPE, printObject = true)
-public final class RedisAppender extends AbstractAppender {
+@Plugin(name = EasyLogRedisAppender.PLUGIN_NAME, category = Core.CATEGORY_NAME, elementType = Appender.ELEMENT_TYPE, printObject = true)
+public final class EasyLogRedisAppender extends AbstractAppender {
 
-    public static final String PLUGIN_NAME = "RedisAppender";
+    public static final String PLUGIN_NAME = "EasyLogRedis";
 
     private final String appName;
 
@@ -47,29 +44,34 @@ public final class RedisAppender extends AbstractAppender {
     private final BlockingQueue<LogTransferred> queue;
 
     private final JedisPool jedisPool;
+    private final int maxPushSize;
+    private final int redisStreamMaxLen;
 
-    private ScheduledFuture<?> scheduledFuture;
-
-    private RedisAppender(final String name,
-                          final Layout<? extends Serializable> layout,
-                          final Filter filter,
-                          final boolean ignoreExceptions,
-                          final Property[] properties,
-                          final String appName,
-                          final String appEnv,
-                          final JedisPool jedisPool,
-                          final BlockingQueue<LogTransferred> queue) {
+    private EasyLogRedisAppender(final String name,
+                                 final Layout<? extends Serializable> layout,
+                                 final Filter filter,
+                                 final boolean ignoreExceptions,
+                                 final Property[] properties,
+                                 final String appName,
+                                 final String appEnv,
+                                 final JedisPool jedisPool,
+                                 final BlockingQueue<LogTransferred> queue,
+                                 final int maxPushSize,
+                                 final int redisStreamMaxLen
+    ) {
         super(name, filter, layout, ignoreExceptions, properties);
         this.appName = appName;
         this.appEnv = appEnv;
         this.jedisPool = jedisPool;
         this.queue = queue;
+        this.maxPushSize = maxPushSize;
+        this.redisStreamMaxLen = redisStreamMaxLen;
     }
 
-    @Setter
     @Getter
+    @Setter
     public static class Builder<B extends Builder<B>> extends AbstractAppender.Builder<B>
-            implements org.apache.logging.log4j.core.util.Builder<RedisAppender> {
+            implements org.apache.logging.log4j.core.util.Builder<EasyLogRedisAppender> {
 
         @PluginAttribute(value = "appName", defaultString = "unknown")
         private String appName;
@@ -108,22 +110,22 @@ public final class RedisAppender extends AbstractAppender {
         private int redisPoolMaxIdle;
 
         @Override
-        public RedisAppender build() {
-            final Layout<? extends Serializable> layout = getLayout();
-
+        public EasyLogRedisAppender build() {
             JedisPool jedisPool = RedisFactory.getJedisPool(redisMode, redisAddress, redisPass, redisDb, redisPoolMaxIdle, redisPoolMaxTotal, redisConnectionTimeout);
-
             BlockingQueue<LogTransferred> queue = new ArrayBlockingQueue<>(queueSize);
-            return new RedisAppender(
+            return new EasyLogRedisAppender(
                     getName(),
-                    layout,
+                    getLayout(),
                     getFilter(),
                     isIgnoreExceptions(),
                     getPropertyArray(),
                     getAppName(),
                     getAppEnv(),
                     jedisPool,
-                    queue);
+                    queue,
+                    getMaxPushSize(),
+                    getRedisStreamMaxLen()
+            );
         }
     }
 
@@ -134,15 +136,15 @@ public final class RedisAppender extends AbstractAppender {
 
     @Override
     public void start() {
+        if (!RedisFactory.ping()) {
+            throw new JedisException("Could not get a resource from the jedis pool");
+        }
+        RedisFactory.schedulePush(queue, jedisPool, maxPushSize, redisStreamMaxLen);
         super.start();
-        // 仅启动单线推送消息，避免多线程下日志乱序问题
-        this.scheduledFuture = EasyLogManager.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
-            RedisFactory.push(queue, jedisPool, 100, 100000);
-        }, 5, 100, TimeUnit.MILLISECONDS);
     }
 
     @Override
-    public void append(LogEvent logEvent) {
+    public void append(final LogEvent logEvent) {
         if (logEvent == null || !isStarted()) {
             return;
         }
@@ -150,15 +152,6 @@ public final class RedisAppender extends AbstractAppender {
         if (!queue.offer(logTransferred)) {
             System.err.println("Easy-Log BlockingQueue add failed");
         }
-    }
-
-    @Override
-    public boolean stop(final long timeout, final TimeUnit timeUnit) {
-        setStopping();
-        boolean stopped = super.stop(timeout, timeUnit, false);
-        RedisFactory.closeJedisPool();
-        setStopped();
-        return stopped;
     }
 
     /**
