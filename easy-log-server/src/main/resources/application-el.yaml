@@ -7,13 +7,14 @@ easy-log:
   admin:
     enable: true
     banner: true
+    auth: false
     init-index-cron: 0 0 23 * * ?
     stats-log-speed-cron: 0/2 * * * * ?
     username: admin
     password: 123456
     validate-captcha: false
   compute:
-    enable: true
+    enable: ${easy-log.admin.enable}
     banner: true
     consumer-global-order: 1
   collector:
