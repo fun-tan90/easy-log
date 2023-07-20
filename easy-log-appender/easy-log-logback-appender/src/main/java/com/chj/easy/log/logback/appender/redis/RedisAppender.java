@@ -34,6 +34,8 @@ public class RedisAppender extends AppenderBase<ILoggingEvent> {
 
     private BlockingQueue<LogTransferred> queue;
 
+    private JedisPool jedisPool;
+
     private ScheduledFuture<?> scheduledFuture;
 
     private String appName = "unknown";
@@ -68,7 +70,7 @@ public class RedisAppender extends AppenderBase<ILoggingEvent> {
         if (isStarted()) {
             return;
         }
-        JedisPool jedisPool = RedisFactory.getJedisPool(redisMode, redisAddress, redisPass, redisDb, redisPoolMaxIdle, redisPoolMaxTotal, redisConnectionTimeout);
+        this.jedisPool = RedisFactory.getJedisPool(redisMode, redisAddress, redisPass, redisDb, redisPoolMaxIdle, redisPoolMaxTotal, redisConnectionTimeout);
         this.queue = new ArrayBlockingQueue<>(queueSize);
         // 仅启动单线推送消息，避免多线程下日志乱序问题
         this.scheduledFuture = EasyLogManager.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {

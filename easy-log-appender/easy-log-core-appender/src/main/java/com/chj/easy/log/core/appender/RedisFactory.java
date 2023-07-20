@@ -34,7 +34,7 @@ public class RedisFactory {
             config.setMaxIdle(redisPoolMaxIdle);
             config.setMaxTotal(redisPoolMaxTotal);
             config.setTestOnBorrow(true);
-            if ("single" .equals(redisMode)) {
+            if ("single".equals(redisMode)) {
                 // TODO redisAddress 正则校验
                 String[] arrays = redisAddress.split(":");
                 return new JedisPool(config, arrays[0], Integer.parseInt(arrays[1]), redisConnectionTimeout, redisPass, redisDb);
@@ -62,8 +62,13 @@ public class RedisFactory {
 
     public static void closeJedisPool() {
         JedisPool jedisPool = Singleton.get(JedisPool.class);
-        if (!Objects.isNull(jedisPool)) {
-            jedisPool.close();
+        try {
+            if (!Objects.isNull(jedisPool)) {
+                jedisPool.close();
+            }
+        } finally {
+            Singleton.remove(JedisPool.class);
         }
+
     }
 }

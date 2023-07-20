@@ -1,0 +1,13 @@
+server:
+  port: 1125
+
+spring:
+  application:
+    name: easy-log-example-boot2
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+  profiles:
+    active: dev
+    group:
+      dev:
+        - log

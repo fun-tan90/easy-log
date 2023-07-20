@@ -12,4 +12,8 @@
     <artifactId>easy-log-example-log4j2</artifactId>
     <packaging>pom</packaging>
 
+    <modules>
+        <module>easy-log-example-log4j2-boot2</module>
+    </modules>
+
 </project>
