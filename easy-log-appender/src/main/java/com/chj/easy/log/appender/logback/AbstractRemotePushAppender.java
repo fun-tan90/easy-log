@@ -15,10 +15,7 @@ import lombok.Setter;
 import org.slf4j.helpers.MessageFormatter;
 
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * description TODO
@@ -53,7 +50,8 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
             return;
         }
         initRemotePushClient();
-        this.queue = new LinkedBlockingQueue<>(queueSize);
+        this.queue = new ArrayBlockingQueue<>(queueSize);
+        // 仅启动单线推送消息，避免多线程下日志乱序问题
         this.scheduledFuture = EasyLogManager.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
             push(queue, maxPushSize);
         }, 5, 100, TimeUnit.MILLISECONDS);
