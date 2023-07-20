@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.chj</groupId>
-        <artifactId>easy-log</artifactId>
+        <artifactId>easy-log-module</artifactId>
         <version>1.0.3</version>
     </parent>
 
-    <artifactId>easy-log-collector</artifactId>
+    <artifactId>easy-log-compute</artifactId>
 
     <dependencies>
         <dependency>

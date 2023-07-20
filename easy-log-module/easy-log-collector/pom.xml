@@ -5,19 +5,17 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.chj</groupId>
-        <artifactId>easy-log</artifactId>
+        <artifactId>easy-log-module</artifactId>
         <version>1.0.3</version>
     </parent>
 
-    <artifactId>easy-log-appender</artifactId>
+    <artifactId>easy-log-collector</artifactId>
 
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>easy-log-logback-appender</module>
-        <module>easy-log-log4j2-appender</module>
-        <module>easy-log-log4j-appender</module>
-        <module>easy-log-core-appender</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>com.chj</groupId>
+            <artifactId>easy-log-core</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

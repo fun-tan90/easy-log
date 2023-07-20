@@ -12,12 +12,9 @@
     <modules>
         <module>easy-log-appender</module>
         <module>easy-log-common</module>
-        <module>easy-log-collector</module>
-        <module>easy-log-core</module>
-        <module>easy-log-admin</module>
         <module>easy-log-server</module>
         <module>easy-log-example</module>
-        <module>easy-log-compute</module>
+        <module>easy-log-module</module>
     </modules>
 
     <properties>

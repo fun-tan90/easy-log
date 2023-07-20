@@ -9,13 +9,13 @@
         <version>1.0.3</version>
     </parent>
 
-    <artifactId>easy-log-compute</artifactId>
+    <artifactId>easy-log-module</artifactId>
+    <packaging>pom</packaging>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.chj</groupId>
-            <artifactId>easy-log-core</artifactId>
-        </dependency>
-    </dependencies>
-
+    <modules>
+        <module>easy-log-collector</module>
+        <module>easy-log-core</module>
+        <module>easy-log-admin</module>
+        <module>easy-log-compute</module>
+    </modules>
 </project>
