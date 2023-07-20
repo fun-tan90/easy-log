@@ -7,7 +7,7 @@ package com.chj.easy.log.common.constant;
  * @since 1.0.0
  */
 public interface EasyLogConstants {
-    String EASY_LOG_VERSION = "1.0.1";
+    String EASY_LOG_VERSION = "1.0.3";
 
     String COLLECTOR_SCAN_BASE_PACKAGES = "com.chj.easy.log.collector";
 

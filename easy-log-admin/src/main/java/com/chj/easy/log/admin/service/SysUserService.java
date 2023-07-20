@@ -2,6 +2,7 @@ package com.chj.easy.log.admin.service;
 
 
 import com.chj.easy.log.admin.model.cmd.SysUserLoginCmd;
+import com.chj.easy.log.admin.model.vo.SysUserAuthVo;
 
 /**
  * description TODO
@@ -12,6 +13,6 @@ import com.chj.easy.log.admin.model.cmd.SysUserLoginCmd;
  */
 public interface SysUserService {
 
-    String basicAuth(SysUserLoginCmd sysUserLoginCmd);
+    SysUserAuthVo basicAuth(SysUserLoginCmd sysUserLoginCmd);
 
 }

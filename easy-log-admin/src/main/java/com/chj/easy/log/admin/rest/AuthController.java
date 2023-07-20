@@ -3,6 +3,7 @@ package com.chj.easy.log.admin.rest;
 import cn.dev33.satoken.stp.StpUtil;
 import com.chj.easy.log.admin.model.cmd.CaptchaGenerateCmd;
 import com.chj.easy.log.admin.model.cmd.SysUserLoginCmd;
+import com.chj.easy.log.admin.model.vo.SysUserAuthVo;
 import com.chj.easy.log.admin.service.SysCaptchaService;
 import com.chj.easy.log.admin.service.SysUserService;
 import com.chj.easy.log.core.convention.Res;
@@ -42,7 +43,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public Res<String> login(@RequestBody @Validated SysUserLoginCmd userLoginCmd) {
+    public Res<SysUserAuthVo> login(@RequestBody @Validated SysUserLoginCmd userLoginCmd) {
         return Res.ok(sysUserService.basicAuth(userLoginCmd));
     }
 

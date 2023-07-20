@@ -41,7 +41,7 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
 
     private String appEnv = "default";
 
-    private int maxPushSize = 100;
+    private int maxPushSize = 500;
 
     private int queueSize = 10240;
 
@@ -56,7 +56,7 @@ public abstract class AbstractRemotePushAppender extends AppenderBase<ILoggingEv
         this.queue = new LinkedBlockingQueue<>(queueSize);
         this.scheduledFuture = EasyLogManager.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
             push(queue, maxPushSize);
-        }, 5, 50, TimeUnit.MILLISECONDS);
+        }, 5, 100, TimeUnit.MILLISECONDS);
         super.start();
     }
 
