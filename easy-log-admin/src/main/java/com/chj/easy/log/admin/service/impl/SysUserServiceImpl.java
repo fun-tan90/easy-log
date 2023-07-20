@@ -64,7 +64,6 @@ public class SysUserServiceImpl implements SysUserService {
                 .token(tokenValue)
                 .userId("1")
                 .userName("管理员")
-                .userRealName("管理员")
                 .roles(StpUtil.getRoleList())
                 .permissions(StpUtil.getPermissionList())
                 .extra(extra)

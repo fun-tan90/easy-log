@@ -22,8 +22,6 @@ public class SysUserAuthVo {
 
     private String userName;
 
-    private String userRealName;
-
     private List<String> roles;
 
     private List<String> permissions;
