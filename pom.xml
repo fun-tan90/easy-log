@@ -65,7 +65,17 @@
             </dependency>
             <dependency>
                 <groupId>com.chj</groupId>
-                <artifactId>easy-log-appender</artifactId>
+                <artifactId>easy-log-core-appender</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.chj</groupId>
+                <artifactId>easy-log-logback-appender</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.chj</groupId>
+                <artifactId>easy-log-log4j2-appender</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

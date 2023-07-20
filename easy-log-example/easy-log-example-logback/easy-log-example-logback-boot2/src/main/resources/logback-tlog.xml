@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="false" debug="false">
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="app"/>
+    <springProperty scope="context" name="LOG_HOME" source="logging.file.path" defaultValue="./logs"/>
+
+    <contextListener class="com.yomahub.tlog.core.enhance.logback.TLogLogbackTTLMdcListener"/>
+    <!-- 日志输出格式 -->
+    <property name="log-format"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{X-B3-TraceId},%X{X-B3-SpanId},%X{X-B3-ParentSpanId},%X{X-Span-Export}] %X{tl} %-5level [%t] {%logger{36}} Line:%-3L - %msg%n"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!--这里替换成AspectLogbackEncoder-->
+        <encoder class="com.yomahub.tlog.core.enhance.logback.AspectLogbackEncoder">
+            <pattern>${log-format}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_HOME}/${APP_NAME}.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_HOME}/${APP_NAME}.log.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+            <MaxHistory>60</MaxHistory>
+            <maxFileSize>100MB</maxFileSize>
+        </rollingPolicy>
+        <!--这里替换成AspectLogbackEncoder-->
+        <encoder class="com.yomahub.tlog.core.enhance.logback.AspectLogbackEncoder">
+            <pattern>${log-format}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 这里替换成AspectLogbackAsyncAppender -->
+    <appender name="ASYNC_FILE" class="com.yomahub.tlog.core.enhance.logback.async.AspectLogbackAsyncAppender">
+        <discardingThreshold>0</discardingThreshold>
+        <queueSize>2048</queueSize>
+        <includeCallerData>true</includeCallerData>
+        <appender-ref ref="FILE"/>
+    </appender>
+
+    <appender name="REDIS_STREAM" class="com.chj.easy.log.logback.appender.redis.RedisAppender">
+        <appName>easy-log-example-boot2</appName>
+        <appEnv>dev</appEnv>
+        <maxPushSize>100</maxPushSize>
+        <queueSize>10240</queueSize>
+        <redisMode>single</redisMode>
+        <redisAddress>172.16.8.31:6379</redisAddress>
+        <redisDb>10</redisDb>
+        <redisPass>root@123456!</redisPass>
+        <redisConnectionTimeout>1000</redisConnectionTimeout>
+        <redisStreamMaxLen>1000000</redisStreamMaxLen>
+    </appender>
+
+    <appender name="REDIS_STREAM_TEST" class="com.chj.easy.log.logback.appender.redis.RedisAppender">
+        <appName>easy-log-example-boot2</appName>
+        <appEnv>prod</appEnv>
+        <maxPushSize>100</maxPushSize>
+        <queueSize>10240</queueSize>
+        <redisMode>single</redisMode>
+        <redisAddress>114.217.55.239:6379</redisAddress>
+        <redisDb>3</redisDb>
+        <redisPass>ICONMAN20220106R</redisPass>
+        <redisConnectionTimeout>1000</redisConnectionTimeout>
+        <redisStreamMaxLen>1000000</redisStreamMaxLen>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC_FILE"/>
+        <appender-ref ref="REDIS_STREAM_TEST"/>
+    </root>
+</configuration>
