@@ -25,6 +25,8 @@ public class LogAlarmRuleAddCmd {
     @NotBlank
     private String appName;
 
+    @NotNull
+    @NotBlank
     private String appEnv;
 
     private String loggerName;
@@ -34,12 +36,8 @@ public class LogAlarmRuleAddCmd {
     private List<String> receiverList;
 
     @NotNull
-    @NotBlank
-    private String alarmPlatform;
-
-    @NotNull
-    @NotBlank
-    private String webhookUrl;
+    @NotEmpty
+    private List<String> alarmPlatformId;
 
     @NotNull
     private Integer threshold;

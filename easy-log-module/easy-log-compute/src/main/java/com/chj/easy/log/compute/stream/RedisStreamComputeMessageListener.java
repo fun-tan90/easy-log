@@ -1,14 +1,18 @@
 package com.chj.easy.log.compute.stream;
 
+import cn.hutool.core.lang.Singleton;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
+import com.chj.easy.log.core.event.LogAlarmEvent;
+import com.chj.easy.log.core.model.LogAlarmRule;
 import com.chj.easy.log.core.model.SlidingWindow;
 import com.chj.easy.log.core.service.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import net.dreamlu.iot.mqtt.codec.MqttQoS;
 import net.dreamlu.iot.mqtt.spring.server.MqttServerTemplate;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.redis.connection.stream.MapRecord;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.stream.StreamListener;
@@ -20,6 +24,8 @@ import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 /**
@@ -42,6 +48,9 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
     @Resource
     MqttServerTemplate mqttServerTemplate;
 
+    @Resource
+    ApplicationContext applicationContext;
+
     @Override
     public void onMessage(MapRecord<String, String, String> entries) {
         if (entries != null) {
@@ -59,7 +68,7 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
     private CompletableFuture<Void> logInputSpeed(Map<String, String> logMap, String recordId) {
         String level = logMap.get("level");
         String timeStamp = logMap.get("timeStamp");
-        return CompletableFuture.runAsync(() -> redisService.slidingWindow("S_W:LOG_INPUT_SPEED:" + level, recordId, Long.parseLong(timeStamp), 5), EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);
+        return CompletableFuture.runAsync(() -> redisService.slidingWindow(EasyLogConstants.S_W_LOG_INPUT_SPEED + level, recordId, Long.parseLong(timeStamp), 5), EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);
     }
 
     /**
@@ -69,12 +78,35 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
      */
     private CompletableFuture<Void> logAlarm(Map<String, String> logMap, String recordId) {
         return CompletableFuture.runAsync(() -> {
+            // TODO
             String level = logMap.get("level");
             String appName = logMap.get("appName");
             String appEnv = logMap.get("appEnv");
             String timeStamp = logMap.get("timeStamp");
-            SlidingWindow slidingWindow = redisService.slidingWindow("S_W:LOG_ALARM:" + appName + ":" + appEnv, recordId, Long.parseLong(timeStamp), 5);
-            log.info("滑动窗口内计数大小:{}", slidingWindow.getWindowCount());
+
+            Map<String, LogAlarmRule> cacheLogAlarmRuleMap = Singleton.get(EasyLogConstants.LOG_ALARM_RULES + appName + ":" + appEnv, () -> {
+                Set<String> logAlarmRuleKeys = stringRedisTemplate.keys(EasyLogConstants.LOG_ALARM_RULES + appName + ":" + appEnv + ":*");
+                if (CollectionUtils.isEmpty(logAlarmRuleKeys)) {
+                    return new HashMap<>();
+                }
+                return logAlarmRuleKeys.stream()
+                        .map(logAlarmRuleKey -> JSONUtil.toBean(stringRedisTemplate.opsForValue().get(logAlarmRuleKey), LogAlarmRule.class))
+                        .filter(logAlarmRule -> "1".equals(logAlarmRule.getStatus()))
+                        .collect(Collectors.toMap(LogAlarmRule::getLoggerName, Function.identity()));
+            });
+            if (CollectionUtils.isEmpty(cacheLogAlarmRuleMap)) {
+                return;
+            }
+            cacheLogAlarmRuleMap.forEach((k, logAlarmRule) -> {
+                Integer period = logAlarmRule.getPeriod();
+                Integer threshold = logAlarmRule.getThreshold();
+                SlidingWindow slidingWindow = redisService.slidingWindow(EasyLogConstants.S_W_LOG_ALARM + appName + ":" + appEnv + ":" + k, recordId, Long.parseLong(timeStamp), period);
+                Integer windowCount = slidingWindow.getWindowCount();
+                log.info("阈值大小:{},滑动窗口内计数大小:{}", threshold, windowCount);
+                if (windowCount == threshold + 1) {
+                    applicationContext.publishEvent(new LogAlarmEvent(this, slidingWindow.getWindowStart(), slidingWindow.getWindowEnd(), windowCount, logAlarmRule));
+                }
+            });
         }, EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);
     }
 
