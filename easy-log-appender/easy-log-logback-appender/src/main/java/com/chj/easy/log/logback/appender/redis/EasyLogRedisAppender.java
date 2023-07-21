@@ -7,13 +7,12 @@ import ch.qos.logback.classic.spi.ThrowableProxy;
 import ch.qos.logback.core.AppenderBase;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import com.chj.easy.log.common.model.LogTransferred;
-import com.chj.easy.log.core.appender.RedisFactory;
+import com.chj.easy.log.core.appender.RedisManager;
 import com.yomahub.tlog.context.TLogContext;
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.helpers.MessageFormatter;
 import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.exceptions.JedisException;
 
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -34,8 +33,6 @@ public class EasyLogRedisAppender extends AppenderBase<ILoggingEvent> {
     private BlockingQueue<LogTransferred> queue;
 
     private JedisPool jedisPool;
-
-    private ScheduledFuture<?> scheduledFuture;
 
     private String appName = "unknown";
 
@@ -69,12 +66,9 @@ public class EasyLogRedisAppender extends AppenderBase<ILoggingEvent> {
         if (isStarted()) {
             return;
         }
-        this.jedisPool = RedisFactory.getJedisPool(redisMode, redisAddress, redisPass, redisDb, redisPoolMaxIdle, redisPoolMaxTotal, redisConnectionTimeout);
-        if (!RedisFactory.ping()) {
-            throw new JedisException("Could not get a resource from the jedis pool");
-        }
+        this.jedisPool = RedisManager.initJedisPool(redisMode, redisAddress, redisPass, redisDb, redisPoolMaxIdle, redisPoolMaxTotal, redisConnectionTimeout);
         this.queue = new ArrayBlockingQueue<>(queueSize);
-        RedisFactory.schedulePush(queue, jedisPool, maxPushSize, redisStreamMaxLen);
+        RedisManager.schedulePush(queue, jedisPool, maxPushSize, redisStreamMaxLen);
         super.start();
     }
 
@@ -87,18 +81,6 @@ public class EasyLogRedisAppender extends AppenderBase<ILoggingEvent> {
         if (!this.queue.offer(logTransferred)) {
             addError("Easy-Log BlockingQueue add failed");
         }
-    }
-
-    @Override
-    public void stop() {
-        if (!isStarted()) {
-            return;
-        }
-        if (!scheduledFuture.isCancelled()) {
-            scheduledFuture.cancel(true);
-        }
-        RedisFactory.closeJedisPool();
-        super.stop();
     }
 
     /**

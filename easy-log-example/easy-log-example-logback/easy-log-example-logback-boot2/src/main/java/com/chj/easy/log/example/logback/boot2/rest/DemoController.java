@@ -34,15 +34,15 @@ public class DemoController {
         return id;
     }
 
-    @GetMapping("error")
+    @GetMapping("test-error")
     public void error() {
         try {
             log.error("业务异常1");
-            throw new RuntimeException("运行时异常");
+            throw new RuntimeException("运行时异常1");
         } catch (Exception e) {
-            log.error("捕获异常01");
-            log.error("捕获异常02{}", e.getMessage(), e);
-            log.error("捕获异常03", e);
+            log.error("捕获异常01", e);
+            log.error("捕获异常02{}", e.getMessage());
+            log.error("捕获异常03{}", e.getMessage(), e);
             e.printStackTrace();
         }
     }

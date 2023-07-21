@@ -3,7 +3,7 @@ package com.chj.easy.log.log4j2.appender.redis;
 
 import cn.hutool.core.exceptions.ExceptionUtil;
 import com.chj.easy.log.common.model.LogTransferred;
-import com.chj.easy.log.core.appender.RedisFactory;
+import com.chj.easy.log.core.appender.RedisManager;
 import com.yomahub.tlog.context.TLogContext;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,7 +18,6 @@ import org.apache.logging.log4j.core.impl.ThrowableProxy;
 import org.apache.logging.log4j.message.Message;
 import org.slf4j.helpers.MessageFormatter;
 import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.exceptions.JedisException;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -111,7 +110,7 @@ public final class EasyLogRedisAppender extends AbstractAppender {
 
         @Override
         public EasyLogRedisAppender build() {
-            JedisPool jedisPool = RedisFactory.getJedisPool(redisMode, redisAddress, redisPass, redisDb, redisPoolMaxIdle, redisPoolMaxTotal, redisConnectionTimeout);
+            JedisPool jedisPool = RedisManager.initJedisPool(redisMode, redisAddress, redisPass, redisDb, redisPoolMaxIdle, redisPoolMaxTotal, redisConnectionTimeout);
             BlockingQueue<LogTransferred> queue = new ArrayBlockingQueue<>(queueSize);
             return new EasyLogRedisAppender(
                     getName(),
@@ -136,10 +135,7 @@ public final class EasyLogRedisAppender extends AbstractAppender {
 
     @Override
     public void start() {
-        if (!RedisFactory.ping()) {
-            throw new JedisException("Could not get a resource from the jedis pool");
-        }
-        RedisFactory.schedulePush(queue, jedisPool, maxPushSize, redisStreamMaxLen);
+        RedisManager.schedulePush(queue, jedisPool, maxPushSize, redisStreamMaxLen);
         super.start();
     }
 
