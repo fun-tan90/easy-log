@@ -42,13 +42,15 @@ public interface EasyLogConstants {
 
     String REAL_TIME_FILTER_RULES = "REAL_TIME_FILTER_RULES:";
 
+    String REAL_TIME_FILTER_Z_SET = "REAL_TIME_FILTER_Z_SET:";
+
     String LOG_ALARM_RULES = "LOG_ALARM_RULES:";
 
     String S_W_LOG_ALARM = "S_W:LOG_ALARM:";
 
-    String S_W_LOG_INPUT_SPEED = "S_W:LOG_INPUT_SPEED:";
+    String LOG_ALARM = "LOG_ALARM";
 
-    String LOG_REAL_TIME_FILTERED_TOPIC = "easy-log/real-time-filtered";
+    String S_W_LOG_INPUT_SPEED = "S_W:LOG_INPUT_SPEED:";
 
     String LOG_INPUT_SPEED_TOPIC = "easy-log/stats-log-input-speed";
 

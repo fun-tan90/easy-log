@@ -3,8 +3,8 @@ package com.chj.easy.log.admin.model.cmd;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -41,7 +41,7 @@ public class SysUserLoginCmd {
 
     @NotNull
     @NotBlank
-    @Min(value = 8)
+    @Length(min = 8, max = 8)
     private String captchaKey;
 
     @NotNull

@@ -1,8 +1,8 @@
 package com.chj.easy.log.admin.model.cmd;
 
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -19,7 +19,7 @@ public class LogRealTimeFilterCmd {
 
     @NotNull
     @NotBlank
-    @Min(value = 8)
+    @Length(min = 8)
     private String mqttClientId;
 
     @NotNull

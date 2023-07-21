@@ -5,12 +5,10 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
-import com.chj.easy.log.core.event.LogAlarmEvent;
 import com.chj.easy.log.core.model.LogAlarmRule;
 import com.chj.easy.log.core.model.SlidingWindow;
 import com.chj.easy.log.core.service.RedisService;
 import lombok.extern.slf4j.Slf4j;
-import net.dreamlu.iot.mqtt.codec.MqttQoS;
 import net.dreamlu.iot.mqtt.spring.server.MqttServerTemplate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.redis.connection.stream.MapRecord;
@@ -21,7 +19,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -55,9 +52,11 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
     public void onMessage(MapRecord<String, String, String> entries) {
         if (entries != null) {
             String recordId = entries.getId().getValue();
+            Long timestamp = entries.getId().getTimestamp();
+            Long sequence = entries.getId().getSequence();
             stringRedisTemplate.opsForStream().acknowledge(EasyLogConstants.REDIS_STREAM_KEY, EasyLogConstants.GROUP_COMPUTE_NAME, recordId);
             Map<String, String> logMap = entries.getValue();
-            CompletableFuture<Void> cfAll = CompletableFuture.allOf(logInputSpeed(logMap, recordId), logAlarm(logMap, recordId), logRealTimeFilter(logMap));
+            CompletableFuture<Void> cfAll = CompletableFuture.allOf(logInputSpeed(logMap, recordId), logAlarm(logMap, recordId), logRealTimeFilter(logMap, timestamp, sequence));
             cfAll.join();
         }
     }
@@ -104,7 +103,10 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
                 Integer windowCount = slidingWindow.getWindowCount();
                 log.info("阈值大小:{},滑动窗口内计数大小:{}", threshold, windowCount);
                 if (windowCount == threshold + 1) {
-                    applicationContext.publishEvent(new LogAlarmEvent(this, slidingWindow.getWindowStart(), slidingWindow.getWindowEnd(), windowCount, logAlarmRule));
+                    JSONObject logAlarmMsg = new JSONObject();
+                    logAlarmMsg.putOnce("slidingWindow", slidingWindow);
+                    logAlarmMsg.putOnce("logAlarmRule", logAlarmRule);
+                    stringRedisTemplate.opsForList().leftPush(EasyLogConstants.LOG_ALARM, logAlarmMsg.toString());
                 }
             });
         }, EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);
@@ -115,7 +117,7 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
      *
      * @param logMap
      */
-    private CompletableFuture<Void> logRealTimeFilter(Map<String, String> logMap) {
+    private CompletableFuture<Void> logRealTimeFilter(Map<String, String> logMap, Long timestamp, Long sequence) {
         return CompletableFuture.runAsync(() -> {
             Set<String> clientIds = stringRedisTemplate.opsForSet().members(EasyLogConstants.MQTT_ONLINE_CLIENTS);
             if (CollectionUtils.isEmpty(clientIds)) {
@@ -157,10 +159,8 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
                 }
             }
             if (!CollectionUtils.isEmpty(clientIds)) {
-                log.info("日志过滤已完成，待发送客户端个数{}", clientIds.size());
-                byte[] logBytes = JSONUtil.toJsonStr(logMap).getBytes(StandardCharsets.UTF_8);
                 for (String clientId : clientIds) {
-                    mqttServerTemplate.publish(clientId, EasyLogConstants.LOG_REAL_TIME_FILTERED_TOPIC, logBytes, MqttQoS.AT_MOST_ONCE);
+                    stringRedisTemplate.opsForZSet().add(EasyLogConstants.REAL_TIME_FILTER_Z_SET + clientId, JSONUtil.toJsonStr(logMap), timestamp + sequence);
                 }
             }
         }, EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);
