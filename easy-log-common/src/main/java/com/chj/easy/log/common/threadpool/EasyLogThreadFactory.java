@@ -25,7 +25,7 @@ public class EasyLogThreadFactory implements ThreadFactory {
         SecurityManager s = System.getSecurityManager();
         group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
 
-        namePrefix = poolName + "-p" + String.format("%02d", POOL_NUMBER.getAndIncrement()) + "-t";
+        namePrefix = poolName + "-p" + String.format("%03d", POOL_NUMBER.getAndIncrement()) + "-t";
     }
 
     @Override
