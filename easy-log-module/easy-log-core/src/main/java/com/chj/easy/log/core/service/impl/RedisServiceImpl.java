@@ -63,14 +63,14 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public SlidingWindow slidingWindow(String key, long timestamp, int period) {
+    public SlidingWindow slidingWindow(String key, String unique, long timestamp, int period) {
         DefaultRedisScript<String> actual = Singleton.get(EasyLogConstants.SLIDING_WINDOW_LUA_PATH, () -> {
             DefaultRedisScript<String> redisScript = new DefaultRedisScript<>();
             redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource(EasyLogConstants.SLIDING_WINDOW_LUA_PATH)));
             redisScript.setResultType(String.class);
             return redisScript;
         });
-        String execute = stringRedisTemplate.execute(actual, Collections.singletonList(key), String.valueOf(period), String.valueOf(timestamp));
+        String execute = stringRedisTemplate.execute(actual, Collections.singletonList(key), String.valueOf(period), String.valueOf(timestamp), unique);
         if (StringUtils.hasLength(execute)) {
             String[] split = execute.split("#");
             return SlidingWindow.builder()

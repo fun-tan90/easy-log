@@ -45,19 +45,21 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
     @Override
     public void onMessage(MapRecord<String, String, String> entries) {
         if (entries != null) {
+            String recordId = entries.getId().getValue();
+            stringRedisTemplate.opsForStream().acknowledge(EasyLogConstants.REDIS_STREAM_KEY, EasyLogConstants.GROUP_COMPUTE_NAME, recordId);
             Map<String, String> logMap = entries.getValue();
-            CompletableFuture<Void> cfAll = CompletableFuture.allOf(logInputSpeed(logMap), logAlarm(logMap), logRealTimeFilter(logMap));
-            cfAll.whenComplete((v, e) -> stringRedisTemplate.opsForStream().acknowledge(EasyLogConstants.REDIS_STREAM_KEY, EasyLogConstants.GROUP_COMPUTE_NAME, entries.getId().getValue()));
+            CompletableFuture<Void> cfAll = CompletableFuture.allOf(logInputSpeed(logMap, recordId), logAlarm(logMap, recordId), logRealTimeFilter(logMap));
+            cfAll.join();
         }
     }
 
     /**
      * 日志收集速率
      */
-    private CompletableFuture<Void> logInputSpeed(Map<String, String> logMap) {
+    private CompletableFuture<Void> logInputSpeed(Map<String, String> logMap, String recordId) {
         String level = logMap.get("level");
         String timeStamp = logMap.get("timeStamp");
-        return CompletableFuture.runAsync(() -> redisService.slidingWindow("S_W:LOG_INPUT_SPEED:" + level, Long.parseLong(timeStamp), 5), EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);
+        return CompletableFuture.runAsync(() -> redisService.slidingWindow("S_W:LOG_INPUT_SPEED:" + level, recordId, Long.parseLong(timeStamp), 5), EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);
     }
 
     /**
@@ -65,15 +67,14 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
      *
      * @param logMap
      */
-    private CompletableFuture<Void> logAlarm(Map<String, String> logMap) {
+    private CompletableFuture<Void> logAlarm(Map<String, String> logMap, String recordId) {
         return CompletableFuture.runAsync(() -> {
             String level = logMap.get("level");
-            if ("info".equalsIgnoreCase(level)) {
-                String appName = logMap.get("appName");
-                String timeStamp = logMap.get("timeStamp");
-                SlidingWindow slidingWindow = redisService.slidingWindow("S_W:LOG_ALARM:" + appName, Long.parseLong(timeStamp), 5);
-                log.info("滑动窗口内计数大小:{}", slidingWindow.getWindowCount());
-            }
+            String appName = logMap.get("appName");
+            String appEnv = logMap.get("appEnv");
+            String timeStamp = logMap.get("timeStamp");
+            SlidingWindow slidingWindow = redisService.slidingWindow("S_W:LOG_ALARM:" + appName + ":" + appEnv, recordId, Long.parseLong(timeStamp), 5);
+            log.info("滑动窗口内计数大小:{}", slidingWindow.getWindowCount());
         }, EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);
     }
 

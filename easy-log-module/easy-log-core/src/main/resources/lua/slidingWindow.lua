@@ -8,6 +8,9 @@ local expire = tonumber(ARGV[1]);
 -- 当前时间
 local currentMs = tonumber(ARGV[2]);
 
+-- 唯一值
+local uniqueVal = ARGV[3];
+
 --窗口开始时间
 local windowStartMs = currentMs - expire * 1000;
 
@@ -18,7 +21,7 @@ local current = redis.call('zcount', key, windowStartMs, currentMs);
 redis.call("ZREMRANGEBYSCORE", key, 0, windowStartMs);
 
 -- 添加当前成员
-redis.call("zadd", key, tostring(currentMs), currentMs);
+redis.call("zadd", key, tostring(currentMs), uniqueVal);
 redis.call("expire", key, expire);
 
 --返回key的次数

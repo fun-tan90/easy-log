@@ -40,10 +40,10 @@ public class DemoController {
 
     @GetMapping("sliding-window")
     public SlidingWindow slidingWindow() {
-        redisService.slidingWindow("S_W:LOG_INPUT_SPEED:DEBUG", System.currentTimeMillis(), 15);
-        redisService.slidingWindow("S_W:LOG_INPUT_SPEED:DEBUG", System.currentTimeMillis(), 15);
-        redisService.slidingWindow("S_W:LOG_INPUT_SPEED:ERROR", System.currentTimeMillis(), 15);
-        return redisService.slidingWindow("S_W:LOG_INPUT_SPEED:INFO", System.currentTimeMillis(), 15);
+        redisService.slidingWindow("S_W:LOG_INPUT_SPEED:DEBUG", String.valueOf(System.currentTimeMillis()), System.currentTimeMillis(), 15);
+        redisService.slidingWindow("S_W:LOG_INPUT_SPEED:DEBUG", String.valueOf(System.currentTimeMillis()), System.currentTimeMillis(), 15);
+        redisService.slidingWindow("S_W:LOG_INPUT_SPEED:ERROR", String.valueOf(System.currentTimeMillis()), System.currentTimeMillis(), 15);
+        return redisService.slidingWindow("S_W:LOG_INPUT_SPEED:INFO", String.valueOf(System.currentTimeMillis()), System.currentTimeMillis(), 15);
     }
 
     @GetMapping("sliding-window-count")

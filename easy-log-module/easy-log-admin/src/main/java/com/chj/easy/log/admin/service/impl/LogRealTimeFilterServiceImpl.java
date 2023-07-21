@@ -35,13 +35,12 @@ public class LogRealTimeFilterServiceImpl implements LogRealTimeFilterService {
 
     @Override
     public long subscribe(LogRealTimeFilterCmd logRealTimeFilterCmd) {
-        Map<String, Object> realTimeFilterRules = new HashMap<>();
         long timestamp = System.currentTimeMillis();
+        Map<String, Object> realTimeFilterRules = new HashMap<>();
         realTimeFilterRules.put("timeStamp#gle", String.valueOf(timestamp));
         String appEnv = logRealTimeFilterCmd.getAppEnv();
-        if (StringUtils.hasLength(appEnv)) {
-            realTimeFilterRules.put("appEnv#eq", appEnv);
-        }
+        realTimeFilterRules.put("appEnv#eq", appEnv);
+
         List<String> appNameList = logRealTimeFilterCmd.getAppNameList();
         if (!CollectionUtils.isEmpty(appNameList)) {
             realTimeFilterRules.put("appName#should", String.join("%", appNameList));
