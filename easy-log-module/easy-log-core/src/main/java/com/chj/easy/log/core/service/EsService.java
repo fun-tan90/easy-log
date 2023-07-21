@@ -2,8 +2,7 @@ package com.chj.easy.log.core.service;
 
 import com.chj.easy.log.core.convention.page.es.EsPageInfo;
 import com.chj.easy.log.core.model.Doc;
-import com.chj.easy.log.core.model.vo.BarChartVo;
-import com.chj.easy.log.core.model.vo.IndexManagementVo;
+import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import java.util.List;
@@ -123,7 +122,7 @@ public interface EsService {
      * @param searchSourceBuilder
      * @return
      */
-    List<BarChartVo> dateHistogramBarChart(String indexName, String dateHistogramName, String termsName, SearchSourceBuilder searchSourceBuilder);
+    List<? extends Histogram.Bucket> dateHistogram(String indexName, String dateHistogramName, String termsName, SearchSourceBuilder searchSourceBuilder);
 
     /**
      * 原生查询
@@ -139,5 +138,5 @@ public interface EsService {
      *
      * @param indexNamePattern
      */
-    List<IndexManagementVo> indexManagement(String indexNamePattern);
+    List<String> indexQuery(String indexNamePattern);
 }

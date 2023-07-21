@@ -2,20 +2,22 @@ package com.chj.easy.log.admin.service.impl;
 
 import cn.hutool.core.date.DateUtil;
 import com.chj.easy.log.admin.model.cmd.BaseLogQueryCmd;
-import com.chj.easy.log.admin.model.cmd.LogQueryCmd;
 import com.chj.easy.log.admin.model.cmd.LogDropBoxCmd;
+import com.chj.easy.log.admin.model.cmd.LogQueryCmd;
+import com.chj.easy.log.admin.model.vo.BarChartVo;
 import com.chj.easy.log.admin.service.LogQueryService;
 import com.chj.easy.log.core.convention.page.es.EsPageInfo;
 import com.chj.easy.log.core.model.Doc;
 import com.chj.easy.log.core.model.LogDoc;
-import com.chj.easy.log.core.model.vo.BarChartVo;
 import com.chj.easy.log.core.service.EsService;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.BucketOrder;
 import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInterval;
+import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
 import org.elasticsearch.search.aggregations.bucket.histogram.LongBounds;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -23,6 +25,7 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * description TODO
@@ -90,6 +93,15 @@ public class LogQueryServiceImpl implements LogQueryService {
                                                 .order(BucketOrder.key(true))
                                 )
                 );
-        return esService.dateHistogramBarChart(LogDoc.indexName(baseParam.getDate()), dateHistogramName, termsName, searchSourceBuilder);
+        List<? extends Histogram.Bucket> histogramBuckets = esService.dateHistogram(LogDoc.indexName(baseParam.getDate()), dateHistogramName, termsName, searchSourceBuilder);
+        return histogramBuckets.stream().map(bucket -> {
+            Terms aggregation = bucket.getAggregations().get(termsName);
+            List<? extends Terms.Bucket> buckets = aggregation.getBuckets();
+            List<BarChartVo.OneBarDetail> oneBarDetailList = buckets.stream().map(n -> new BarChartVo.OneBarDetail(n.getKeyAsString(), n.getDocCount())).collect(Collectors.toList());
+            return BarChartVo.builder()
+                    .key(bucket.getKeyAsString())
+                    .count(bucket.getDocCount())
+                    .oneBarDetailList(oneBarDetailList).build();
+        }).collect(Collectors.toList());
     }
 }

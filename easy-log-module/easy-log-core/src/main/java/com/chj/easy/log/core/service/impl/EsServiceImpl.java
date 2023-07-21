@@ -10,8 +10,6 @@ import com.chj.easy.log.core.convention.page.es.EsPageHelper;
 import com.chj.easy.log.core.convention.page.es.EsPageInfo;
 import com.chj.easy.log.core.model.Doc;
 import com.chj.easy.log.core.model.LogDoc;
-import com.chj.easy.log.core.model.vo.BarChartVo;
-import com.chj.easy.log.core.model.vo.IndexManagementVo;
 import com.chj.easy.log.core.service.EsService;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -35,12 +33,12 @@ import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation;
+import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
 import org.elasticsearch.search.aggregations.bucket.histogram.ParsedDateHistogram;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -286,21 +284,13 @@ public class EsServiceImpl implements EsService {
     }
 
     @Override
-    public List<BarChartVo> dateHistogramBarChart(String indexName, String dateHistogramName, String termsName, SearchSourceBuilder searchSourceBuilder) {
+    public List<? extends Histogram.Bucket> dateHistogram(String indexName, String dateHistogramName, String termsName, SearchSourceBuilder searchSourceBuilder) {
         SearchRequest searchRequest = new SearchRequest(indexName);
         searchRequest.source(searchSourceBuilder);
         try {
             SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
             ParsedDateHistogram dateHistogram = searchResponse.getAggregations().get(dateHistogramName);
-            return dateHistogram.getBuckets().stream().map(bucket -> {
-                Terms aggregation = bucket.getAggregations().get(termsName);
-                List<? extends Terms.Bucket> buckets = aggregation.getBuckets();
-                List<BarChartVo.OneBarDetail> oneBarDetailList = buckets.stream().map(n -> new BarChartVo.OneBarDetail(n.getKeyAsString(), n.getDocCount())).collect(Collectors.toList());
-                return BarChartVo.builder()
-                        .key(bucket.getKeyAsString())
-                        .count(bucket.getDocCount())
-                        .oneBarDetailList(oneBarDetailList).build();
-            }).collect(Collectors.toList());
+            return dateHistogram.getBuckets();
         } catch (IOException e) {
             throw new RuntimeException(StrUtil.format("barChart failed, {}", e));
         }
@@ -321,34 +311,16 @@ public class EsServiceImpl implements EsService {
     }
 
     @Override
-    public List<IndexManagementVo> indexManagement(String indexNamePattern) {
+    public List<String> indexQuery(String indexNamePattern) {
         Request request = new Request("GET", "/_cat/indices/" + indexNamePattern);
         try {
             Response response = restHighLevelClient.getLowLevelClient().performRequest(request);
             InputStream inputStream = response.getEntity().getContent();
             List<String> lines = new ArrayList<>();
             IoUtil.readLines(inputStream, Charset.defaultCharset(), lines);
-            if (!CollectionUtils.isEmpty(lines)) {
-                return lines.stream().map(n -> {
-                    String[] items = n.split(" ");
-                    List<String> properties = Arrays.stream(items).filter(StringUtils::hasLength).collect(Collectors.toList());
-                    return IndexManagementVo.builder()
-                            .health(properties.get(0))
-                            .status(properties.get(1))
-                            .index(properties.get(2))
-                            .uuid(properties.get(3))
-                            .pri(properties.get(4))
-                            .rep(properties.get(5))
-                            .docsCount(properties.get(6))
-                            .docsDeleted(properties.get(7))
-                            .storeSize(properties.get(8))
-                            .priStoreSize(properties.get(9))
-                            .build();
-                }).collect(Collectors.toList());
-            }
-            return new ArrayList<>();
+            return lines;
         } catch (IOException e) {
-            throw new RuntimeException(StrUtil.format("indexManagement failed, {}", e));
+            throw new RuntimeException(StrUtil.format("index query failed, {}", e));
         }
     }
 }

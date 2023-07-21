@@ -1,4 +1,4 @@
-package com.chj.easy.log.admin.rest;
+package com.chj.easy.log.admin;
 
 
 import com.chj.easy.log.core.convention.Res;

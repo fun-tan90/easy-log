@@ -1,4 +1,4 @@
-package com.chj.easy.log.core.model.vo;
+package com.chj.easy.log.admin.model.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

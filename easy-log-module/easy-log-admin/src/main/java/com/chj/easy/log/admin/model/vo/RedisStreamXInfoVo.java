@@ -15,6 +15,7 @@ import java.util.List;
 @Data
 @Builder
 public class RedisStreamXInfoVo {
+
     private String streamKey;
 
     private List<XInfoGroup> groups;

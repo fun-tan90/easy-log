@@ -1,4 +1,4 @@
-package com.chj.easy.log.core.model.vo;
+package com.chj.easy.log.admin.model.vo;
 
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +12,7 @@ import lombok.Data;
  */
 @Data
 @Builder
-public class IndexManagementVo {
+public class EsIndexVo {
 
     private String health;
 
