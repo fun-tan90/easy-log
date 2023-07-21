@@ -40,6 +40,9 @@ public class EasyLogCoreAutoConfiguration {
     @Resource
     EasyLogEsProperties easyLogEsProperties;
 
+    @Resource
+    EasyLogStreamProperties easyLogStreamProperties;
+
     @Bean(destroyMethod = "close")
     public RestHighLevelClient restHighLevelClient() {
         // 处理地址
@@ -92,7 +95,7 @@ public class EasyLogCoreAutoConfiguration {
     }
 
     @Bean
-    public StreamMessageListenerContainer.StreamMessageListenerContainerOptions<String, MapRecord<String, String, String>> streamMessageListenerContainerOptions(EasyLogStreamProperties easyLogStreamProperties) {
+    public StreamMessageListenerContainer.StreamMessageListenerContainerOptions<String, MapRecord<String, String, String>> streamMessageListenerContainerOptions() {
         return StreamMessageListenerContainer
                 .StreamMessageListenerContainerOptions
                 .builder()

@@ -15,7 +15,6 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -57,16 +56,11 @@ public class RedisStreamCollectorMessageListener implements StreamListener<Strin
                     .content(value.get("content"))
                     .mdc(JSONUtil.parseObj(value.get("mdc")))
                     .build();
-            try {
-                boolean offer = logDocBlockingQueue.offer(logDoc, 100, TimeUnit.MILLISECONDS);
-                if (!offer) {
-                    log.error("Dropping LogDoc due to timeout limit of [100] being exceeded");
-                }
-            } catch (InterruptedException e) {
-                log.error("Interrupted while appending LogDoc to LogDocBlockingQueue", e);
-            } finally {
-                stringRedisTemplate.opsForStream().acknowledge(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_COLLECTOR_NAME, recordId);
+            boolean offer = logDocBlockingQueue.offer(logDoc);
+            if (!offer) {
+                log.error("offer LogDoc failed");
             }
+            stringRedisTemplate.opsForStream().acknowledge(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_COLLECTOR_NAME, recordId);
         }
     }
 }

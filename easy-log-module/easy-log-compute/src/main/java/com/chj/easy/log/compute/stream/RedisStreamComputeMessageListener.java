@@ -29,7 +29,7 @@ import java.util.concurrent.CompletableFuture;
  * @author 陈浩杰
  * @date 2023/7/16 8:40
  */
-@Slf4j(topic = EasyLogConstants.LOG_TOPIC_COMPUTE)
+@Slf4j
 @Component
 public class RedisStreamComputeMessageListener implements StreamListener<String, MapRecord<String, String, String>> {
 
@@ -68,11 +68,11 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
     private CompletableFuture<Void> logAlarm(Map<String, String> logMap) {
         return CompletableFuture.runAsync(() -> {
             String level = logMap.get("level");
-            if ("info" .equalsIgnoreCase(level)) {
+            if ("info".equalsIgnoreCase(level)) {
                 String appName = logMap.get("appName");
                 String timeStamp = logMap.get("timeStamp");
                 SlidingWindow slidingWindow = redisService.slidingWindow("S_W:LOG_ALARM:" + appName, Long.parseLong(timeStamp), 5);
-                log.info("\n{}", JSONUtil.toJsonPrettyStr(slidingWindow));
+                log.info("滑动窗口内计数大小:{}", slidingWindow.getWindowCount());
             }
         }, EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);
     }
@@ -100,19 +100,19 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
                         String ruleWay = split[1];
                         String logVal = logMap.get(ruleKey);
                         String ruleVal = realTimeFilterRules.getStr(realTimeFilterRule);
-                        if ("eq" .equals(ruleWay)) {
+                        if ("eq".equals(ruleWay)) {
                             if (!logVal.equals(ruleVal)) {
                                 clientIdsIterator.remove();
                                 break;
                             }
-                        } else if ("should" .equals(ruleWay)) {
+                        } else if ("should".equals(ruleWay)) {
                             List<String> list = Arrays.asList(ruleVal.split("%"));
                             Optional<String> any = list.stream().filter(logVal::contains).findAny();
                             if (!any.isPresent()) {
                                 clientIdsIterator.remove();
                                 break;
                             }
-                        } else if ("gle" .equals(ruleWay)) {
+                        } else if ("gle".equals(ruleWay)) {
                             if (Long.parseLong(ruleVal) > Long.parseLong(logVal)) {
                                 clientIdsIterator.remove();
                                 break;

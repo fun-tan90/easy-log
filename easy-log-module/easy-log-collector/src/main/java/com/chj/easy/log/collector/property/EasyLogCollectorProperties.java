@@ -23,7 +23,7 @@ public class EasyLogCollectorProperties {
 
     private boolean banner = true;
 
-    private int queueCapacity = 1024;
+    private int queueCapacity = 10000;
 
     private int insertBatchSize = 100;
 

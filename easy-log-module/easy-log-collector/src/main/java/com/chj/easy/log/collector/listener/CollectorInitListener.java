@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author 陈浩杰
  * @date 2023/7/13 10:15
  */
-@Slf4j(topic = EasyLogConstants.LOG_TOPIC_COLLECTOR)
+@Slf4j
 @Component
 public class CollectorInitListener implements ApplicationListener<ApplicationReadyEvent> {
 
@@ -73,26 +73,22 @@ public class CollectorInitListener implements ApplicationListener<ApplicationRea
     }
 
     private void batchInsertLogDocBySchedule() {
+        List<Doc> logDocs = new ArrayList<>();
         EasyLogManager.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
-            List<Doc> logDocs = new ArrayList<>();
-            while (logDocBlockingQueue.remainingCapacity() != -1) {
-                LogDoc logDoc = logDocBlockingQueue.poll();
-                if (logDoc == null) {
-                    break;
-                }
-                logDocs.add(logDoc);
-                if (logDocs.size() == easyLogCollectorProperties.getInsertBatchSize()) {
-                    break;
-                }
-            }
+            logDocBlockingQueue.drainTo(logDocs, Math.min(logDocBlockingQueue.size(), easyLogCollectorProperties.getInsertBatchSize()));
             if (!logDocs.isEmpty()) {
-                StopWatch stopWatch = new StopWatch("es 批量输入");
-                stopWatch.start("批量插入数据耗时");
-                int insertedSize = esService.insertBatch(LogDoc.indexName(), logDocs);
-                log.debug("批量输入条数[{}-{}]", logDocs.size(), insertedSize);
-                stopWatch.stop();
-                log.debug(stopWatch.prettyPrint(TimeUnit.MILLISECONDS));
+                try {
+                    StopWatch stopWatch = new StopWatch("es批量输入");
+                    stopWatch.start();
+                    int insertedSize = esService.insertBatch(LogDoc.indexName(), logDocs);
+                    log.debug("批量输入条数[{}-{}]", logDocs.size(), insertedSize);
+                    logDocs.clear();
+                    stopWatch.stop();
+                    log.debug("{}耗时:{}ms", stopWatch.getId(), stopWatch.getTotalTimeMillis());
+                } catch (RuntimeException e) {
+                    log.error("es 批量插入异常", e);
+                }
             }
-        }, 1, 100, TimeUnit.MILLISECONDS);
+        }, 1, 50, TimeUnit.MILLISECONDS);
     }
 }

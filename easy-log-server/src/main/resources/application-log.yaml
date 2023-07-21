@@ -2,6 +2,6 @@ logging:
   level:
     root: info
 #    tracer: trace
-    easy-log-admin: debug
-    easy-log-compute: debug
-    easy-log-collector: debug
+    com.chj.easy.log.admin: debug
+    com.chj.easy.log.compute: debug
+    com.chj.easy.log.collector: debug
