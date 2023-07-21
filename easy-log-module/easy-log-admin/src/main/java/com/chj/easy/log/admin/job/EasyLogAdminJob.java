@@ -44,6 +44,6 @@ public class EasyLogAdminJob {
     @Scheduled(cron = "${easy-log.compute.stats-log-speed-cron:0/2 * * * * ?}")
     public void statsLogInputSpeed() {
         Map<String, Integer> windowCountMap = redisService.slidingWindowCount("S_W:LOG_INPUT_SPEED:");
-        mqttServerTemplate.publishAll(EasyLogConstants.INPUT_SPEED_TOPIC, JSONUtil.toJsonStr(windowCountMap).getBytes(StandardCharsets.UTF_8), MqttQoS.AT_MOST_ONCE);
+        mqttServerTemplate.publishAll(EasyLogConstants.LOG_INPUT_SPEED_TOPIC, JSONUtil.toJsonStr(windowCountMap).getBytes(StandardCharsets.UTF_8), MqttQoS.AT_MOST_ONCE);
     }
 }

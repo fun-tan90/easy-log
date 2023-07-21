@@ -62,9 +62,9 @@ public class CollectorInitListener implements ApplicationListener<ApplicationRea
                 esService.createIndexIfNotExists(LogDoc.indexName());
             }
 
-            String streamKey = EasyLogConstants.STREAM_KEY;
+            String streamKey = EasyLogConstants.REDIS_STREAM_KEY;
             String groupName = EasyLogConstants.GROUP_COLLECTOR_NAME;
-            String consumerNamePrefix = EasyLogConstants.GROUP_COLLECTOR_CONSUMER_NAME + "-";
+            String consumerNamePrefix = EasyLogConstants.CONSUMER_COLLECTOR_NAME + "-";
             int[] consumerGlobalOrders = easyLogCollectorProperties.getConsumerGlobalOrders();
             redisService.initStream(streamKey, groupName, consumerNamePrefix, consumerGlobalOrders, redisStreamCollectorMessageListener);
 

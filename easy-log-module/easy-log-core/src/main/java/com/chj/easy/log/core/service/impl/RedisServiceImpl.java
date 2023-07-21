@@ -64,9 +64,9 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public SlidingWindow slidingWindow(String key, long timestamp, int period) {
-        DefaultRedisScript<String> actual = Singleton.get(EasyLogConstants.SLIDING_WINDOW_PATH, () -> {
+        DefaultRedisScript<String> actual = Singleton.get(EasyLogConstants.SLIDING_WINDOW_LUA_PATH, () -> {
             DefaultRedisScript<String> redisScript = new DefaultRedisScript<>();
-            redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource(EasyLogConstants.SLIDING_WINDOW_PATH)));
+            redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource(EasyLogConstants.SLIDING_WINDOW_LUA_PATH)));
             redisScript.setResultType(String.class);
             return redisScript;
         });
@@ -84,9 +84,9 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public Map<String, Integer> slidingWindowCount(String keyPrefix) {
-        DefaultRedisScript<String> actual = Singleton.get(EasyLogConstants.SLIDING_WINDOW_COUNT_PATH, () -> {
+        DefaultRedisScript<String> actual = Singleton.get(EasyLogConstants.SLIDING_WINDOW_COUNT_LUA_PATH, () -> {
             DefaultRedisScript<String> redisScript = new DefaultRedisScript<>();
-            redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource(EasyLogConstants.SLIDING_WINDOW_COUNT_PATH)));
+            redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource(EasyLogConstants.SLIDING_WINDOW_COUNT_LUA_PATH)));
             redisScript.setResultType(String.class);
             return redisScript;
         });

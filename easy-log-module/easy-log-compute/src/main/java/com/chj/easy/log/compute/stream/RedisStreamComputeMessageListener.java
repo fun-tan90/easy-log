@@ -47,7 +47,7 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
         if (entries != null) {
             Map<String, String> logMap = entries.getValue();
             CompletableFuture<Void> cfAll = CompletableFuture.allOf(logInputSpeed(logMap), logAlarm(logMap), logRealTimeFilter(logMap));
-            cfAll.whenComplete((v, e) -> stringRedisTemplate.opsForStream().acknowledge(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_COMPUTE_NAME, entries.getId().getValue()));
+            cfAll.whenComplete((v, e) -> stringRedisTemplate.opsForStream().acknowledge(EasyLogConstants.REDIS_STREAM_KEY, EasyLogConstants.GROUP_COMPUTE_NAME, entries.getId().getValue()));
         }
     }
 
@@ -124,11 +124,11 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
                 }
             }
             if (!CollectionUtils.isEmpty(clientIds)) {
+                log.info("日志过滤已完成，待发送客户端个数{}", clientIds.size());
                 byte[] logBytes = JSONUtil.toJsonStr(logMap).getBytes(StandardCharsets.UTF_8);
                 for (String clientId : clientIds) {
-                    mqttServerTemplate.publish(clientId, EasyLogConstants.AFTER_FILTER_TOPIC, logBytes, MqttQoS.AT_MOST_ONCE);
+                    mqttServerTemplate.publish(clientId, EasyLogConstants.LOG_REAL_TIME_FILTERED_TOPIC, logBytes, MqttQoS.AT_MOST_ONCE);
                 }
-                log.info("日志过滤已完成，待发送客户端个数{}", clientIds.size());
             }
         }, EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);
     }

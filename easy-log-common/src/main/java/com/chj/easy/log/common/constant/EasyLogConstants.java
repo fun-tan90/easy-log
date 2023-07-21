@@ -7,6 +7,7 @@ package com.chj.easy.log.common.constant;
  * @since 1.0.0
  */
 public interface EasyLogConstants {
+
     String EASY_LOG_VERSION = "1.0.3";
 
     String COLLECTOR_SCAN_BASE_PACKAGES = "com.chj.easy.log.collector";
@@ -17,17 +18,15 @@ public interface EasyLogConstants {
 
     String CORE_SCAN_BASE_PACKAGES = "com.chj.easy.log.core";
 
-    String INDEX_FIXED_PREFIX = "daily-easy-log-";
-
-    String STREAM_KEY = "easy-log";
+    String REDIS_STREAM_KEY = "easy-log";
 
     String GROUP_COMPUTE_NAME = "easy-log-compute-group";
 
-    String GROUP_COMPUTE_CONSUMER_NAME = "easy-log-compute-group-consumer";
-
     String GROUP_COLLECTOR_NAME = "easy-log-collector-group";
 
-    String GROUP_COLLECTOR_CONSUMER_NAME = "easy-log-collector-group-consumer";
+    String CONSUMER_COMPUTE_NAME = "easy-log-compute-group-consumer";
+
+    String CONSUMER_COLLECTOR_NAME = "easy-log-collector-group-consumer";
 
     String INDEX_MAPPING_PATH = "index_mapping/{}.json";
 
@@ -43,11 +42,11 @@ public interface EasyLogConstants {
 
     String REAL_TIME_FILTER_RULES = "REAL_TIME_FILTER_RULES:";
 
-    String AFTER_FILTER_TOPIC = "easy-log/after-filter";
+    String LOG_REAL_TIME_FILTERED_TOPIC = "easy-log/real-time-filtered";
 
-    String INPUT_SPEED_TOPIC = "easy-log/stats-log-input-speed";
+    String LOG_INPUT_SPEED_TOPIC = "easy-log/stats-log-input-speed";
 
-    String SLIDING_WINDOW_PATH = "lua/slidingWindow.lua";
+    String SLIDING_WINDOW_LUA_PATH = "lua/slidingWindow.lua";
 
-    String SLIDING_WINDOW_COUNT_PATH = "lua/slidingWindowCount.lua";
+    String SLIDING_WINDOW_COUNT_LUA_PATH = "lua/slidingWindowCount.lua";
 }

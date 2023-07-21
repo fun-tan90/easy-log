@@ -64,7 +64,7 @@ public class RedisManager {
                 try {
                     Pipeline pipelined = jedis.pipelined();
                     logTransferredList.forEach(logTransferred -> {
-                        pipelined.xadd(EasyLogConstants.STREAM_KEY, StreamEntryID.NEW_ENTRY, logTransferred.toMap(), redisStreamMaxLen, false);
+                        pipelined.xadd(EasyLogConstants.REDIS_STREAM_KEY, StreamEntryID.NEW_ENTRY, logTransferred.toMap(), redisStreamMaxLen, false);
                     });
                     pipelined.sync();
                     RETRY_TIMES.set(0);

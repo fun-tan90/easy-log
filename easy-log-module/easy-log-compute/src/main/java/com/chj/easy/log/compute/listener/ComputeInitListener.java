@@ -45,9 +45,9 @@ public class ComputeInitListener implements ApplicationListener<ApplicationReady
         if (initialized.compareAndSet(false, true)) {
             esService.createIndexIfNotExists(LogDoc.indexName());
 
-            String streamKey = EasyLogConstants.STREAM_KEY;
+            String streamKey = EasyLogConstants.REDIS_STREAM_KEY;
             String groupName = EasyLogConstants.GROUP_COMPUTE_NAME;
-            String consumerNamePrefix = EasyLogConstants.GROUP_COMPUTE_CONSUMER_NAME + "-";
+            String consumerNamePrefix = EasyLogConstants.CONSUMER_COMPUTE_NAME + "-";
             int[] consumerGlobalOrders = {easyLogComputeProperties.getConsumerGlobalOrder()};
             redisService.initStream(streamKey, groupName, consumerNamePrefix, consumerGlobalOrders, redisStreamComputeMessageListener);
         }

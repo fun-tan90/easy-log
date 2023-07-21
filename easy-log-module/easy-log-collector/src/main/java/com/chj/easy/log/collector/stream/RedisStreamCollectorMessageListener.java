@@ -60,7 +60,7 @@ public class RedisStreamCollectorMessageListener implements StreamListener<Strin
             if (!offer) {
                 log.error("offer LogDoc failed");
             }
-            stringRedisTemplate.opsForStream().acknowledge(EasyLogConstants.STREAM_KEY, EasyLogConstants.GROUP_COLLECTOR_NAME, recordId);
+            stringRedisTemplate.opsForStream().acknowledge(EasyLogConstants.REDIS_STREAM_KEY, EasyLogConstants.GROUP_COLLECTOR_NAME, recordId);
         }
     }
 }

@@ -33,7 +33,7 @@ public class SysRedisStreamServiceImpl implements SysRedisStreamService {
     public RedisStreamXInfoVo streamXInfo(String streamKey) {
         StreamInfo.XInfoGroups groups = stringRedisTemplate.opsForStream().groups(streamKey);
         List<RedisStreamXInfoVo.XInfoGroup> xInfoGroups = groups.stream().map(group -> {
-            StreamInfo.XInfoConsumers consumers = stringRedisTemplate.opsForStream().consumers(EasyLogConstants.STREAM_KEY, group.groupName());
+            StreamInfo.XInfoConsumers consumers = stringRedisTemplate.opsForStream().consumers(EasyLogConstants.REDIS_STREAM_KEY, group.groupName());
 
             List<RedisStreamXInfoVo.XInfoConsumer> xInfoConsumers = consumers.stream().map(xInfoConsumer -> RedisStreamXInfoVo.XInfoConsumer.builder()
                     .consumerName(xInfoConsumer.consumerName())
@@ -55,7 +55,7 @@ public class SysRedisStreamServiceImpl implements SysRedisStreamService {
         Map<String, Map<String, List<String>>> map = new HashMap<>();
         StreamInfo.XInfoGroups groups = stringRedisTemplate.opsForStream().groups(streamKey);
         groups.forEach(group -> {
-            StreamInfo.XInfoConsumers consumers = stringRedisTemplate.opsForStream().consumers(EasyLogConstants.STREAM_KEY, group.groupName());
+            StreamInfo.XInfoConsumers consumers = stringRedisTemplate.opsForStream().consumers(EasyLogConstants.REDIS_STREAM_KEY, group.groupName());
             Map<String, List<String>> item = new HashMap<>();
             consumers.forEach(consumer -> {
                 PendingMessages pending = stringRedisTemplate.opsForStream().pending(streamKey, Consumer.from(group.groupName(), consumer.consumerName()));
