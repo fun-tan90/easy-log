@@ -1,10 +1,12 @@
 package com.chj.easy.log.admin.service.impl;
 
+import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.SaLoginModel;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.chj.easy.log.admin.model.cmd.SysUserLoginCmd;
 import com.chj.easy.log.admin.model.vo.SysUserAuthVo;
+import com.chj.easy.log.admin.model.vo.SysUserMqttVo;
 import com.chj.easy.log.admin.property.EasyLogAdminProperties;
 import com.chj.easy.log.admin.service.SysCaptchaService;
 import com.chj.easy.log.admin.service.SysUserService;
@@ -15,8 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * description TODO
@@ -51,22 +51,30 @@ public class SysUserServiceImpl implements SysUserService {
         StpUtil.login(username, saLoginModel.setIsLastingCookie(rememberMe));
         String tokenValue = StpUtil.getTokenValue();
 
-        Map<String, String> extra = new HashMap<>();
-        extra.put("mqttClientId", tokenValue);
-        extra.put("mqttUserName", RandomUtil.randomString(4));
-        extra.put("mqttPassword", RandomUtil.randomString(8));
-        StpUtil.getTokenSession().set("mqttClientId", extra.get("mqttClientId"));
-        StpUtil.getTokenSession().set("mqttUserName", extra.get("mqttUserName"));
-        StpUtil.getTokenSession().set("mqttPassword", extra.get("mqttPassword"));
-
-        extra.put("sysVersion", EasyLogConstants.EASY_LOG_VERSION);
+        StpUtil.getTokenSession().set("mqttClientId", tokenValue);
+        StpUtil.getTokenSession().set("mqttUserName", RandomUtil.randomString(6));
+        StpUtil.getTokenSession().set("mqttPassword", RandomUtil.randomString(8));
+        StpUtil.getTokenSession().set("sysVersion", EasyLogConstants.EASY_LOG_VERSION);
         return SysUserAuthVo.builder()
                 .token(tokenValue)
                 .userId("1")
                 .userName("管理员")
                 .roles(StpUtil.getRoleList())
                 .permissions(StpUtil.getPermissionList())
-                .extra(extra)
                 .build();
+    }
+
+    @Override
+    public SysUserMqttVo userMqttInfo() {
+        if (StpUtil.isLogin()) {
+            SaSession tokenSession = StpUtil.getTokenSession();
+            return SysUserMqttVo
+                    .builder()
+                    .mqttClientId(tokenSession.getString("mqttClientId"))
+                    .mqttUserName(tokenSession.getString("mqttUserName"))
+                    .mqttUserName(tokenSession.getString("mqttPassword"))
+                    .build();
+        }
+        throw new ClientException(IErrorCode.AUTH_1001006);
     }
 }

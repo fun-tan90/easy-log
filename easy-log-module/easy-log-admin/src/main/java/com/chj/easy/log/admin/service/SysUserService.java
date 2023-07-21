@@ -3,6 +3,7 @@ package com.chj.easy.log.admin.service;
 
 import com.chj.easy.log.admin.model.cmd.SysUserLoginCmd;
 import com.chj.easy.log.admin.model.vo.SysUserAuthVo;
+import com.chj.easy.log.admin.model.vo.SysUserMqttVo;
 
 /**
  * description TODO
@@ -15,4 +16,5 @@ public interface SysUserService {
 
     SysUserAuthVo basicAuth(SysUserLoginCmd sysUserLoginCmd);
 
+    SysUserMqttVo userMqttInfo();
 }

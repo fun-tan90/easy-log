@@ -25,6 +25,4 @@ public class SysUserAuthVo {
     private List<String> roles;
 
     private List<String> permissions;
-
-    private Map<String,String> extra;
 }

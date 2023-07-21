@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.chj.easy.log.admin.model.cmd.CaptchaGenerateCmd;
 import com.chj.easy.log.admin.model.cmd.SysUserLoginCmd;
 import com.chj.easy.log.admin.model.vo.SysUserAuthVo;
+import com.chj.easy.log.admin.model.vo.SysUserMqttVo;
 import com.chj.easy.log.admin.service.SysCaptchaService;
 import com.chj.easy.log.admin.service.SysUserService;
 import com.chj.easy.log.core.convention.Res;
@@ -47,10 +48,13 @@ public class AuthController {
         return Res.ok(sysUserService.basicAuth(userLoginCmd));
     }
 
+    @GetMapping("/user-mqtt-info")
+    public Res<SysUserMqttVo> userMqttInfo() {
+        return Res.ok(sysUserService.userMqttInfo());
+    }
+
     @GetMapping("/isLogin")
     public Res<Boolean> isLogin() {
-        String loginId = StpUtil.getLoginId().toString();
-        log.info("=======LoginId==={}", loginId);
         return Res.ok(StpUtil.isLogin());
     }
 
