@@ -66,7 +66,7 @@ public class CollectorInitListener implements ApplicationListener<ApplicationRea
             String groupName = EasyLogConstants.GROUP_COLLECTOR_NAME;
             String consumerNamePrefix = EasyLogConstants.CONSUMER_COLLECTOR_NAME + "-";
             int[] consumerGlobalOrders = easyLogCollectorProperties.getConsumerGlobalOrders();
-            redisService.initStream(streamKey, groupName, consumerNamePrefix, consumerGlobalOrders, redisStreamCollectorMessageListener);
+            redisService.initGroupAndConsumers(streamKey, groupName, consumerNamePrefix, consumerGlobalOrders, redisStreamCollectorMessageListener);
 
             batchInsertLogDocBySchedule();
         }

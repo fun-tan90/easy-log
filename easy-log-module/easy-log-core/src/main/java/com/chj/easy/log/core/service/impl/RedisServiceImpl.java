@@ -37,11 +37,11 @@ public class RedisServiceImpl implements RedisService {
     private StreamMessageListenerContainer<String, MapRecord<String, String, String>> streamMessageListenerContainer;
 
     @Override
-    public void initStream(String streamKey,
-                           String groupName,
-                           String consumerNamePrefix,
-                           int[] consumerGlobalOrders,
-                           StreamListener<String, MapRecord<String, String, String>> streamListener) {
+    public void initGroupAndConsumers(String streamKey,
+                                      String groupName,
+                                      String consumerNamePrefix,
+                                      int[] consumerGlobalOrders,
+                                      StreamListener<String, MapRecord<String, String, String>> streamListener) {
         Boolean hasKey = stringRedisTemplate.hasKey(streamKey);
         if (Boolean.FALSE.equals(hasKey)) {
             stringRedisTemplate.opsForStream().createGroup(streamKey, groupName);

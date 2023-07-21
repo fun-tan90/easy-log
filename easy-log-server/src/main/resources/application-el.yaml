@@ -16,7 +16,7 @@ easy-log:
   compute:
     enable: ${easy-log.admin.enable}
     banner: true
-    consumer-global-order: 1
+    consumer-global-orders: 1,2,3,4
   collector:
     enable: true
     banner: true

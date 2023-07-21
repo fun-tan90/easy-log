@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public interface RedisService {
 
-    void initStream(String streamKey, String groupName, String consumerNamePrefix, int[] consumerGlobalOrders, StreamListener<String, MapRecord<String, String, String>> streamListener);
+    void initGroupAndConsumers(String streamKey, String groupName, String consumerNamePrefix, int[] consumerGlobalOrders, StreamListener<String, MapRecord<String, String, String>> streamListener);
 
     SlidingWindow slidingWindow(String key, String unique, long timestamp, int period);
 
