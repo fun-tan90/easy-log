@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class EasyLogThreadFactory implements ThreadFactory {
     private static final AtomicInteger POOL_NUMBER = new AtomicInteger(1);
     private final ThreadGroup group;
-    private final AtomicInteger threadNumber = new AtomicInteger(1);
+    private final AtomicInteger THREAD_NUMBER = new AtomicInteger(1);
     private final String namePrefix;
 
     /**
@@ -24,12 +24,13 @@ public class EasyLogThreadFactory implements ThreadFactory {
     public EasyLogThreadFactory(String poolName) {
         SecurityManager s = System.getSecurityManager();
         group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
-        namePrefix = poolName + "-p" + POOL_NUMBER.getAndIncrement() + "-t";
+
+        namePrefix = poolName + "-p" + String.format("%02d", POOL_NUMBER.getAndIncrement()) + "-t";
     }
 
     @Override
     public Thread newThread(Runnable r) {
-        Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
+        Thread t = new Thread(group, r, namePrefix + String.format("%03d", THREAD_NUMBER.getAndIncrement()), 0);
         if (t.isDaemon()) {
             t.setDaemon(false);
         }
