@@ -54,7 +54,6 @@ public class SysUserServiceImpl implements SysUserService {
         StpUtil.getTokenSession().set("mqttClientId", tokenValue);
         StpUtil.getTokenSession().set("mqttUserName", RandomUtil.randomString(6));
         StpUtil.getTokenSession().set("mqttPassword", RandomUtil.randomString(8));
-        StpUtil.getTokenSession().set("sysVersion", EasyLogConstants.EASY_LOG_VERSION);
         return SysUserAuthVo.builder()
                 .token(tokenValue)
                 .userId("1")
@@ -72,7 +71,7 @@ public class SysUserServiceImpl implements SysUserService {
                     .builder()
                     .mqttClientId(tokenSession.getString("mqttClientId"))
                     .mqttUserName(tokenSession.getString("mqttUserName"))
-                    .mqttUserName(tokenSession.getString("mqttPassword"))
+                    .mqttPassword(tokenSession.getString("mqttPassword"))
                     .build();
         }
         throw new ClientException(IErrorCode.AUTH_1001006);

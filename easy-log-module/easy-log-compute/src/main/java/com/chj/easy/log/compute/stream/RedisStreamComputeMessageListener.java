@@ -117,7 +117,7 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
             Iterator<String> clientIdsIterator = clientIds.iterator();
             while (clientIdsIterator.hasNext()) {
                 String clientId = clientIdsIterator.next();
-                JSONObject realTimeFilterRules = redisService.getLogRealTimeFilterRuleFromCache(clientId);
+                JSONObject realTimeFilterRules = redisService.getLogRealTimeFilterRule(clientId);
                 if (!realTimeFilterRules.isEmpty()) {
                     for (String realTimeFilterRule : realTimeFilterRules.keySet()) {
                         String[] split = realTimeFilterRule.split("#");
@@ -150,7 +150,7 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
             }
             if (!CollectionUtils.isEmpty(clientIds)) {
                 for (String clientId : clientIds) {
-                    redisService.addRealTimeFilterZSet(clientId, logMap, timestamp + sequence);
+                    redisService.addRealTimeFilteredLogs(clientId, logMap, timestamp + sequence);
                 }
             }
         }, EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);

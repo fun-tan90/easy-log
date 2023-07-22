@@ -1,17 +1,15 @@
 package com.chj.easy.log.admin.mqtt;
 
-import cn.hutool.core.lang.Singleton;
+import com.chj.easy.log.admin.register.LogRealTimeFilterRegistry;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.service.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import net.dreamlu.iot.mqtt.codec.MqttQoS;
 import net.dreamlu.iot.mqtt.core.server.event.IMqttSessionListener;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.tio.core.ChannelContext;
 
 import javax.annotation.Resource;
-import java.util.concurrent.ScheduledFuture;
 
 /**
  * description TODO
@@ -25,10 +23,10 @@ import java.util.concurrent.ScheduledFuture;
 public class MqttSessionListener implements IMqttSessionListener {
 
     @Resource
-    StringRedisTemplate stringRedisTemplate;
+    RedisService redisService;
 
     @Resource
-    RedisService redisService;
+    LogRealTimeFilterRegistry logRealTimeFilterRegistry;
 
     @Override
     public void onSubscribed(ChannelContext context, String clientId, String topicFilter, MqttQoS mqttQoS) {
@@ -40,12 +38,7 @@ public class MqttSessionListener implements IMqttSessionListener {
     @Override
     public void onUnsubscribed(ChannelContext context, String clientId, String topicFilter) {
         if (topicFilter.startsWith(EasyLogConstants.LOG_AFTER_FILTERED_TOPIC)) {
-            ScheduledFuture<?> scheduledFuture = Singleton.get(clientId, () -> null);
-            if (!scheduledFuture.isCancelled()) {
-                scheduledFuture.cancel(true);
-            }
-            redisService.delRealTimeFilterSubscribingClient(clientId);
-            redisService.delLogRealTimeFilterRuleFromCache(clientId);
+            logRealTimeFilterRegistry.unRegister(clientId);
         }
     }
 }

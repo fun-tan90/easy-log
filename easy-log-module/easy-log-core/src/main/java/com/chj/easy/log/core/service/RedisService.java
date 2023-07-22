@@ -5,6 +5,7 @@ import com.chj.easy.log.core.model.SlidingWindow;
 import org.springframework.data.redis.connection.stream.MapRecord;
 import org.springframework.data.redis.stream.StreamListener;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,11 +24,11 @@ public interface RedisService {
 
     Map<String, Integer> slidingWindowCount(String keyPrefix);
 
-    void addLogRealTimeFilterRuleToCache(String mqttClientId, Map<String, String> realTimeFilterRules);
+    void addLogRealTimeFilterRule(String mqttClientId, Map<String, String> realTimeFilterRules);
 
-    void delLogRealTimeFilterRuleFromCache(String mqttClientId);
+    void delLogRealTimeFilterRule(String mqttClientId);
 
-    JSONObject getLogRealTimeFilterRuleFromCache(String mqttClientId);
+    JSONObject getLogRealTimeFilterRule(String mqttClientId);
 
     void addRealTimeFilterSubscribingClient(String mqttClientId);
 
@@ -35,5 +36,7 @@ public interface RedisService {
 
     Set<String> getRealTimeFilterSubscribingClients();
 
-    void addRealTimeFilterZSet(String clientId, Map<String, String> logMap, double score);
+    void addRealTimeFilteredLogs(String clientId, Map<String, String> logMap, double score);
+
+    List<String> popRealTimeFilteredLog(String clientId);
 }

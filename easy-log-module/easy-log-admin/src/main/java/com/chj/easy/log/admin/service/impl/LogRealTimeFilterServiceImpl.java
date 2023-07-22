@@ -1,28 +1,19 @@
 package com.chj.easy.log.admin.service.impl;
 
-import cn.hutool.core.lang.Singleton;
 import com.chj.easy.log.admin.model.cmd.LogRealTimeFilterCmd;
+import com.chj.easy.log.admin.register.LogRealTimeFilterRegistry;
 import com.chj.easy.log.admin.service.LogRealTimeFilterService;
-import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.service.EsService;
-import com.chj.easy.log.core.service.RedisService;
 import lombok.extern.slf4j.Slf4j;
-import net.dreamlu.iot.mqtt.codec.MqttQoS;
-import net.dreamlu.iot.mqtt.spring.server.MqttServerTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 /**
  * description TODO
@@ -36,19 +27,13 @@ import java.util.concurrent.TimeUnit;
 public class LogRealTimeFilterServiceImpl implements LogRealTimeFilterService {
 
     @Resource
-    StringRedisTemplate stringRedisTemplate;
-
-    @Resource
-    MqttServerTemplate mqttServerTemplate;
+    LogRealTimeFilterRegistry logRealTimeFilterRegistry;
 
     @Resource
     EsService esService;
 
-    @Resource
-    RedisService redisService;
-
     @Override
-    public long subscribe(LogRealTimeFilterCmd logRealTimeFilterCmd) {
+    public long submit(LogRealTimeFilterCmd logRealTimeFilterCmd) {
         long timestamp = System.currentTimeMillis();
         Map<String, String> realTimeFilterRules = new HashMap<>();
         realTimeFilterRules.put("timeStamp#gle", String.valueOf(timestamp));
@@ -80,18 +65,7 @@ public class LogRealTimeFilterServiceImpl implements LogRealTimeFilterService {
             List<String> ikSmartWord = esService.analyze(logRealTimeFilterCmd.getAnalyzer(), content);
             realTimeFilterRules.put("content#should", String.join("%", ikSmartWord));
         }
-        String mqttClientId = logRealTimeFilterCmd.getMqttClientId();
-        redisService.addLogRealTimeFilterRuleToCache(mqttClientId, realTimeFilterRules);
-        ScheduledFuture<?> scheduledFuture = EasyLogManager.EASY_LOG_SCHEDULED_EXECUTOR.scheduleAtFixedRate(() -> {
-            Set<String> filteredLogs = stringRedisTemplate.opsForZSet().range(EasyLogConstants.REAL_TIME_FILTER_Z_SET + mqttClientId, 0, -1);
-            if (CollectionUtils.isEmpty(filteredLogs)) {
-                return;
-            }
-            for (String filteredLog : filteredLogs) {
-                mqttServerTemplate.publish(mqttClientId, EasyLogConstants.LOG_AFTER_FILTERED_TOPIC, filteredLog.getBytes(StandardCharsets.UTF_8), MqttQoS.AT_LEAST_ONCE);
-            }
-        }, 1, 50, TimeUnit.MILLISECONDS);
-        Singleton.put(mqttClientId, scheduledFuture);
+        logRealTimeFilterRegistry.register(logRealTimeFilterCmd.getMqttClientId(), realTimeFilterRules);
         return timestamp;
     }
 

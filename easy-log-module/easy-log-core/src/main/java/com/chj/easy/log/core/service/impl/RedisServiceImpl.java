@@ -10,11 +10,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.connection.stream.*;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.stream.StreamListener;
 import org.springframework.data.redis.stream.StreamMessageListenerContainer;
 import org.springframework.scripting.support.ResourceScriptSource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -102,17 +104,17 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public void addLogRealTimeFilterRuleToCache(String mqttClientId, Map<String, String> realTimeFilterRules) {
+    public void addLogRealTimeFilterRule(String mqttClientId, Map<String, String> realTimeFilterRules) {
         stringRedisTemplate.opsForValue().set(EasyLogConstants.REAL_TIME_FILTER_RULES + mqttClientId, JSONUtil.toJsonStr(realTimeFilterRules));
     }
 
     @Override
-    public void delLogRealTimeFilterRuleFromCache(String mqttClientId) {
+    public void delLogRealTimeFilterRule(String mqttClientId) {
         stringRedisTemplate.delete(EasyLogConstants.REAL_TIME_FILTER_RULES + mqttClientId);
     }
 
     @Override
-    public JSONObject getLogRealTimeFilterRuleFromCache(String mqttClientId) {
+    public JSONObject getLogRealTimeFilterRule(String mqttClientId) {
         String realTimeFilterRulesStr = stringRedisTemplate.opsForValue().get(EasyLogConstants.REAL_TIME_FILTER_RULES + mqttClientId);
         return Optional.ofNullable(realTimeFilterRulesStr).map(JSONUtil::parseObj).orElse(new JSONObject());
     }
@@ -133,7 +135,16 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public void addRealTimeFilterZSet(String clientId, Map<String, String> logMap, double score) {
+    public void addRealTimeFilteredLogs(String clientId, Map<String, String> logMap, double score) {
         stringRedisTemplate.opsForZSet().add(EasyLogConstants.REAL_TIME_FILTER_Z_SET + clientId, JSONUtil.toJsonStr(logMap), score);
+    }
+
+    @Override
+    public List<String> popRealTimeFilteredLog(String clientId) {
+        Set<ZSetOperations.TypedTuple<String>> typedTuples = stringRedisTemplate.opsForZSet().popMax(EasyLogConstants.REAL_TIME_FILTER_Z_SET + clientId, -1);
+        if (CollectionUtils.isEmpty(typedTuples)) {
+            return new ArrayList<>();
+        }
+        return typedTuples.stream().sorted(Comparator.comparing(ZSetOperations.TypedTuple::getScore)).map(ZSetOperations.TypedTuple::getValue).collect(Collectors.toList());
     }
 }
