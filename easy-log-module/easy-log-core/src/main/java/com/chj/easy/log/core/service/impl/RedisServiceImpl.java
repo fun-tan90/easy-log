@@ -1,6 +1,8 @@
 package com.chj.easy.log.core.service.impl;
 
 import cn.hutool.core.lang.Singleton;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.model.SlidingWindow;
 import com.chj.easy.log.core.service.RedisService;
@@ -97,5 +99,41 @@ public class RedisServiceImpl implements RedisService {
                     m -> Integer.parseInt(m.split("#")[1])));
         }
         return new HashMap<>();
+    }
+
+    @Override
+    public void addLogRealTimeFilterRuleToCache(String mqttClientId, Map<String, String> realTimeFilterRules) {
+        stringRedisTemplate.opsForValue().set(EasyLogConstants.REAL_TIME_FILTER_RULES + mqttClientId, JSONUtil.toJsonStr(realTimeFilterRules));
+    }
+
+    @Override
+    public void delLogRealTimeFilterRuleFromCache(String mqttClientId) {
+        stringRedisTemplate.delete(EasyLogConstants.REAL_TIME_FILTER_RULES + mqttClientId);
+    }
+
+    @Override
+    public JSONObject getLogRealTimeFilterRuleFromCache(String mqttClientId) {
+        String realTimeFilterRulesStr = stringRedisTemplate.opsForValue().get(EasyLogConstants.REAL_TIME_FILTER_RULES + mqttClientId);
+        return Optional.ofNullable(realTimeFilterRulesStr).map(JSONUtil::parseObj).orElse(new JSONObject());
+    }
+
+    @Override
+    public void addRealTimeFilterSubscribingClient(String mqttClientId) {
+        stringRedisTemplate.opsForSet().add(EasyLogConstants.REAL_TIME_FILTER_SUBSCRIBING_CLIENTS, mqttClientId);
+    }
+
+    @Override
+    public void delRealTimeFilterSubscribingClient(String mqttClientId) {
+        stringRedisTemplate.opsForSet().remove(EasyLogConstants.REAL_TIME_FILTER_SUBSCRIBING_CLIENTS, mqttClientId);
+    }
+
+    @Override
+    public Set<String> getRealTimeFilterSubscribingClients() {
+        return stringRedisTemplate.opsForSet().members(EasyLogConstants.REAL_TIME_FILTER_SUBSCRIBING_CLIENTS);
+    }
+
+    @Override
+    public void addRealTimeFilterZSet(String clientId, Map<String, String> logMap, double score) {
+        stringRedisTemplate.opsForZSet().add(EasyLogConstants.REAL_TIME_FILTER_Z_SET + clientId, JSONUtil.toJsonStr(logMap), score);
     }
 }

@@ -3,6 +3,8 @@ package com.chj.easy.log.admin.service;
 
 import com.chj.easy.log.admin.model.cmd.LogRealTimeFilterCmd;
 
+import java.util.Map;
+
 /**
  * description TODO
  * company 铁人科技
@@ -13,4 +15,5 @@ import com.chj.easy.log.admin.model.cmd.LogRealTimeFilterCmd;
 public interface LogRealTimeFilterService {
 
     long subscribe(LogRealTimeFilterCmd logRealTimeFilterCmd);
+
 }

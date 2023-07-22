@@ -9,14 +9,11 @@ import com.chj.easy.log.core.model.LogAlarmRule;
 import com.chj.easy.log.core.model.SlidingWindow;
 import com.chj.easy.log.core.service.RedisService;
 import lombok.extern.slf4j.Slf4j;
-import net.dreamlu.iot.mqtt.spring.server.MqttServerTemplate;
-import org.springframework.context.ApplicationContext;
 import org.springframework.data.redis.connection.stream.MapRecord;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.stream.StreamListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -41,12 +38,6 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
 
     @Resource
     RedisService redisService;
-
-    @Resource
-    MqttServerTemplate mqttServerTemplate;
-
-    @Resource
-    ApplicationContext applicationContext;
 
     @Override
     public void onMessage(MapRecord<String, String, String> entries) {
@@ -119,16 +110,15 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
      */
     private CompletableFuture<Void> logRealTimeFilter(Map<String, String> logMap, Long timestamp, Long sequence) {
         return CompletableFuture.runAsync(() -> {
-            Set<String> clientIds = stringRedisTemplate.opsForSet().members(EasyLogConstants.MQTT_ONLINE_CLIENTS);
+            Set<String> clientIds = redisService.getRealTimeFilterSubscribingClients();
             if (CollectionUtils.isEmpty(clientIds)) {
                 return;
             }
             Iterator<String> clientIdsIterator = clientIds.iterator();
             while (clientIdsIterator.hasNext()) {
                 String clientId = clientIdsIterator.next();
-                String realTimeFilterRulesStr = stringRedisTemplate.opsForValue().get(EasyLogConstants.REAL_TIME_FILTER_RULES + clientId);
-                if (StringUtils.hasLength(realTimeFilterRulesStr)) {
-                    JSONObject realTimeFilterRules = JSONUtil.parseObj(realTimeFilterRulesStr);
+                JSONObject realTimeFilterRules = redisService.getLogRealTimeFilterRuleFromCache(clientId);
+                if (!realTimeFilterRules.isEmpty()) {
                     for (String realTimeFilterRule : realTimeFilterRules.keySet()) {
                         String[] split = realTimeFilterRule.split("#");
                         String ruleKey = split[0];
@@ -160,7 +150,7 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
             }
             if (!CollectionUtils.isEmpty(clientIds)) {
                 for (String clientId : clientIds) {
-                    stringRedisTemplate.opsForZSet().add(EasyLogConstants.REAL_TIME_FILTER_Z_SET + clientId, JSONUtil.toJsonStr(logMap), timestamp + sequence);
+                    redisService.addRealTimeFilterZSet(clientId, logMap, timestamp + sequence);
                 }
             }
         }, EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);

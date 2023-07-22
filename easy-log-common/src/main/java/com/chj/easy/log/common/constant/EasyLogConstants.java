@@ -38,7 +38,7 @@ public interface EasyLogConstants {
 
     String CAPTCHA_IMG = "CAPTCHA_IMG:";
 
-    String MQTT_ONLINE_CLIENTS = "MQTT_ONLINE_CLIENTS";
+    String REAL_TIME_FILTER_SUBSCRIBING_CLIENTS = "REAL_TIME_FILTER_SUBSCRIBING_CLIENTS";
 
     String REAL_TIME_FILTER_RULES = "REAL_TIME_FILTER_RULES:";
 
@@ -51,6 +51,8 @@ public interface EasyLogConstants {
     String LOG_ALARM = "LOG_ALARM";
 
     String S_W_LOG_INPUT_SPEED = "S_W:LOG_INPUT_SPEED:";
+
+    String LOG_AFTER_FILTERED_TOPIC = "easy-log/after-filtered";
 
     String LOG_INPUT_SPEED_TOPIC = "easy-log/stats-log-input-speed";
 

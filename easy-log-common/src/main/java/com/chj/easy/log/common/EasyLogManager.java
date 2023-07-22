@@ -20,7 +20,7 @@ import java.util.concurrent.ScheduledExecutorService;
 public class EasyLogManager {
     public final static ExecutorService EASY_LOG_FIXED_THREAD_POOL = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), new EasyLogThreadFactory("el"));
 
-    public final static ScheduledExecutorService EASY_LOG_SCHEDULED_EXECUTOR = Executors.newScheduledThreadPool(4, new EasyLogThreadFactory("el"));
+    public final static ScheduledExecutorService EASY_LOG_SCHEDULED_EXECUTOR = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors(), new EasyLogThreadFactory("el"));
 
     public static final SlidingWindow ERROR_SPEED_SLIDING_WINDOW = new SlidingWindow(1000, 5);
 
