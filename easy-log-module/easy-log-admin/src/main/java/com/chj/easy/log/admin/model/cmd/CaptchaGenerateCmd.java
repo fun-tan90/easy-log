@@ -21,7 +21,7 @@ public class CaptchaGenerateCmd {
      */
     @NotNull
     @NotBlank
-    @Length(min = 8, max = 8)
+    @Length(min = 8, max = 12)
     private String captchaKey;
 
     private Integer width = 130;

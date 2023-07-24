@@ -19,7 +19,6 @@ public class LogRealTimeFilterCmd {
 
     @NotNull
     @NotBlank
-    @Length(min = 8)
     private String mqttClientId;
 
     @NotNull

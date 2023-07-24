@@ -1,4 +1,4 @@
-package com.chj.easy.log.admin.register;
+package com.chj.easy.log.admin.handler;
 
 import cn.hutool.core.map.SafeConcurrentHashMap;
 import com.chj.easy.log.common.EasyLogManager;
@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Component
-public class LogRealTimeFilterRegistry {
+public class LogRealTimeFilterEventHandler {
 
     private static final SafeConcurrentHashMap<String, ScheduledFuture<?>> SCHEDULED_FUTURE_POOL = new SafeConcurrentHashMap<>();
 
@@ -61,7 +61,7 @@ public class LogRealTimeFilterRegistry {
     @EventListener
     public void logAlarmUnRegisterEvent(LogAlarmUnRegisterEvent logAlarmUnRegisterEvent) {
         String clientId = logAlarmUnRegisterEvent.getClientId();
-        ScheduledFuture<?> scheduledFuture = SCHEDULED_FUTURE_POOL.get(clientId);
+        ScheduledFuture<?> scheduledFuture = SCHEDULED_FUTURE_POOL.remove(clientId);
         if (!Objects.isNull(scheduledFuture) && !scheduledFuture.isCancelled()) {
             scheduledFuture.cancel(true);
         }
