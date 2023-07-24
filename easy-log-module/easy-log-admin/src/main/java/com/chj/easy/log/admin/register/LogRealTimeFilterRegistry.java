@@ -3,10 +3,13 @@ package com.chj.easy.log.admin.register;
 import cn.hutool.core.map.SafeConcurrentHashMap;
 import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
+import com.chj.easy.log.core.event.LogAlarmRegisterEvent;
+import com.chj.easy.log.core.event.LogAlarmUnRegisterEvent;
 import com.chj.easy.log.core.service.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import net.dreamlu.iot.mqtt.codec.MqttQoS;
 import net.dreamlu.iot.mqtt.spring.server.MqttServerTemplate;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -37,7 +40,10 @@ public class LogRealTimeFilterRegistry {
     @Resource
     MqttServerTemplate mqttServerTemplate;
 
-    public void register(String clientId, Map<String, String> realTimeFilterRules) {
+    @EventListener
+    public void logAlarmRegisterEvent(LogAlarmRegisterEvent logAlarmRegisterEvent) {
+        String clientId = logAlarmRegisterEvent.getClientId();
+        Map<String, String> realTimeFilterRules = logAlarmRegisterEvent.getRealTimeFilterRules();
         redisService.addLogRealTimeFilterRule(clientId, realTimeFilterRules);
         ScheduledFuture<?> scheduledFuture = EasyLogManager.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
             List<String> filteredLogs = redisService.popRealTimeFilteredLog(clientId);
@@ -52,7 +58,9 @@ public class LogRealTimeFilterRegistry {
         SCHEDULED_FUTURE_POOL.put(clientId, scheduledFuture);
     }
 
-    public void unRegister(String clientId) {
+    @EventListener
+    public void logAlarmUnRegisterEvent(LogAlarmUnRegisterEvent logAlarmUnRegisterEvent) {
+        String clientId = logAlarmUnRegisterEvent.getClientId();
         ScheduledFuture<?> scheduledFuture = SCHEDULED_FUTURE_POOL.get(clientId);
         if (!Objects.isNull(scheduledFuture) && !scheduledFuture.isCancelled()) {
             scheduledFuture.cancel(true);
@@ -60,5 +68,4 @@ public class LogRealTimeFilterRegistry {
         redisService.delRealTimeFilterSubscribingClient(clientId);
         redisService.delLogRealTimeFilterRule(clientId);
     }
-
 }

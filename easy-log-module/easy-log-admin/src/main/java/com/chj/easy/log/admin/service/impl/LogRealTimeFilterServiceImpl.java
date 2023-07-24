@@ -1,11 +1,12 @@
 package com.chj.easy.log.admin.service.impl;
 
 import com.chj.easy.log.admin.model.cmd.LogRealTimeFilterCmd;
-import com.chj.easy.log.admin.register.LogRealTimeFilterRegistry;
 import com.chj.easy.log.admin.service.LogRealTimeFilterService;
 import com.chj.easy.log.common.constant.EasyLogConstants;
+import com.chj.easy.log.core.event.LogAlarmRegisterEvent;
 import com.chj.easy.log.core.service.EsService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -27,7 +28,7 @@ import java.util.Map;
 public class LogRealTimeFilterServiceImpl implements LogRealTimeFilterService {
 
     @Resource
-    LogRealTimeFilterRegistry logRealTimeFilterRegistry;
+    ApplicationContext applicationContext;
 
     @Resource
     EsService esService;
@@ -65,7 +66,7 @@ public class LogRealTimeFilterServiceImpl implements LogRealTimeFilterService {
             List<String> ikSmartWord = esService.analyze(logRealTimeFilterCmd.getAnalyzer(), content);
             realTimeFilterRules.put("content#should", String.join("%", ikSmartWord));
         }
-        logRealTimeFilterRegistry.register(logRealTimeFilterCmd.getMqttClientId(), realTimeFilterRules);
+        applicationContext.publishEvent(new LogAlarmRegisterEvent(this, logRealTimeFilterCmd.getMqttClientId(), realTimeFilterRules));
         return timestamp;
     }
 

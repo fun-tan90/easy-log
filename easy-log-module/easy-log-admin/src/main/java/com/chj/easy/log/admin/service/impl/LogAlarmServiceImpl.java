@@ -4,8 +4,6 @@ import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.admin.model.cmd.LogAlarmRuleAddCmd;
 import com.chj.easy.log.admin.service.LogAlarmService;
 import com.chj.easy.log.common.constant.EasyLogConstants;
-import com.chj.easy.log.core.convention.enums.IErrorCode;
-import com.chj.easy.log.core.convention.exception.ClientException;
 import com.chj.easy.log.core.model.LogAlarmRule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -32,11 +30,8 @@ public class LogAlarmServiceImpl implements LogAlarmService {
     public String logAlarm(LogAlarmRuleAddCmd logAlarmRuleAddCmd) {
         String appName = logAlarmRuleAddCmd.getAppName();
         String appEnv = logAlarmRuleAddCmd.getAppEnv();
+        String ruleKey = EasyLogConstants.LOG_ALARM_RULES + appName + ":" + appEnv;
         String loggerName = StringUtils.hasLength(logAlarmRuleAddCmd.getLoggerName()) ? logAlarmRuleAddCmd.getLoggerName() : "all";
-        String ruleKey = EasyLogConstants.LOG_ALARM_RULES + appName + ":" + appEnv + ":" + loggerName;
-        if (Boolean.TRUE.equals(stringRedisTemplate.hasKey(ruleKey))) {
-            throw new ClientException(IErrorCode.LOG_ALARM_1004001);
-        }
         LogAlarmRule logAlarmRule = LogAlarmRule
                 .builder()
                 .loggerName(loggerName)
@@ -46,7 +41,7 @@ public class LogAlarmServiceImpl implements LogAlarmService {
                 .threshold(logAlarmRuleAddCmd.getThreshold())
                 .status(logAlarmRuleAddCmd.getStatus())
                 .build();
-        stringRedisTemplate.opsForValue().set(ruleKey, JSONUtil.toJsonStr(logAlarmRule));
+        stringRedisTemplate.opsForHash().put(ruleKey, loggerName, JSONUtil.toJsonStr(logAlarmRule));
         return ruleKey;
     }
 }

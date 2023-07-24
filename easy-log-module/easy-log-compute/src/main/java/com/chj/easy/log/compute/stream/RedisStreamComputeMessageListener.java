@@ -1,6 +1,5 @@
 package com.chj.easy.log.compute.stream;
 
-import cn.hutool.core.lang.Singleton;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.common.EasyLogManager;
@@ -72,18 +71,16 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
             String level = logMap.get("level");
             String appName = logMap.get("appName");
             String appEnv = logMap.get("appEnv");
+            String loggerName = logMap.get("loggerName");
             String timeStamp = logMap.get("timeStamp");
 
-            Map<String, LogAlarmRule> cacheLogAlarmRuleMap = Singleton.get(EasyLogConstants.LOG_ALARM_RULES + appName + ":" + appEnv, () -> {
-                Set<String> logAlarmRuleKeys = stringRedisTemplate.keys(EasyLogConstants.LOG_ALARM_RULES + appName + ":" + appEnv + ":*");
-                if (CollectionUtils.isEmpty(logAlarmRuleKeys)) {
-                    return new HashMap<>();
-                }
-                return logAlarmRuleKeys.stream()
-                        .map(logAlarmRuleKey -> JSONUtil.toBean(stringRedisTemplate.opsForValue().get(logAlarmRuleKey), LogAlarmRule.class))
-                        .filter(logAlarmRule -> "1".equals(logAlarmRule.getStatus()))
-                        .collect(Collectors.toMap(LogAlarmRule::getLoggerName, Function.identity()));
-            });
+            List<Object> logAlarmRulesList = stringRedisTemplate.opsForHash().multiGet(EasyLogConstants.LOG_ALARM_RULES + appName + ":" + appEnv, Arrays.asList("all", loggerName));
+            Map<String, LogAlarmRule> cacheLogAlarmRuleMap = logAlarmRulesList
+                    .stream()
+                    .filter(n -> !Objects.isNull(n))
+                    .map(logAlarmRule -> JSONUtil.toBean(logAlarmRule.toString(), LogAlarmRule.class))
+                    .filter(logAlarmRule -> "1".equals(logAlarmRule.getStatus()))
+                    .collect(Collectors.toMap(LogAlarmRule::getLoggerName, Function.identity()));
             if (CollectionUtils.isEmpty(cacheLogAlarmRuleMap)) {
                 return;
             }

@@ -1,9 +1,10 @@
 package com.chj.easy.log.admin.mqtt;
 
-import com.chj.easy.log.admin.register.LogRealTimeFilterRegistry;
 import com.chj.easy.log.common.constant.EasyLogConstants;
+import com.chj.easy.log.core.event.LogAlarmUnRegisterEvent;
 import lombok.extern.slf4j.Slf4j;
 import net.dreamlu.iot.mqtt.core.server.event.IMqttConnectStatusListener;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.tio.core.ChannelContext;
 
@@ -21,7 +22,7 @@ import javax.annotation.Resource;
 public class MqttConnectStatusListener implements IMqttConnectStatusListener {
 
     @Resource
-    LogRealTimeFilterRegistry logRealTimeFilterRegistry;
+    ApplicationContext applicationContext;
 
     @Override
     public void online(ChannelContext context, String clientId, String username) {
@@ -29,6 +30,6 @@ public class MqttConnectStatusListener implements IMqttConnectStatusListener {
 
     @Override
     public void offline(ChannelContext context, String clientId, String username, String reason) {
-        logRealTimeFilterRegistry.unRegister(clientId);
+        applicationContext.publishEvent(new LogAlarmUnRegisterEvent(this, clientId));
     }
 }

@@ -1,11 +1,12 @@
 package com.chj.easy.log.admin.mqtt;
 
-import com.chj.easy.log.admin.register.LogRealTimeFilterRegistry;
 import com.chj.easy.log.common.constant.EasyLogConstants;
+import com.chj.easy.log.core.event.LogAlarmUnRegisterEvent;
 import com.chj.easy.log.core.service.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import net.dreamlu.iot.mqtt.codec.MqttQoS;
 import net.dreamlu.iot.mqtt.core.server.event.IMqttSessionListener;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.tio.core.ChannelContext;
 
@@ -26,7 +27,7 @@ public class MqttSessionListener implements IMqttSessionListener {
     RedisService redisService;
 
     @Resource
-    LogRealTimeFilterRegistry logRealTimeFilterRegistry;
+    ApplicationContext applicationContext;
 
     @Override
     public void onSubscribed(ChannelContext context, String clientId, String topicFilter, MqttQoS mqttQoS) {
@@ -38,7 +39,7 @@ public class MqttSessionListener implements IMqttSessionListener {
     @Override
     public void onUnsubscribed(ChannelContext context, String clientId, String topicFilter) {
         if (topicFilter.startsWith(EasyLogConstants.LOG_AFTER_FILTERED_TOPIC)) {
-            logRealTimeFilterRegistry.unRegister(clientId);
+            applicationContext.publishEvent(new LogAlarmUnRegisterEvent(this, clientId));
         }
     }
 }
