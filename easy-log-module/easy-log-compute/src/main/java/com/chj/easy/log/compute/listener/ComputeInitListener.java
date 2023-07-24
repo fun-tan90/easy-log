@@ -43,7 +43,8 @@ public class ComputeInitListener implements ApplicationListener<ApplicationReady
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         if (initialized.compareAndSet(false, true)) {
-            esService.createIndexIfNotExists(LogDoc.indexName());
+            esService.initIndex();
+//            esService.createIndexIfNotExists(LogDoc.indexName());
 
             String streamKey = EasyLogConstants.REDIS_STREAM_KEY;
             String groupName = EasyLogConstants.GROUP_COMPUTE_NAME;

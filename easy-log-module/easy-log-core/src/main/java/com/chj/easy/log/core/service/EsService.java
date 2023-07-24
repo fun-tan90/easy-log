@@ -24,6 +24,25 @@ public interface EsService {
      */
     void createIndexIfNotExists(String indexName);
 
+    void initIndex();
+
+    /**
+     * 创建索引模板
+     */
+    boolean createLifecyclePolicy(String indexTemplateName, String templateSource);
+
+    /**
+     * 创建索引模板
+     */
+    boolean createIndexTemplate(String indexTemplateName, String templateSource);
+
+    /**
+     * 创建数据流
+     *
+     * @param dataStreamName
+     */
+    boolean createDataStream(String dataStreamName);
+
     /**
      * 判断索引是否存在
      *

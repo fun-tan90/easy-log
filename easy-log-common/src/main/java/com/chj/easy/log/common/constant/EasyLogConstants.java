@@ -30,6 +30,10 @@ public interface EasyLogConstants {
 
     String INDEX_MAPPING_PATH = "index_mapping/{}.json";
 
+    String ILM_PATH = "es/easy-log-ilm.json";
+
+    String INDEX_TEMPLATE_PATH = "es/easy-log-index-template.json";
+
     String LOG_TOPIC_COLLECTOR = "easy-log-collector";
 
     String LOG_TOPIC_COMPUTE = "easy-log-compute";

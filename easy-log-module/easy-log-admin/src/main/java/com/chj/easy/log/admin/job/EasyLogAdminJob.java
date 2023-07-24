@@ -38,7 +38,7 @@ public class EasyLogAdminJob {
     @Scheduled(cron = "${easy-log.admin.init-index-cron:0 0 23 * * ?}")
     public void createLogDocIndexTask() {
         String newIndexName = LogDoc.newIndexName();
-        esService.createIndexIfNotExists(newIndexName);
+//        esService.createIndexIfNotExists(newIndexName);
     }
 
     @Scheduled(cron = "${easy-log.compute.stats-log-speed-cron:0/2 * * * * ?}")
