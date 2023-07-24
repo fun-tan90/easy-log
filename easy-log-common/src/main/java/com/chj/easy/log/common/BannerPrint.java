@@ -15,7 +15,7 @@ public class BannerPrint {
 
     private static final String PROJECT_NAME = " :: easy-log :: ";
 
-    private static final String GITEE = "Gitee:  git@gitee.com:DianZiFaPiao/easy-log.git";
+    private static final String GITEE = "Gitee:  git@gitee.com:easy-log/easy-log.git";
 
     private static final int STRAP_LINE_SIZE = 50;
 
