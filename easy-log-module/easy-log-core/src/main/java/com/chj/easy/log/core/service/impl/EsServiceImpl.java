@@ -63,6 +63,24 @@ public class EsServiceImpl implements EsService {
     RestHighLevelClient restHighLevelClient;
 
     @Override
+    public void initIndex() {
+        String lifecyclePolicyContent = ResourceUtil.readUtf8Str(EasyLogConstants.ILM_PATH);
+        boolean lifecyclePolicy = putLifecyclePolicy("easy-log-policy", lifecyclePolicyContent);
+        if (lifecyclePolicy) {
+            String templateSource = ResourceUtil.readUtf8Str(EasyLogConstants.INDEX_TEMPLATE_PATH);
+            boolean indexTemplate = putIndexTemplate("easy-log-template", templateSource);
+            if (indexTemplate) {
+                boolean dataStream = createDataStreamIfNotExist("easy-log-ds");
+                if (dataStream) {
+                    log.info("数据流【easy-log-ds】创建成功");
+                } else {
+                    log.info("数据流【easy-log-ds】已创建");
+                }
+            }
+        }
+    }
+
+    @Override
     public void createIndexIfNotExists(String indexName) {
         boolean exists = exists(indexName);
         if (!exists) {
@@ -75,25 +93,7 @@ public class EsServiceImpl implements EsService {
     }
 
     @Override
-    public void initIndex() {
-        String lifecyclePolicyContent = ResourceUtil.readUtf8Str(EasyLogConstants.ILM_PATH);
-        boolean lifecyclePolicy = createLifecyclePolicy("easy-log-policy", lifecyclePolicyContent);
-        if (lifecyclePolicy) {
-            String templateSource = ResourceUtil.readUtf8Str(EasyLogConstants.INDEX_TEMPLATE_PATH);
-            boolean indexTemplate = createIndexTemplate("easy-log-template", templateSource);
-            if (indexTemplate) {
-                boolean dataStream = createDataStream("easy-log-ds");
-                if (dataStream) {
-                    log.info("数据流【easy-log-ds】创建成功");
-                } else {
-                    log.info("数据流【easy-log-ds】已创建");
-                }
-            }
-        }
-    }
-
-    @Override
-    public boolean createLifecyclePolicy(String lifecyclePolicyName, String lifecyclePolicyContent) {
+    public boolean putLifecyclePolicy(String lifecyclePolicyName, String lifecyclePolicyContent) {
         Request request = new Request("PUT", "/_ilm/policy/" + lifecyclePolicyName);
         try {
             request.setJsonEntity(lifecyclePolicyContent);
@@ -105,7 +105,7 @@ public class EsServiceImpl implements EsService {
     }
 
     @Override
-    public boolean createIndexTemplate(String indexTemplateName, String templateSource) {
+    public boolean putIndexTemplate(String indexTemplateName, String templateSource) {
         Request request = new Request("PUT", "/_index_template/" + indexTemplateName);
         try {
             request.setJsonEntity(templateSource);
@@ -117,7 +117,7 @@ public class EsServiceImpl implements EsService {
     }
 
     @Override
-    public boolean createDataStream(String dataStreamName) {
+    public boolean createDataStreamIfNotExist(String dataStreamName) {
         try {
             GetIndexRequest request = new GetIndexRequest(dataStreamName);
             boolean exists = restHighLevelClient.indices().exists(request, RequestOptions.DEFAULT);

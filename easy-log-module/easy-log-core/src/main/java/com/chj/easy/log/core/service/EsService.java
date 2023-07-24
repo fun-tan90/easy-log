@@ -18,6 +18,11 @@ import java.util.Map;
 public interface EsService {
 
     /**
+     * 初始化索引
+     */
+    void initIndex();
+
+    /**
      * 创建索引
      *
      * @param indexName 索引名称
@@ -25,26 +30,21 @@ public interface EsService {
     void createIndexIfNotExists(String indexName);
 
     /**
-     * 初始化索引
+     * 创建索引模板
      */
-    void initIndex();
+    boolean putLifecyclePolicy(String indexTemplateName, String templateSource);
 
     /**
      * 创建索引模板
      */
-    boolean createLifecyclePolicy(String indexTemplateName, String templateSource);
-
-    /**
-     * 创建索引模板
-     */
-    boolean createIndexTemplate(String indexTemplateName, String templateSource);
+    boolean putIndexTemplate(String indexTemplateName, String templateSource);
 
     /**
      * 创建数据流
      *
      * @param dataStreamName
      */
-    boolean createDataStream(String dataStreamName);
+    boolean createDataStreamIfNotExist(String dataStreamName);
 
     /**
      * 判断索引是否存在
