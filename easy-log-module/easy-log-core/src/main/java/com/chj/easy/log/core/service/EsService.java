@@ -24,6 +24,9 @@ public interface EsService {
      */
     void createIndexIfNotExists(String indexName);
 
+    /**
+     * 初始化索引
+     */
     void initIndex();
 
     /**
@@ -123,7 +126,6 @@ public interface EsService {
      */
     EsPageInfo<Doc> paging(String indexName, Integer pageNum, Integer pageSize, SearchSourceBuilder searchSourceBuilder, Class<? extends Doc> tClass);
 
-
     /**
      * 多条件聚合查询
      *
@@ -132,7 +134,6 @@ public interface EsService {
      * @return
      */
     Map<String, List<String>> aggregation(String indexName, SearchSourceBuilder searchSourceBuilder);
-
 
     /**
      * 时间范围柱状图查询

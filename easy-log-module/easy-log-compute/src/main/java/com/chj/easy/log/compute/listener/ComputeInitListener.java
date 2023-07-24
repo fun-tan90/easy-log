@@ -3,12 +3,12 @@ package com.chj.easy.log.compute.listener;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.compute.property.EasyLogComputeProperties;
 import com.chj.easy.log.compute.stream.RedisStreamComputeMessageListener;
-import com.chj.easy.log.core.model.LogDoc;
 import com.chj.easy.log.core.service.EsService;
 import com.chj.easy.log.core.service.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -40,11 +40,16 @@ public class ComputeInitListener implements ApplicationListener<ApplicationReady
     @Resource
     private EasyLogComputeProperties easyLogComputeProperties;
 
+    @Resource
+    private Environment environment;
+
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         if (initialized.compareAndSet(false, true)) {
-            esService.initIndex();
-//            esService.createIndexIfNotExists(LogDoc.indexName());
+            Boolean enable = environment.getProperty("easy-log.admin.enable", Boolean.class);
+            if (Boolean.FALSE.equals(enable)) {
+                esService.initIndex();
+            }
 
             String streamKey = EasyLogConstants.REDIS_STREAM_KEY;
             String groupName = EasyLogConstants.GROUP_COMPUTE_NAME;

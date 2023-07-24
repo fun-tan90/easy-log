@@ -119,13 +119,17 @@ public class EsServiceImpl implements EsService {
     @Override
     public boolean createDataStream(String dataStreamName) {
         try {
-            // TODO
-            CreateDataStreamRequest createDataStreamRequest = new CreateDataStreamRequest(dataStreamName);
-            AcknowledgedResponse dataStream = restHighLevelClient.indices().createDataStream(createDataStreamRequest, RequestOptions.DEFAULT);
-            return dataStream.isAcknowledged();
-        } catch (IllegalStateException | IOException e) {
-            log.warn(e.getMessage());
-            return false;
+            GetIndexRequest request = new GetIndexRequest(dataStreamName);
+            boolean exists = restHighLevelClient.indices().exists(request, RequestOptions.DEFAULT);
+            if (!exists) {
+                CreateDataStreamRequest createDataStreamRequest = new CreateDataStreamRequest(dataStreamName);
+                AcknowledgedResponse dataStream = restHighLevelClient.indices().createDataStream(createDataStreamRequest, RequestOptions.DEFAULT);
+                return dataStream.isAcknowledged();
+            } else {
+                return false;
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(StrUtil.format("createDataStream failed, {}", e));
         }
     }
 
@@ -290,36 +294,28 @@ public class EsServiceImpl implements EsService {
     }
 
     private long analyticSearchResponseForTotalSize(SearchResponse searchResponse) {
-        SearchHits searchHits = Optional.ofNullable(searchResponse)
-                .map(SearchResponse::getHits)
-                .orElseThrow(() -> new RuntimeException("SearchRequest failed"));
+        SearchHits searchHits = Optional.ofNullable(searchResponse).map(SearchResponse::getHits).orElseThrow(() -> new RuntimeException("SearchRequest failed"));
         return searchHits.getTotalHits().value;
     }
 
     private List<Doc> analyticSearchResponseForHits(SearchResponse searchResponse, Class<? extends Doc> tClass) {
-        SearchHits searchHits = Optional.ofNullable(searchResponse)
-                .map(SearchResponse::getHits)
-                .orElseThrow(() -> new RuntimeException("SearchRequest failed"));
-        return Arrays.stream(searchHits.getHits())
-                .map(searchHit -> {
-                    JSONObject row = JSONUtil.parseObj(searchHit.getSourceAsString());
-                    searchHit.getHighlightFields()
-                            .forEach((k, v) -> {
-                                Optional<Text> fragmentOpt = Arrays.stream(v.getFragments()).findFirst();
-                                fragmentOpt.ifPresent(value -> row.putOnce(k, value));
-                            });
-                    Doc entity = row.toBean(tClass);
-                    entity.setIndexId(searchHit.getId());
-                    return entity;
-                })
-                .collect(Collectors.toList());
+        SearchHits searchHits = Optional.ofNullable(searchResponse).map(SearchResponse::getHits).orElseThrow(() -> new RuntimeException("SearchRequest failed"));
+        return Arrays.stream(searchHits.getHits()).map(searchHit -> {
+            JSONObject row = JSONUtil.parseObj(searchHit.getSourceAsString());
+            searchHit.getHighlightFields().forEach((k, v) -> {
+                Optional<Text> fragmentOpt = Arrays.stream(v.getFragments()).findFirst();
+                fragmentOpt.ifPresent(value -> row.putOnce(k, value));
+            });
+            Doc entity = row.toBean(tClass);
+            entity.setIndexId(searchHit.getId());
+            return entity;
+        }).collect(Collectors.toList());
     }
 
     @Override
     public Map<String, List<String>> aggregation(String indexName, SearchSourceBuilder searchSourceBuilder) {
         SearchRequest searchRequest = new SearchRequest(indexName);
-        searchRequest
-                .source(searchSourceBuilder.size(0));
+        searchRequest.source(searchSourceBuilder.size(0));
         try {
             SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
             Aggregations aggregations = searchResponse.getAggregations();

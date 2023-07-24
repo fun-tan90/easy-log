@@ -59,7 +59,7 @@ public class CollectorInitListener implements ApplicationListener<ApplicationRea
         if (initialized.compareAndSet(false, true)) {
             Boolean enable = environment.getProperty("easy-log.admin.enable", Boolean.class);
             if (Boolean.FALSE.equals(enable)) {
-                esService.createIndexIfNotExists(LogDoc.indexName());
+                esService.initIndex();
             }
 
             String streamKey = EasyLogConstants.REDIS_STREAM_KEY;
