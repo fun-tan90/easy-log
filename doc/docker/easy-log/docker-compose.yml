@@ -19,7 +19,6 @@ services:
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:1203/monitor/health"]
       start_period: 3s
-      interval: 5m
       retries: 3
 
   easy-log-server-compute:
@@ -37,7 +36,6 @@ services:
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:1203/monitor/health"]
       start_period: 3s
-      interval: 5m
       retries: 3
 
   easy-log-server-collector:
@@ -55,7 +53,6 @@ services:
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:1203/monitor/health"]
       start_period: 3s
-      interval: 5m
       retries: 3
 
 volumes:
@@ -68,3 +65,8 @@ volumes:
 
 networks:
   easy-log:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/16
+          gateway: 172.30.0.1
