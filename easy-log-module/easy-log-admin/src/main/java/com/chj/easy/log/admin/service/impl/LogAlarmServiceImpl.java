@@ -43,6 +43,8 @@ public class LogAlarmServiceImpl implements LogAlarmService {
         LogAlarmRule logAlarmRule = LogAlarmRule
                 .builder()
                 .ruleId(SecureUtil.md5(ruleKey + ":" + loggerName))
+                .appName(appName)
+                .appEnv(appEnv)
                 .loggerName(loggerName)
                 .receiverList(logAlarmRuleAddCmd.getReceiverList())
                 .alarmPlatformId(logAlarmRuleAddCmd.getAlarmPlatformId())
@@ -61,6 +63,7 @@ public class LogAlarmServiceImpl implements LogAlarmService {
             if (StringUtils.hasLength(logAlarm)) {
                 LogAlarmContent logAlarmContent = JSONUtil.toBean(logAlarm, LogAlarmContent.class);
                 log.debug("\n{}", JSONUtil.toJsonPrettyStr(logAlarmContent));
+
             }
         }, 1, 1, TimeUnit.SECONDS);
     }

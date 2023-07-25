@@ -92,11 +92,20 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
                 Integer windowCount = slidingWindow.getWindowCount();
                 log.info("阈值大小:{},滑动窗口内计数大小:{}", threshold, windowCount);
                 if (windowCount == threshold + 1) {
-                    cacheService.addLogAlarmContent(LogAlarmContent
-                            .builder()
-                            .slidingWindow(slidingWindow)
-                            .logAlarmRule(logAlarmRule)
-                            .build()
+                    cacheService.addLogAlarmContent(
+                            LogAlarmContent
+                                    .builder()
+                                    .windowStart(slidingWindow.getWindowStart())
+                                    .windowEnd(slidingWindow.getWindowEnd())
+                                    .ruleId(logAlarmRule.getRuleId())
+                                    .appName(logAlarmRule.getAppName())
+                                    .appEnv(logAlarmRule.getAppEnv())
+                                    .loggerName(k)
+                                    .receiverList(logAlarmRule.getReceiverList())
+                                    .alarmPlatformId(logAlarmRule.getAlarmPlatformId())
+                                    .threshold(logAlarmRule.getThreshold())
+                                    .period(logAlarmRule.getPeriod())
+                                    .build()
                     );
                 }
             });

@@ -152,8 +152,8 @@ public class CacheServiceImpl implements CacheService {
 
     @Override
     public void addLogAlarmContent(LogAlarmContent logAlarmContent) {
-        String ruleId = logAlarmContent.getLogAlarmRule().getRuleId();
-        Integer period = logAlarmContent.getLogAlarmRule().getPeriod();
+        String ruleId = logAlarmContent.getRuleId();
+        Integer period = logAlarmContent.getPeriod();
         Boolean res = stringRedisTemplate.opsForValue().setIfAbsent(EasyLogConstants.LOG_ALARM_LOCK + ruleId, "", period, TimeUnit.SECONDS);
         if (Boolean.TRUE.equals(res)) {
             stringRedisTemplate.opsForList().leftPush(EasyLogConstants.LOG_ALARM, JSONUtil.toJsonStr(logAlarmContent));

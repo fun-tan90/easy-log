@@ -18,6 +18,10 @@ public class LogAlarmRule {
 
     private String ruleId;
 
+    private String appName;
+
+    private String appEnv;
+
     private String loggerName;
 
     private List<String> receiverList;
