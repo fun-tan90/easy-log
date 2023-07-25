@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.chj</groupId>
         <artifactId>easy-log-example-log4j2</artifactId>
-        <version>1.0.4</version>
+        <version>1.1.0</version>
     </parent>
 
     <artifactId>easy-log-example-log4j2-boot2</artifactId>
