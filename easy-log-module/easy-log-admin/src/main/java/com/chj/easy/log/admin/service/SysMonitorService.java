@@ -13,14 +13,9 @@ import java.util.Map;
  * @author 陈浩杰
  * @date 2023/6/12 22:00
  */
-public interface SysRedisStreamService {
+public interface SysMonitorService {
+    void statsLogInputSpeed();
 
-    /**
-     * stream xinfo
-     *
-     * @param streamKey
-     * @return
-     */
     RedisStreamXInfoVo streamXInfo(String streamKey);
 
     Map<String, Map<String, List<String>>> streamXPending(String streamKey);

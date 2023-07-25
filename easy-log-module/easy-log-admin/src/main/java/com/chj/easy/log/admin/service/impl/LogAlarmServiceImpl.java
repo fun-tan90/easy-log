@@ -58,9 +58,9 @@ public class LogAlarmServiceImpl implements LogAlarmService {
     public void handlerLogAlarm() {
         EasyLogManager.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
             String logAlarm = redisService.popLogAlarm(5);
-            log.info(logAlarm);
             if (StringUtils.hasLength(logAlarm)) {
                 LogAlarmContent logAlarmContent = JSONUtil.toBean(logAlarm, LogAlarmContent.class);
+                log.debug("\n{}", JSONUtil.toJsonPrettyStr(logAlarmContent));
             }
         }, 1, 1, TimeUnit.SECONDS);
     }

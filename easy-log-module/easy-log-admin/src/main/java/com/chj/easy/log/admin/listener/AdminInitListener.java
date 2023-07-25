@@ -1,6 +1,7 @@
 package com.chj.easy.log.admin.listener;
 
 import com.chj.easy.log.admin.service.LogAlarmService;
+import com.chj.easy.log.admin.service.SysMonitorService;
 import com.chj.easy.log.core.service.EsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -30,12 +31,17 @@ public class AdminInitListener implements ApplicationListener<ApplicationReadyEv
     @Resource
     LogAlarmService logAlarmService;
 
+    @Resource
+    SysMonitorService sysMonitorService;
+
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         if (initialized.compareAndSet(false, true)) {
             esService.initLifecyclePolicyAndTemplate();
 
             logAlarmService.handlerLogAlarm();
+
+            sysMonitorService.statsLogInputSpeed();
         }
     }
 }

@@ -25,8 +25,6 @@ public class EasyLogAdminProperties {
 
     private boolean validateCaptcha = true;
 
-    private String statsLogSpeedCron = "0/2 * * * * ?";
-
     private String username = "admin";
 
     private String password = "123456";
