@@ -202,12 +202,12 @@ public class EsServiceImpl implements EsService {
     }
 
     @Override
-    public int insertBatch(String dataStreamName, List<Doc> entities, boolean create) {
-        Assert.hasLength(dataStreamName, "indexName must not be empty");
+    public int insertBatch(String indexName, List<Doc> entities, boolean create) {
+        Assert.hasLength(indexName, "indexName must not be empty");
         Assert.notEmpty(entities, "entities must not be empty");
         BulkRequest bulkRequest = new BulkRequest();
         entities.forEach(entity -> {
-            IndexRequest indexRequest = new IndexRequest(dataStreamName);
+            IndexRequest indexRequest = new IndexRequest(indexName);
             if (StringUtils.hasLength(entity.indexId())) {
                 indexRequest.id(entity.indexId());
             }

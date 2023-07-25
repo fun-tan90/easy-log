@@ -13,9 +13,7 @@ public interface Doc {
 
     void setIndexId(String id);
 
-    default String indexId() {
-        return null;
-    }
+    String indexId();
 
     default String toSource() {
         return JSONUtil.toJsonStr(this);
