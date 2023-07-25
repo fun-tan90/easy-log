@@ -33,13 +33,6 @@ public interface EsService {
     boolean putIndexTemplate(String indexTemplateName, String templateSource);
 
     /**
-     * 创建数据流
-     *
-     * @param dataStreamName
-     */
-    boolean createDataStreamIfNotExist(String dataStreamName);
-
-    /**
      * 判断索引是否存在
      *
      * @param indexName 索引名称

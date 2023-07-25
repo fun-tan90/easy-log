@@ -7,14 +7,14 @@
             "priority": 100
           },
           "rollover": {
-            "max_age": "5m",
+            "max_age": "10m",
             "max_size": "10gb",
             "max_docs": 10000000
           }
         }
       },
       "delete": {
-        "min_age": "30d",
+        "min_age": "1d",
         "actions": {
           "delete": {
             "delete_searchable_snapshot": true

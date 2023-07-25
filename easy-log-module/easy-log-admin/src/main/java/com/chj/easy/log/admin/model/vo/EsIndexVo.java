@@ -33,4 +33,6 @@ public class EsIndexVo {
     private String storeSize;
 
     private String priStoreSize;
+
+    private String dataStream;
 }

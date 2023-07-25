@@ -69,12 +69,9 @@ public class EsServiceImpl implements EsService {
             String templateSource = ResourceUtil.readUtf8Str(EasyLogConstants.INDEX_TEMPLATE_PATH);
             boolean indexTemplate = putIndexTemplate("easy-log-template", templateSource);
             if (indexTemplate) {
-                boolean dataStream = createDataStreamIfNotExist("easy-log-ds");
-                if (dataStream) {
-                    log.info("数据流【easy-log-ds】创建成功");
-                } else {
-                    log.info("数据流【easy-log-ds】已创建");
-                }
+                log.info("索引模板创建【easy-log-template】创建成功");
+            } else {
+                log.error("索引模板创建【easy-log-template】创建成功");
             }
         }
     }
@@ -100,22 +97,6 @@ public class EsServiceImpl implements EsService {
             return response.getStatusLine().getStatusCode() == 200;
         } catch (IOException e) {
             throw new RuntimeException(StrUtil.format("createIndexTemplate failed, {}", e));
-        }
-    }
-
-    @Override
-    public boolean createDataStreamIfNotExist(String dataStreamName) {
-        boolean exists = exists(dataStreamName);
-        try {
-            if (!exists) {
-                CreateDataStreamRequest createDataStreamRequest = new CreateDataStreamRequest(dataStreamName);
-                AcknowledgedResponse dataStream = restHighLevelClient.indices().createDataStream(createDataStreamRequest, RequestOptions.DEFAULT);
-                return dataStream.isAcknowledged();
-            } else {
-                return false;
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(StrUtil.format("createDataStream failed, {}", e));
         }
     }
 

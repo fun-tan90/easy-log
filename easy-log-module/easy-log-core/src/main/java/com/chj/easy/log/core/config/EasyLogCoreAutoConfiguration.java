@@ -75,7 +75,7 @@ public class EasyLogCoreAutoConfiguration {
             String username = easyLogEsProperties.getUsername();
             String password = easyLogEsProperties.getPassword();
             if (StringUtils.hasLength(username) && StringUtils.hasLength(password)) {
-                final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+                CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
                 credentialsProvider.setCredentials(AuthScope.ANY,
                         new UsernamePasswordCredentials(username, password));
                 httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
