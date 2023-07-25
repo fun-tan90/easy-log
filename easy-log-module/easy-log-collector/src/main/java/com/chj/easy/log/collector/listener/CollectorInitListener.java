@@ -54,7 +54,7 @@ public class CollectorInitListener implements ApplicationListener<ApplicationRea
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         if (initialized.compareAndSet(false, true)) {
-            esService.initIndex();
+            esService.initLifecyclePolicyAndTemplate();
 
             String streamKey = EasyLogConstants.REDIS_STREAM_KEY;
             String groupName = EasyLogConstants.GROUP_COLLECTOR_NAME;

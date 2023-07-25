@@ -29,7 +29,7 @@ public class AdminInitListener implements ApplicationListener<ApplicationReadyEv
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         if (initialized.compareAndSet(false, true)) {
-            esService.initIndex();
+            esService.initLifecyclePolicyAndTemplate();
         }
     }
 }

@@ -63,7 +63,7 @@ public class EsServiceImpl implements EsService {
     RestHighLevelClient restHighLevelClient;
 
     @Override
-    public void initIndex() {
+    public void initLifecyclePolicyAndTemplate() {
         String lifecyclePolicyContent = generateLifecyclePolicy(new IndexLifecyclePolicy());
         boolean lifecyclePolicy = putLifecyclePolicy(EasyLogConstants.ILM_POLICY_NAME, lifecyclePolicyContent);
         if (lifecyclePolicy) {

@@ -19,9 +19,9 @@ import java.util.Map;
 public interface EsService {
 
     /**
-     * 初始化索引
+     * 初始化索引生命周期和索引模板
      */
-    void initIndex();
+    void initLifecyclePolicyAndTemplate();
 
     /**
      * 创建索引模板
