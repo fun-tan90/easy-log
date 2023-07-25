@@ -6,7 +6,7 @@ import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.model.LogAlarmContent;
 import com.chj.easy.log.core.model.SlidingWindow;
-import com.chj.easy.log.core.service.RedisService;
+import com.chj.easy.log.core.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.connection.stream.*;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class RedisServiceImpl implements RedisService {
+public class CacheServiceImpl implements CacheService {
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
@@ -151,7 +151,7 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public void addLogAlarm(LogAlarmContent logAlarmContent) {
+    public void addLogAlarmContent(LogAlarmContent logAlarmContent) {
         String ruleId = logAlarmContent.getLogAlarmRule().getRuleId();
         Integer period = logAlarmContent.getLogAlarmRule().getPeriod();
         Boolean res = stringRedisTemplate.opsForValue().setIfAbsent(EasyLogConstants.LOG_ALARM_LOCK + ruleId, "", period, TimeUnit.SECONDS);
@@ -161,7 +161,7 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public String popLogAlarm(long timeout) {
+    public String popLogAlarmContent(long timeout) {
         return stringRedisTemplate.opsForList().rightPop(EasyLogConstants.LOG_ALARM, timeout, TimeUnit.SECONDS);
     }
 }

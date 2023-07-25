@@ -7,7 +7,7 @@ import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.model.LogAlarmContent;
 import com.chj.easy.log.core.model.LogAlarmRule;
 import com.chj.easy.log.core.model.SlidingWindow;
-import com.chj.easy.log.core.service.RedisService;
+import com.chj.easy.log.core.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.stream.MapRecord;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -37,7 +37,7 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
     StringRedisTemplate stringRedisTemplate;
 
     @Resource
-    RedisService redisService;
+    CacheService cacheService;
 
     @Override
     public void onMessage(MapRecord<String, String, String> entries) {
@@ -58,7 +58,7 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
     private CompletableFuture<Void> logInputSpeed(Map<String, String> logMap, String recordId) {
         String level = logMap.get("level");
         String timeStamp = logMap.get("timeStamp");
-        return CompletableFuture.runAsync(() -> redisService.slidingWindow(EasyLogConstants.S_W_LOG_INPUT_SPEED + level, recordId, Long.parseLong(timeStamp), 5), EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);
+        return CompletableFuture.runAsync(() -> cacheService.slidingWindow(EasyLogConstants.S_W_LOG_INPUT_SPEED + level, recordId, Long.parseLong(timeStamp), 5), EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);
     }
 
     /**
@@ -88,11 +88,11 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
             cacheLogAlarmRuleMap.forEach((k, logAlarmRule) -> {
                 Integer period = logAlarmRule.getPeriod();
                 Integer threshold = logAlarmRule.getThreshold();
-                SlidingWindow slidingWindow = redisService.slidingWindow(EasyLogConstants.S_W_LOG_ALARM + appName + ":" + appEnv + ":" + k, recordId, Long.parseLong(timeStamp), period);
+                SlidingWindow slidingWindow = cacheService.slidingWindow(EasyLogConstants.S_W_LOG_ALARM + appName + ":" + appEnv + ":" + k, recordId, Long.parseLong(timeStamp), period);
                 Integer windowCount = slidingWindow.getWindowCount();
                 log.info("阈值大小:{},滑动窗口内计数大小:{}", threshold, windowCount);
                 if (windowCount == threshold + 1) {
-                    redisService.addLogAlarm(LogAlarmContent
+                    cacheService.addLogAlarmContent(LogAlarmContent
                             .builder()
                             .slidingWindow(slidingWindow)
                             .logAlarmRule(logAlarmRule)
@@ -110,14 +110,14 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
      */
     private CompletableFuture<Void> logRealTimeFilter(Map<String, String> logMap, Long timestamp, Long sequence) {
         return CompletableFuture.runAsync(() -> {
-            Set<String> clientIds = redisService.getRealTimeFilterSubscribingClients();
+            Set<String> clientIds = cacheService.getRealTimeFilterSubscribingClients();
             if (CollectionUtils.isEmpty(clientIds)) {
                 return;
             }
             Iterator<String> clientIdsIterator = clientIds.iterator();
             while (clientIdsIterator.hasNext()) {
                 String clientId = clientIdsIterator.next();
-                JSONObject realTimeFilterRules = redisService.getLogRealTimeFilterRule(clientId);
+                JSONObject realTimeFilterRules = cacheService.getLogRealTimeFilterRule(clientId);
                 if (!realTimeFilterRules.isEmpty()) {
                     for (String realTimeFilterRule : realTimeFilterRules.keySet()) {
                         String[] split = realTimeFilterRule.split("#");
@@ -150,7 +150,7 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
             }
             if (!CollectionUtils.isEmpty(clientIds)) {
                 for (String clientId : clientIds) {
-                    redisService.addRealTimeFilteredLogs(clientId, logMap, timestamp + sequence);
+                    cacheService.addRealTimeFilteredLogs(clientId, logMap, timestamp + sequence);
                 }
             }
         }, EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);

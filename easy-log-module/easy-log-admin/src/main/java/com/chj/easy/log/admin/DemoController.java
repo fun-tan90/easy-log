@@ -4,7 +4,7 @@ package com.chj.easy.log.admin;
 import com.chj.easy.log.core.convention.Res;
 import com.chj.easy.log.core.model.SlidingWindow;
 import com.chj.easy.log.core.service.EsService;
-import com.chj.easy.log.core.service.RedisService;
+import com.chj.easy.log.core.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +31,7 @@ public class DemoController {
     EsService esService;
 
     @Resource
-    RedisService redisService;
+    CacheService cacheService;
 
     @GetMapping("analyzer")
     public Res<List<String>> test(@RequestParam(defaultValue = "ik_smart", required = false) String analyzer, String content) {
@@ -40,14 +40,14 @@ public class DemoController {
 
     @GetMapping("sliding-window")
     public SlidingWindow slidingWindow() {
-        redisService.slidingWindow("S_W:LOG_INPUT_SPEED:DEBUG", String.valueOf(System.currentTimeMillis()), System.currentTimeMillis(), 15);
-        redisService.slidingWindow("S_W:LOG_INPUT_SPEED:DEBUG", String.valueOf(System.currentTimeMillis()), System.currentTimeMillis(), 15);
-        redisService.slidingWindow("S_W:LOG_INPUT_SPEED:ERROR", String.valueOf(System.currentTimeMillis()), System.currentTimeMillis(), 15);
-        return redisService.slidingWindow("S_W:LOG_INPUT_SPEED:INFO", String.valueOf(System.currentTimeMillis()), System.currentTimeMillis(), 15);
+        cacheService.slidingWindow("S_W:LOG_INPUT_SPEED:DEBUG", String.valueOf(System.currentTimeMillis()), System.currentTimeMillis(), 15);
+        cacheService.slidingWindow("S_W:LOG_INPUT_SPEED:DEBUG", String.valueOf(System.currentTimeMillis()), System.currentTimeMillis(), 15);
+        cacheService.slidingWindow("S_W:LOG_INPUT_SPEED:ERROR", String.valueOf(System.currentTimeMillis()), System.currentTimeMillis(), 15);
+        return cacheService.slidingWindow("S_W:LOG_INPUT_SPEED:INFO", String.valueOf(System.currentTimeMillis()), System.currentTimeMillis(), 15);
     }
 
     @GetMapping("sliding-window-count")
     public Map<String, Integer> slidingWindowCount() {
-        return redisService.slidingWindowCount("S_W:LOG_INPUT_SPEED:");
+        return cacheService.slidingWindowCount("S_W:LOG_INPUT_SPEED:");
     }
 }

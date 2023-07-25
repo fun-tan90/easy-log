@@ -8,7 +8,7 @@ import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.model.LogAlarmContent;
 import com.chj.easy.log.core.model.LogAlarmRule;
-import com.chj.easy.log.core.service.RedisService;
+import com.chj.easy.log.core.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class LogAlarmServiceImpl implements LogAlarmService {
     StringRedisTemplate stringRedisTemplate;
 
     @Resource
-    RedisService redisService;
+    CacheService cacheService;
 
     @Override
     public String logAlarm(LogAlarmRuleAddCmd logAlarmRuleAddCmd) {
@@ -57,7 +57,7 @@ public class LogAlarmServiceImpl implements LogAlarmService {
     @Override
     public void handlerLogAlarm() {
         EasyLogManager.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
-            String logAlarm = redisService.popLogAlarm(5);
+            String logAlarm = cacheService.popLogAlarmContent(5);
             if (StringUtils.hasLength(logAlarm)) {
                 LogAlarmContent logAlarmContent = JSONUtil.toBean(logAlarm, LogAlarmContent.class);
                 log.debug("\n{}", JSONUtil.toJsonPrettyStr(logAlarmContent));

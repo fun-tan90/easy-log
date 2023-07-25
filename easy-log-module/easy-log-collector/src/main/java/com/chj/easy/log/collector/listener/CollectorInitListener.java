@@ -9,7 +9,7 @@ import com.chj.easy.log.core.convention.exception.ServiceException;
 import com.chj.easy.log.core.model.Doc;
 import com.chj.easy.log.core.model.LogDoc;
 import com.chj.easy.log.core.service.EsService;
-import com.chj.easy.log.core.service.RedisService;
+import com.chj.easy.log.core.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
@@ -37,7 +37,7 @@ public class CollectorInitListener implements ApplicationListener<ApplicationRea
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
     @Resource
-    private RedisService redisService;
+    private CacheService cacheService;
 
     @Resource
     private BlockingQueue<LogDoc> logDocBlockingQueue;
@@ -60,7 +60,7 @@ public class CollectorInitListener implements ApplicationListener<ApplicationRea
             String groupName = EasyLogConstants.GROUP_COLLECTOR_NAME;
             String consumerNamePrefix = EasyLogConstants.CONSUMER_COLLECTOR_NAME + "-";
             int[] consumerGlobalOrders = easyLogCollectorProperties.getConsumerGlobalOrders();
-            redisService.initGroupAndConsumers(streamKey, groupName, consumerNamePrefix, consumerGlobalOrders, redisStreamCollectorMessageListener);
+            cacheService.initGroupAndConsumers(streamKey, groupName, consumerNamePrefix, consumerGlobalOrders, redisStreamCollectorMessageListener);
 
             batchInsertLogDocBySchedule();
         }

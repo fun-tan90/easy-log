@@ -17,7 +17,7 @@ import java.util.Set;
  * @author 陈浩杰
  * @date 2023/7/14 10:59
  */
-public interface RedisService {
+public interface CacheService {
 
     void initGroupAndConsumers(String streamKey, String groupName, String consumerNamePrefix, int[] consumerGlobalOrders, StreamListener<String, MapRecord<String, String, String>> streamListener);
 
@@ -41,7 +41,7 @@ public interface RedisService {
 
     List<String> popRealTimeFilteredLog(String clientId);
 
-    void addLogAlarm(LogAlarmContent logAlarmContent);
+    void addLogAlarmContent(LogAlarmContent logAlarmContent);
 
-    String popLogAlarm(long timeout);
+    String popLogAlarmContent(long timeout);
 }

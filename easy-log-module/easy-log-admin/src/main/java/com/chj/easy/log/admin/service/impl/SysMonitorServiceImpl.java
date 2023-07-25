@@ -5,7 +5,7 @@ import com.chj.easy.log.admin.model.vo.RedisStreamXInfoVo;
 import com.chj.easy.log.admin.service.SysMonitorService;
 import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
-import com.chj.easy.log.core.service.RedisService;
+import com.chj.easy.log.core.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
 import net.dreamlu.iot.mqtt.codec.MqttQoS;
 import net.dreamlu.iot.mqtt.spring.server.MqttServerTemplate;
@@ -38,7 +38,7 @@ public class SysMonitorServiceImpl implements SysMonitorService {
     StringRedisTemplate stringRedisTemplate;
 
     @Resource
-    RedisService redisService;
+    CacheService cacheService;
 
     @Resource
     MqttServerTemplate mqttServerTemplate;
@@ -46,7 +46,7 @@ public class SysMonitorServiceImpl implements SysMonitorService {
     @Override
     public void statsLogInputSpeed() {
         EasyLogManager.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
-            Map<String, Integer> windowCountMap = redisService.slidingWindowCount("S_W:LOG_INPUT_SPEED:");
+            Map<String, Integer> windowCountMap = cacheService.slidingWindowCount("S_W:LOG_INPUT_SPEED:");
             if (!CollectionUtils.isEmpty(windowCountMap)) {
                 log.debug("\n{}", JSONUtil.toJsonPrettyStr(windowCountMap));
             }

@@ -2,7 +2,7 @@ package com.chj.easy.log.admin.mqtt;
 
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.event.LogAlarmUnRegisterEvent;
-import com.chj.easy.log.core.service.RedisService;
+import com.chj.easy.log.core.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
 import net.dreamlu.iot.mqtt.codec.MqttQoS;
 import net.dreamlu.iot.mqtt.core.server.event.IMqttSessionListener;
@@ -24,7 +24,7 @@ import javax.annotation.Resource;
 public class MqttSessionListener implements IMqttSessionListener {
 
     @Resource
-    RedisService redisService;
+    CacheService cacheService;
 
     @Resource
     ApplicationContext applicationContext;
@@ -32,7 +32,7 @@ public class MqttSessionListener implements IMqttSessionListener {
     @Override
     public void onSubscribed(ChannelContext context, String clientId, String topicFilter, MqttQoS mqttQoS) {
         if (topicFilter.startsWith(EasyLogConstants.LOG_AFTER_FILTERED_TOPIC)) {
-            redisService.addRealTimeFilterSubscribingClient(clientId);
+            cacheService.addRealTimeFilterSubscribingClient(clientId);
         }
     }
 
