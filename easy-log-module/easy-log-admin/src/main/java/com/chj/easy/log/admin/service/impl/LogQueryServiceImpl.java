@@ -57,13 +57,13 @@ public class LogQueryServiceImpl implements LogQueryService {
                             .order(BucketOrder.key(true))
             );
         }
-        return esService.aggregation(LogDoc.indexName(logDropBoxCmd.getDate()), searchSourceBuilder);
+        return esService.aggregation(LogDoc.indexName(), searchSourceBuilder);
     }
 
     @Override
     public EsPageInfo<Doc> paging(LogQueryCmd logQueryCmd) {
         SearchSourceBuilder searchSourceBuilder = generateSearchSource(logQueryCmd.getBaseParam());
-        return esService.paging(LogDoc.indexName(logQueryCmd.getBaseParam().getDate()), logQueryCmd.getPageParam().getPageNum(), logQueryCmd.getPageParam().getPageSize(), searchSourceBuilder, LogDoc.class);
+        return esService.paging(LogDoc.indexName(), logQueryCmd.getPageParam().getPageNum(), logQueryCmd.getPageParam().getPageSize(), searchSourceBuilder, LogDoc.class);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class LogQueryServiceImpl implements LogQueryService {
                                                 .order(BucketOrder.key(true))
                                 )
                 );
-        List<? extends Histogram.Bucket> histogramBuckets = esService.dateHistogram(LogDoc.indexName(baseParam.getDate()), dateHistogramName, termsName, searchSourceBuilder);
+        List<? extends Histogram.Bucket> histogramBuckets = esService.dateHistogram(LogDoc.indexName(), dateHistogramName, termsName, searchSourceBuilder);
         return histogramBuckets.stream().map(bucket -> {
             Terms aggregation = bucket.getAggregations().get(termsName);
             List<? extends Terms.Bucket> buckets = aggregation.getBuckets();

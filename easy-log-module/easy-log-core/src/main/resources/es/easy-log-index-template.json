@@ -28,9 +28,8 @@
         "currIp": {
           "type": "keyword"
         },
-        "dateTime": {
-          "type": "date",
-          "format": "yyyy-MM-dd HH:mm:ss.SSS"
+        "@timestamp": {
+          "type": "date"
         },
         "level": {
           "type": "keyword"

@@ -27,19 +27,10 @@ import java.util.Map;
 public class EasyLogAdminJob {
 
     @Resource
-    EsService esService;
-
-    @Resource
     RedisService redisService;
 
     @Resource
     MqttServerTemplate mqttServerTemplate;
-
-    @Scheduled(cron = "${easy-log.admin.init-index-cron:0 0 23 * * ?}")
-    public void createLogDocIndexTask() {
-        String newIndexName = LogDoc.newIndexName();
-//        esService.createIndexIfNotExists(newIndexName);
-    }
 
     @Scheduled(cron = "${easy-log.compute.stats-log-speed-cron:0/2 * * * * ?}")
     public void statsLogInputSpeed() {

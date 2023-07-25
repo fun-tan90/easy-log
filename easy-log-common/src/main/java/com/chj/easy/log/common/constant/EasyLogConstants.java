@@ -28,8 +28,6 @@ public interface EasyLogConstants {
 
     String CONSUMER_COLLECTOR_NAME = "easy-log-collector-group-consumer";
 
-    String INDEX_MAPPING_PATH = "index_mapping/{}.json";
-
     String ILM_PATH = "es/easy-log-ilm.json";
 
     String INDEX_TEMPLATE_PATH = "es/easy-log-index-template.json";

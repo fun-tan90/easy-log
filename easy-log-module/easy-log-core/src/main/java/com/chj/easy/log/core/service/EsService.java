@@ -23,13 +23,6 @@ public interface EsService {
     void initIndex();
 
     /**
-     * 创建索引
-     *
-     * @param indexName 索引名称
-     */
-    void createIndexIfNotExists(String indexName);
-
-    /**
      * 创建索引模板
      */
     boolean putLifecyclePolicy(String indexTemplateName, String templateSource);
@@ -101,9 +94,10 @@ public interface EsService {
      *
      * @param indexName 索引名称
      * @param entities  实体集合
+     * @param create  Set to true to force this index to use DocWriteRequest.OpType.CREATE.
      * @return 成功插入条数
      */
-    int insertBatch(String indexName, List<Doc> entities);
+    int insertBatch(String indexName, List<Doc> entities, boolean create);
 
     /**
      * 分词

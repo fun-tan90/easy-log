@@ -9,7 +9,6 @@ import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.convention.page.es.EsPageHelper;
 import com.chj.easy.log.core.convention.page.es.EsPageInfo;
 import com.chj.easy.log.core.model.Doc;
-import com.chj.easy.log.core.model.LogDoc;
 import com.chj.easy.log.core.service.EsService;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -81,18 +80,6 @@ public class EsServiceImpl implements EsService {
     }
 
     @Override
-    public void createIndexIfNotExists(String indexName) {
-        boolean exists = exists(indexName);
-        if (!exists) {
-            String mappings = ResourceUtil.readUtf8Str(StrUtil.format(EasyLogConstants.INDEX_MAPPING_PATH, LogDoc.class.getSimpleName()));
-            boolean createIndex = createIndex(indexName, mappings);
-            log.debug("【{}】索引创建{}", indexName, createIndex ? "成功" : "失败");
-        } else {
-            log.debug("【{}】索引已存在", indexName);
-        }
-    }
-
-    @Override
     public boolean putLifecyclePolicy(String lifecyclePolicyName, String lifecyclePolicyContent) {
         Request request = new Request("PUT", "/_ilm/policy/" + lifecyclePolicyName);
         try {
@@ -118,9 +105,8 @@ public class EsServiceImpl implements EsService {
 
     @Override
     public boolean createDataStreamIfNotExist(String dataStreamName) {
+        boolean exists = exists(dataStreamName);
         try {
-            GetIndexRequest request = new GetIndexRequest(dataStreamName);
-            boolean exists = restHighLevelClient.indices().exists(request, RequestOptions.DEFAULT);
             if (!exists) {
                 CreateDataStreamRequest createDataStreamRequest = new CreateDataStreamRequest(dataStreamName);
                 AcknowledgedResponse dataStream = restHighLevelClient.indices().createDataStream(createDataStreamRequest, RequestOptions.DEFAULT);
@@ -224,15 +210,16 @@ public class EsServiceImpl implements EsService {
     }
 
     @Override
-    public int insertBatch(String indexName, List<Doc> entities) {
-        Assert.hasLength(indexName, "indexName must not be empty");
+    public int insertBatch(String dataStreamName, List<Doc> entities, boolean create) {
+        Assert.hasLength(dataStreamName, "indexName must not be empty");
         Assert.notEmpty(entities, "entities must not be empty");
         BulkRequest bulkRequest = new BulkRequest();
         entities.forEach(entity -> {
-            IndexRequest indexRequest = new IndexRequest(indexName);
+            IndexRequest indexRequest = new IndexRequest(dataStreamName);
             if (StringUtils.hasLength(entity.indexId())) {
                 indexRequest.id(entity.indexId());
             }
+            indexRequest.create(create);
             indexRequest.source(entity.toSource(), XContentType.JSON);
             bulkRequest.add(indexRequest);
         });

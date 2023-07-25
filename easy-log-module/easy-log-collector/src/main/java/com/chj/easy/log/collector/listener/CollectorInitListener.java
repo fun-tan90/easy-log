@@ -80,7 +80,7 @@ public class CollectorInitListener implements ApplicationListener<ApplicationRea
                 try {
                     StopWatch stopWatch = new StopWatch("es批量输入");
                     stopWatch.start();
-                    int insertedSize = esService.insertBatch(LogDoc.indexName(), logDocs);
+                    int insertedSize = esService.insertBatch(LogDoc.indexName(), logDocs, true);
                     log.debug("批量输入条数[{}-{}]", logDocs.size(), insertedSize);
                     logDocs.clear();
                     stopWatch.stop();

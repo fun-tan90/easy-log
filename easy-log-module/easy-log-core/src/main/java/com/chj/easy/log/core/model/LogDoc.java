@@ -1,14 +1,11 @@
 package com.chj.easy.log.core.model;
 
-import cn.hutool.core.date.DatePattern;
-import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.annotation.Alias;
 import cn.hutool.json.JSONObject;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Date;
 
 /**
  * description TODO
@@ -27,7 +24,8 @@ public class LogDoc implements Doc {
 
     private String id;
 
-    private String dateTime;
+    @Alias("@timestamp")
+    private String timestamp;
 
     private String appName;
 
@@ -56,15 +54,7 @@ public class LogDoc implements Doc {
     private JSONObject mdc;
 
     public static String indexName() {
-        return INDEX_FIXED_PREFIX + DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN);
-    }
-
-    public static String indexName(String date) {
-        return INDEX_FIXED_PREFIX + date;
-    }
-
-    public static String newIndexName() {
-        return INDEX_FIXED_PREFIX + DateUtil.format(DateUtil.offsetDay(new Date(), 1), DatePattern.NORM_DATE_PATTERN);
+        return "easy-log-ds";
     }
 
     @Override
