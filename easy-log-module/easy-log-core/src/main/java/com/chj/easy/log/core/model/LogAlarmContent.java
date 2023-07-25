@@ -16,6 +16,10 @@ import java.util.List;
 @Builder
 public class LogAlarmContent {
 
+    private String alarmPlatformType;
+
+    private String alarmPlatformId;
+
     private Long windowStart;
 
     private Long windowEnd;
@@ -29,8 +33,6 @@ public class LogAlarmContent {
     private String loggerName;
 
     private List<String> receiverList;
-
-    private List<String> alarmPlatformId;
 
     private Integer threshold;
 

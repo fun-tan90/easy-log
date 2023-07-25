@@ -16,6 +16,10 @@ import java.util.List;
 @Builder
 public class LogAlarmRule {
 
+    private String alarmPlatformType;
+
+    private String alarmPlatformId;
+
     private String ruleId;
 
     private String appName;
@@ -25,8 +29,6 @@ public class LogAlarmRule {
     private String loggerName;
 
     private List<String> receiverList;
-
-    private List<String> alarmPlatformId;
 
     private Integer threshold;
 

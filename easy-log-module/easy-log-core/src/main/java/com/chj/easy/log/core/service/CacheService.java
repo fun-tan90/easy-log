@@ -2,6 +2,8 @@ package com.chj.easy.log.core.service;
 
 import cn.hutool.json.JSONObject;
 import com.chj.easy.log.core.model.LogAlarmContent;
+import com.chj.easy.log.core.model.LogAlarmPlatform;
+import com.chj.easy.log.core.model.LogAlarmRule;
 import com.chj.easy.log.core.model.SlidingWindow;
 import org.springframework.data.redis.connection.stream.MapRecord;
 import org.springframework.data.redis.stream.StreamListener;
@@ -44,4 +46,12 @@ public interface CacheService {
     void addLogAlarmContent(LogAlarmContent logAlarmContent);
 
     String popLogAlarmContent(long timeout);
+
+    String addLogAlarmRule(LogAlarmRule logAlarmRule);
+
+    String addAlarmPlatform(String alarmPlatformType, LogAlarmPlatform logAlarmPlatform);
+
+    LogAlarmPlatform alarmPlatform(String alarmPlatformType, String alarmPlatformId);
+
+    void delAlarmPlatform(String alarmPlatformType, String alarmPlatformId);
 }

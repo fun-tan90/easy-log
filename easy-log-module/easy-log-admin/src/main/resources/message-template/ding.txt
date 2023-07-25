@@ -1,0 +1,17 @@
+**<font color=#f1c40f>[告警通知]</font>**
+
+---
+
+<font color=#3498db size=2>应用名称：%s</font>
+
+<font color=#3498db size=2>应用环境：%s</font>
+
+<font color=#3498db size=2>日志名称/类型：%s</font>
+
+<font color=#3498db size=2>错误阈值：%s</font>
+
+<font color=#3498db size=2>窗口时间：%s 至 %s</font>
+
+<font color=#3498db size=2>时间间隔：%s</font>
+
+**<font color=#e74c3c>告警时间：%s</font>**

@@ -95,6 +95,8 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
                     cacheService.addLogAlarmContent(
                             LogAlarmContent
                                     .builder()
+                                    .alarmPlatformType(logAlarmRule.getAlarmPlatformType())
+                                    .alarmPlatformId(logAlarmRule.getAlarmPlatformId())
                                     .windowStart(slidingWindow.getWindowStart())
                                     .windowEnd(slidingWindow.getWindowEnd())
                                     .ruleId(logAlarmRule.getRuleId())
@@ -102,7 +104,6 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
                                     .appEnv(logAlarmRule.getAppEnv())
                                     .loggerName(k)
                                     .receiverList(logAlarmRule.getReceiverList())
-                                    .alarmPlatformId(logAlarmRule.getAlarmPlatformId())
                                     .threshold(logAlarmRule.getThreshold())
                                     .period(logAlarmRule.getPeriod())
                                     .build()

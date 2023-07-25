@@ -1,5 +1,6 @@
 package com.chj.easy.log.admin.rest;
 
+import com.chj.easy.log.admin.model.cmd.LogAlarmPlatformAddCmd;
 import com.chj.easy.log.admin.model.cmd.LogAlarmRuleAddCmd;
 import com.chj.easy.log.admin.service.LogAlarmService;
 import com.chj.easy.log.core.convention.Res;
@@ -28,8 +29,13 @@ public class LogAlarmController {
     @Resource
     LogAlarmService logAlarmService;
 
-    @PostMapping
-    public Res<String> logAlarm(@RequestBody @Validated LogAlarmRuleAddCmd logAlarmRuleAddCmd) {
-        return Res.ok(logAlarmService.logAlarm(logAlarmRuleAddCmd));
+    @PostMapping("platform")
+    public Res<String> logAlarmPlatform(@RequestBody @Validated LogAlarmPlatformAddCmd logAlarmPlatformAddCmd) {
+        return Res.ok(logAlarmService.logAlarmPlatform(logAlarmPlatformAddCmd));
+    }
+
+    @PostMapping("rule")
+    public Res<String> logAlarmRule(@RequestBody @Validated LogAlarmRuleAddCmd logAlarmRuleAddCmd) {
+        return Res.ok(logAlarmService.logAlarmRule(logAlarmRuleAddCmd));
     }
 }

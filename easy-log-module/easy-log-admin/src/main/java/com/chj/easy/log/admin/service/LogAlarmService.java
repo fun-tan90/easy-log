@@ -1,6 +1,7 @@
 package com.chj.easy.log.admin.service;
 
 
+import com.chj.easy.log.admin.model.cmd.LogAlarmPlatformAddCmd;
 import com.chj.easy.log.admin.model.cmd.LogAlarmRuleAddCmd;
 
 /**
@@ -12,7 +13,9 @@ import com.chj.easy.log.admin.model.cmd.LogAlarmRuleAddCmd;
  */
 public interface LogAlarmService {
 
-    String logAlarm(LogAlarmRuleAddCmd logAlarmRuleAddCmd);
+    String logAlarmPlatform(LogAlarmPlatformAddCmd logAlarmPlatformAddCmd);
+
+    String logAlarmRule(LogAlarmRuleAddCmd logAlarmRuleAddCmd);
 
     void handlerLogAlarm();
 }

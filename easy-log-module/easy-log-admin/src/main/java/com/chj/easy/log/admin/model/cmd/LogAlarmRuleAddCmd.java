@@ -36,8 +36,12 @@ public class LogAlarmRuleAddCmd {
     private List<String> receiverList;
 
     @NotNull
-    @NotEmpty
-    private List<String> alarmPlatformId;
+    @NotBlank
+    private String alarmPlatformType;
+
+    @NotNull
+    @NotBlank
+    private String alarmPlatformId;
 
     @NotNull
     private Integer threshold;

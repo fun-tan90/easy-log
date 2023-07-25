@@ -1,12 +1,13 @@
 package com.chj.easy.log.admin.service.impl;
 
-import cn.hutool.crypto.SecureUtil;
 import cn.hutool.json.JSONUtil;
+import com.chj.easy.log.admin.message.MessageCenterServiceChoose;
+import com.chj.easy.log.admin.model.cmd.LogAlarmPlatformAddCmd;
 import com.chj.easy.log.admin.model.cmd.LogAlarmRuleAddCmd;
 import com.chj.easy.log.admin.service.LogAlarmService;
 import com.chj.easy.log.common.EasyLogManager;
-import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.model.LogAlarmContent;
+import com.chj.easy.log.core.model.LogAlarmPlatform;
 import com.chj.easy.log.core.model.LogAlarmRule;
 import com.chj.easy.log.core.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
@@ -34,26 +35,35 @@ public class LogAlarmServiceImpl implements LogAlarmService {
     @Resource
     CacheService cacheService;
 
+    @Resource
+    MessageCenterServiceChoose messageCenterServiceChoose;
+
     @Override
-    public String logAlarm(LogAlarmRuleAddCmd logAlarmRuleAddCmd) {
-        String appName = logAlarmRuleAddCmd.getAppName();
-        String appEnv = logAlarmRuleAddCmd.getAppEnv();
-        String ruleKey = EasyLogConstants.LOG_ALARM_RULES + appName + ":" + appEnv;
-        String loggerName = StringUtils.hasLength(logAlarmRuleAddCmd.getLoggerName()) ? logAlarmRuleAddCmd.getLoggerName() : "all";
+    public String logAlarmPlatform(LogAlarmPlatformAddCmd logAlarmPlatformAddCmd) {
+        return cacheService.addAlarmPlatform(logAlarmPlatformAddCmd.getAlarmPlatformType(),
+                LogAlarmPlatform.builder()
+                        .alarmPlatformName(logAlarmPlatformAddCmd.getAlarmPlatformName())
+                        .accessToken(logAlarmPlatformAddCmd.getAccessToken())
+                        .secret(logAlarmPlatformAddCmd.getSecret())
+                        .build()
+        );
+    }
+
+    @Override
+    public String logAlarmRule(LogAlarmRuleAddCmd logAlarmRuleAddCmd) {
         LogAlarmRule logAlarmRule = LogAlarmRule
                 .builder()
-                .ruleId(SecureUtil.md5(ruleKey + ":" + loggerName))
-                .appName(appName)
-                .appEnv(appEnv)
-                .loggerName(loggerName)
-                .receiverList(logAlarmRuleAddCmd.getReceiverList())
+                .alarmPlatformType(logAlarmRuleAddCmd.getAlarmPlatformType())
                 .alarmPlatformId(logAlarmRuleAddCmd.getAlarmPlatformId())
+                .appName(logAlarmRuleAddCmd.getAppName())
+                .appEnv(logAlarmRuleAddCmd.getAppEnv())
+                .loggerName(StringUtils.hasLength(logAlarmRuleAddCmd.getLoggerName()) ? logAlarmRuleAddCmd.getLoggerName() : "all")
+                .receiverList(logAlarmRuleAddCmd.getReceiverList())
                 .period(logAlarmRuleAddCmd.getPeriod())
                 .threshold(logAlarmRuleAddCmd.getThreshold())
                 .status(logAlarmRuleAddCmd.getStatus())
                 .build();
-        stringRedisTemplate.opsForHash().put(ruleKey, loggerName, JSONUtil.toJsonStr(logAlarmRule));
-        return ruleKey;
+        return cacheService.addLogAlarmRule(logAlarmRule);
     }
 
     @Override
@@ -63,7 +73,7 @@ public class LogAlarmServiceImpl implements LogAlarmService {
             if (StringUtils.hasLength(logAlarm)) {
                 LogAlarmContent logAlarmContent = JSONUtil.toBean(logAlarm, LogAlarmContent.class);
                 log.debug("\n{}", JSONUtil.toJsonPrettyStr(logAlarmContent));
-
+                messageCenterServiceChoose.execute(logAlarmContent);
             }
         }, 1, 1, TimeUnit.SECONDS);
     }

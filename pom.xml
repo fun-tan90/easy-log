@@ -34,6 +34,7 @@
         <easy-captcha.version>1.6.2</easy-captcha.version>
         <mybatis-flex.version>1.4.3</mybatis-flex.version>
         <tlog.version>1.5.1</tlog.version>
+        <forest.version>1.5.26</forest.version>
         <mica-mqtt.version>2.2.2</mica-mqtt.version>
         <snack3.version>3.2.72</snack3.version>
     </properties>
@@ -205,6 +206,12 @@
                 <groupId>net.dreamlu</groupId>
                 <artifactId>mica-mqtt-server-spring-boot-starter</artifactId>
                 <version>${mica-mqtt.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.dtflys.forest</groupId>
+                <artifactId>forest-spring-boot-starter</artifactId>
+                <version>${forest.version}</version>
             </dependency>
 
             <dependency>

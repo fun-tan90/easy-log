@@ -67,4 +67,6 @@ public interface EasyLogConstants {
     String SLIDING_WINDOW_LUA_PATH = "lua/slidingWindow.lua";
 
     String SLIDING_WINDOW_COUNT_LUA_PATH = "lua/slidingWindowCount.lua";
+
+    String LOG_ALARM_PLATFORM = "LOG_ALARM_PLATFORM:";
 }

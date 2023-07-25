@@ -1,10 +1,14 @@
 package com.chj.easy.log.core.service.impl;
 
 import cn.hutool.core.lang.Singleton;
+import cn.hutool.core.lang.id.NanoId;
+import cn.hutool.crypto.SecureUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.model.LogAlarmContent;
+import com.chj.easy.log.core.model.LogAlarmPlatform;
+import com.chj.easy.log.core.model.LogAlarmRule;
 import com.chj.easy.log.core.model.SlidingWindow;
 import com.chj.easy.log.core.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
@@ -163,5 +167,35 @@ public class CacheServiceImpl implements CacheService {
     @Override
     public String popLogAlarmContent(long timeout) {
         return stringRedisTemplate.opsForList().rightPop(EasyLogConstants.LOG_ALARM, timeout, TimeUnit.SECONDS);
+    }
+
+    @Override
+    public String addLogAlarmRule(LogAlarmRule logAlarmRule) {
+        String appName = logAlarmRule.getAppName();
+        String appEnv = logAlarmRule.getAppEnv();
+        String ruleKey = EasyLogConstants.LOG_ALARM_RULES + appName + ":" + appEnv;
+        String loggerName = logAlarmRule.getLoggerName();
+        String ruleId = SecureUtil.md5(ruleKey + ":" + loggerName);
+        logAlarmRule.setRuleId(ruleId);
+        stringRedisTemplate.opsForHash().put(ruleKey, loggerName, JSONUtil.toJsonStr(logAlarmRule));
+        return ruleId;
+    }
+
+    @Override
+    public String addAlarmPlatform(String alarmPlatformType, LogAlarmPlatform logAlarmPlatform) {
+        String alarmPlatformId = NanoId.randomNanoId();
+        stringRedisTemplate.opsForHash().put(EasyLogConstants.LOG_ALARM_PLATFORM + alarmPlatformType, alarmPlatformId, JSONUtil.toJsonStr(logAlarmPlatform));
+        return alarmPlatformId;
+    }
+
+    @Override
+    public LogAlarmPlatform alarmPlatform(String alarmPlatformType, String alarmPlatformId) {
+        Object res = stringRedisTemplate.opsForHash().get(EasyLogConstants.LOG_ALARM_PLATFORM + alarmPlatformType, alarmPlatformId);
+        return Objects.isNull(res) ? null : JSONUtil.toBean(res.toString(), LogAlarmPlatform.class);
+    }
+
+    @Override
+    public void delAlarmPlatform(String alarmPlatformType, String alarmPlatformId) {
+        stringRedisTemplate.opsForHash().delete(EasyLogConstants.LOG_ALARM_PLATFORM + alarmPlatformType, alarmPlatformId);
     }
 }
