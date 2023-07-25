@@ -9,6 +9,7 @@ import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.convention.page.es.EsPageHelper;
 import com.chj.easy.log.core.convention.page.es.EsPageInfo;
 import com.chj.easy.log.core.model.Doc;
+import com.chj.easy.log.core.model.vo.EsIndexVo;
 import com.chj.easy.log.core.service.EsService;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -42,8 +43,6 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -64,10 +63,10 @@ public class EsServiceImpl implements EsService {
     @Override
     public void initIndex() {
         String lifecyclePolicyContent = ResourceUtil.readUtf8Str(EasyLogConstants.ILM_PATH);
-        boolean lifecyclePolicy = putLifecyclePolicy("easy-log-policy", lifecyclePolicyContent);
+        boolean lifecyclePolicy = putLifecyclePolicy(EasyLogConstants.ILM_POLICY_NAME, lifecyclePolicyContent);
         if (lifecyclePolicy) {
             String templateSource = ResourceUtil.readUtf8Str(EasyLogConstants.INDEX_TEMPLATE_PATH);
-            boolean indexTemplate = putIndexTemplate("easy-log-template", templateSource);
+            boolean indexTemplate = putIndexTemplate(EasyLogConstants.INDEX_TEMPLATE_NAME, templateSource);
             if (indexTemplate) {
                 log.info("索引模板创建【easy-log-template】创建成功");
             } else {
@@ -330,16 +329,13 @@ public class EsServiceImpl implements EsService {
     }
 
     @Override
-    public List<String> indexQuery(String indexNamePattern) {
-        Request request = new Request("GET", "/_cat/indices/" + indexNamePattern);
+    public List<EsIndexVo> indexList(String indexNamePattern) {
+        Request request = new Request("GET", "/_cat/indices/" + indexNamePattern + "?format=json");
         try {
             Response response = restHighLevelClient.getLowLevelClient().performRequest(request);
-            InputStream inputStream = response.getEntity().getContent();
-            List<String> lines = new ArrayList<>();
-            IoUtil.readLines(inputStream, Charset.defaultCharset(), lines);
-            return lines;
+            return JSONUtil.toList(IoUtil.readUtf8(response.getEntity().getContent()), EsIndexVo.class);
         } catch (IOException e) {
-            throw new RuntimeException(StrUtil.format("index query failed, {}", e));
+            throw new RuntimeException(StrUtil.format("indexQuery failed, {}", e));
         }
     }
 }

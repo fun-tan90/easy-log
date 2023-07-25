@@ -1,5 +1,6 @@
-package com.chj.easy.log.admin.model.vo;
+package com.chj.easy.log.core.model.vo;
 
+import cn.hutool.core.annotation.Alias;
 import lombok.Builder;
 import lombok.Data;
 
@@ -26,13 +27,15 @@ public class EsIndexVo {
 
     private String rep;
 
+    @Alias("docs.count")
     private String docsCount;
 
+    @Alias("docs.deleted")
     private String docsDeleted;
 
+    @Alias("store.size")
     private String storeSize;
 
+    @Alias("pri.store.size")
     private String priStoreSize;
-
-    private String dataStream;
 }

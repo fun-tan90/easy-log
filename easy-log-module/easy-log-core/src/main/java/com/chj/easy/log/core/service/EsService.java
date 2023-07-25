@@ -2,6 +2,7 @@ package com.chj.easy.log.core.service;
 
 import com.chj.easy.log.core.convention.page.es.EsPageInfo;
 import com.chj.easy.log.core.model.Doc;
+import com.chj.easy.log.core.model.vo.EsIndexVo;
 import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
@@ -87,7 +88,7 @@ public interface EsService {
      *
      * @param indexName 索引名称
      * @param entities  实体集合
-     * @param create  Set to true to force this index to use DocWriteRequest.OpType.CREATE.
+     * @param create    Set to true to force this index to use DocWriteRequest.OpType.CREATE.
      * @return 成功插入条数
      */
     int insertBatch(String indexName, List<Doc> entities, boolean create);
@@ -141,9 +142,9 @@ public interface EsService {
     String executeSearchDsl(String indexName, String dsl);
 
     /**
-     * 索引管理
+     * 索引列表查询
      *
      * @param indexNamePattern
      */
-    List<String> indexQuery(String indexNamePattern);
+    List<EsIndexVo> indexList(String indexNamePattern);
 }
