@@ -6,6 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.common.constant.EasyLogConstants;
+import com.chj.easy.log.core.convention.exception.ServiceException;
 import com.chj.easy.log.core.convention.page.es.EsPageHelper;
 import com.chj.easy.log.core.convention.page.es.EsPageInfo;
 import com.chj.easy.log.core.model.Doc;
@@ -83,7 +84,7 @@ public class EsServiceImpl implements EsService {
             Response response = restHighLevelClient.getLowLevelClient().performRequest(request);
             return response.getStatusLine().getStatusCode() == 200;
         } catch (IOException e) {
-            throw new RuntimeException(StrUtil.format("createLifecyclePolicy failed, {}", e));
+            throw new ServiceException(StrUtil.format("createLifecyclePolicy failed, {}", e));
         }
     }
 
@@ -95,7 +96,7 @@ public class EsServiceImpl implements EsService {
             Response response = restHighLevelClient.getLowLevelClient().performRequest(request);
             return response.getStatusLine().getStatusCode() == 200;
         } catch (IOException e) {
-            throw new RuntimeException(StrUtil.format("createIndexTemplate failed, {}", e));
+            throw new ServiceException(StrUtil.format("createIndexTemplate failed, {}", e));
         }
     }
 
@@ -106,7 +107,7 @@ public class EsServiceImpl implements EsService {
         try {
             return restHighLevelClient.indices().exists(getIndexRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
-            throw new RuntimeException(StrUtil.format("exists index failed, {}", e));
+            throw new ServiceException(StrUtil.format("exists index failed, {}", e));
         }
     }
 
@@ -120,7 +121,7 @@ public class EsServiceImpl implements EsService {
             CreateIndexResponse createIndexResponse = restHighLevelClient.indices().create(createIndexRequest, RequestOptions.DEFAULT);
             return createIndexResponse.isAcknowledged() && createIndexResponse.isShardsAcknowledged();
         } catch (IOException e) {
-            throw new RuntimeException(StrUtil.format("create index failed, {}", e));
+            throw new ServiceException(StrUtil.format("create index failed, {}", e));
         }
     }
 
@@ -133,7 +134,7 @@ public class EsServiceImpl implements EsService {
             AcknowledgedResponse acknowledgedResponse = restHighLevelClient.indices().putMapping(putMappingRequest, RequestOptions.DEFAULT);
             return acknowledgedResponse.isAcknowledged();
         } catch (IOException e) {
-            throw new RuntimeException(StrUtil.format("updateIndex failed, {}", e));
+            throw new ServiceException(StrUtil.format("updateIndex failed, {}", e));
         }
     }
 
@@ -145,7 +146,7 @@ public class EsServiceImpl implements EsService {
             AcknowledgedResponse acknowledgedResponse = restHighLevelClient.indices().delete(deleteIndexRequest, RequestOptions.DEFAULT);
             return acknowledgedResponse.isAcknowledged();
         } catch (IOException e) {
-            throw new RuntimeException(StrUtil.format("delete index failed, {}", e));
+            throw new ServiceException(StrUtil.format("delete index failed, {}", e));
         }
     }
 
@@ -159,7 +160,7 @@ public class EsServiceImpl implements EsService {
             AcknowledgedResponse acknowledgedResponse = restHighLevelClient.indices().putMapping(putMappingRequest, RequestOptions.DEFAULT);
             return acknowledgedResponse.isAcknowledged();
         } catch (IOException e) {
-            throw new RuntimeException(StrUtil.format("update index failed, {}", e));
+            throw new ServiceException(StrUtil.format("update index failed, {}", e));
         }
     }
 
@@ -182,10 +183,10 @@ public class EsServiceImpl implements EsService {
                 // 该id已存在,数据被更新的情况
                 return 0;
             } else {
-                throw new RuntimeException(StrUtil.format("insert failed, result:{} entity:{}", indexResponse.getResult(), entity.toSource()));
+                throw new ServiceException(StrUtil.format("insert failed, result:{} entity:{}", indexResponse.getResult(), entity.toSource()));
             }
         } catch (IOException e) {
-            throw new RuntimeException(StrUtil.format("insertOne failed, {}", e));
+            throw new ServiceException(StrUtil.format("insertOne failed, {}", e));
         }
     }
 
@@ -218,7 +219,7 @@ public class EsServiceImpl implements EsService {
             }
             return totalSuccess;
         } catch (IOException e) {
-            throw new RuntimeException(StrUtil.format("insertBatch failed, {}", e));
+            throw new ServiceException(StrUtil.format("insertBatch failed, {}", e));
         }
     }
 
@@ -229,7 +230,7 @@ public class EsServiceImpl implements EsService {
             AnalyzeResponse analyzeResponse = restHighLevelClient.indices().analyze(analyzeRequest, RequestOptions.DEFAULT);
             return analyzeResponse.getTokens().stream().map(AnalyzeResponse.AnalyzeToken::getTerm).collect(Collectors.toList());
         } catch (IOException e) {
-            throw new RuntimeException(StrUtil.format("analyze failed, {}", e));
+            throw new ServiceException(StrUtil.format("analyze failed, {}", e));
         }
     }
 
@@ -256,7 +257,7 @@ public class EsServiceImpl implements EsService {
             long total = analyticSearchResponseForTotalSize(searchResponse);
             return EsPageHelper.getPageInfo(rows, total, pageNum, pageSize);
         } catch (IOException e) {
-            throw new RuntimeException(StrUtil.format("search failed, {}", e));
+            throw new ServiceException(StrUtil.format("paging failed, {}", e));
         }
     }
 
@@ -297,7 +298,7 @@ public class EsServiceImpl implements EsService {
             });
             return mapList;
         } catch (IOException e) {
-            throw new RuntimeException(StrUtil.format("aggregation failed, {}", e));
+            throw new ServiceException(StrUtil.format("aggregation failed, {}", e));
         }
     }
 
@@ -310,7 +311,7 @@ public class EsServiceImpl implements EsService {
             ParsedDateHistogram dateHistogram = searchResponse.getAggregations().get(dateHistogramName);
             return dateHistogram.getBuckets();
         } catch (IOException e) {
-            throw new RuntimeException(StrUtil.format("barChart failed, {}", e));
+            throw new ServiceException(StrUtil.format("barChart failed, {}", e));
         }
     }
 
@@ -324,7 +325,7 @@ public class EsServiceImpl implements EsService {
             Response response = restHighLevelClient.getLowLevelClient().performRequest(request);
             return IoUtil.readUtf8(response.getEntity().getContent());
         } catch (IOException e) {
-            throw new RuntimeException(StrUtil.format("executeSearchDsl failed, {}", e));
+            throw new ServiceException(StrUtil.format("executeSearchDsl failed, {}", e));
         }
     }
 
@@ -335,7 +336,7 @@ public class EsServiceImpl implements EsService {
             Response response = restHighLevelClient.getLowLevelClient().performRequest(request);
             return JSONUtil.toList(IoUtil.readUtf8(response.getEntity().getContent()), EsIndexVo.class);
         } catch (IOException e) {
-            throw new RuntimeException(StrUtil.format("indexQuery failed, {}", e));
+            throw new ServiceException(StrUtil.format("indexList failed, {}", e));
         }
     }
 }

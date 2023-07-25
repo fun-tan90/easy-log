@@ -5,6 +5,7 @@ import com.chj.easy.log.collector.property.EasyLogCollectorProperties;
 import com.chj.easy.log.collector.stream.RedisStreamCollectorMessageListener;
 import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
+import com.chj.easy.log.core.convention.exception.ServiceException;
 import com.chj.easy.log.core.model.Doc;
 import com.chj.easy.log.core.model.LogDoc;
 import com.chj.easy.log.core.service.EsService;
@@ -78,7 +79,7 @@ public class CollectorInitListener implements ApplicationListener<ApplicationRea
                     logDocs.clear();
                     stopWatch.stop();
                     log.debug("{}耗时:{}ms", stopWatch.getId(), stopWatch.getTotalTimeMillis());
-                } catch (RuntimeException e) {
+                } catch (ServiceException e) {
                     log.error("es 批量插入异常", e);
                 }
             }

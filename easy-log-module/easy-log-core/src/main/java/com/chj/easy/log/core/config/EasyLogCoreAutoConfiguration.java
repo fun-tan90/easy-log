@@ -2,6 +2,7 @@ package com.chj.easy.log.core.config;
 
 import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
+import com.chj.easy.log.core.convention.exception.ServiceException;
 import com.chj.easy.log.core.property.EasyLogEsProperties;
 import com.chj.easy.log.core.property.EasyLogStreamProperties;
 import org.apache.http.HttpHost;
@@ -48,10 +49,10 @@ public class EasyLogCoreAutoConfiguration {
         // 处理地址
         String address = easyLogEsProperties.getAddress();
         if (!StringUtils.hasLength(address)) {
-            throw new RuntimeException("please config the es address");
+            throw new ServiceException("please config the es address");
         }
         if (!address.contains(":")) {
-            throw new RuntimeException("the address must contains port and separate by ':'");
+            throw new ServiceException("the address must contains port and separate by ':'");
         }
         String schema = !StringUtils.hasLength(easyLogEsProperties.getSchema())
                 ? "http" : easyLogEsProperties.getSchema();
