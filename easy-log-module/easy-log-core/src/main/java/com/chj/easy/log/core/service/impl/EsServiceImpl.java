@@ -11,6 +11,7 @@ import com.chj.easy.log.core.convention.page.es.EsPageHelper;
 import com.chj.easy.log.core.convention.page.es.EsPageInfo;
 import com.chj.easy.log.core.model.Doc;
 import com.chj.easy.log.core.model.vo.EsIndexVo;
+import com.chj.easy.log.core.property.IndexLifecyclePolicy;
 import com.chj.easy.log.core.service.EsService;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -63,7 +64,7 @@ public class EsServiceImpl implements EsService {
 
     @Override
     public void initIndex() {
-        String lifecyclePolicyContent = ResourceUtil.readUtf8Str(EasyLogConstants.ILM_PATH);
+        String lifecyclePolicyContent = generateLifecyclePolicy(new IndexLifecyclePolicy());
         boolean lifecyclePolicy = putLifecyclePolicy(EasyLogConstants.ILM_POLICY_NAME, lifecyclePolicyContent);
         if (lifecyclePolicy) {
             String templateSource = ResourceUtil.readUtf8Str(EasyLogConstants.INDEX_TEMPLATE_PATH);
@@ -74,6 +75,16 @@ public class EsServiceImpl implements EsService {
                 log.error("索引模板创建【easy-log-template】创建成功");
             }
         }
+    }
+
+    private String generateLifecyclePolicy(IndexLifecyclePolicy indexLifecyclePolicy) {
+        Map<String, String> params = new HashMap<>(4);
+        params.put("rollover_max_age", indexLifecyclePolicy.getRolloverMaxAge());
+        params.put("rollover_max_size", indexLifecyclePolicy.getRolloverMaxSize());
+        params.put("rollover_max_docs", String.valueOf(indexLifecyclePolicy.getRolloverMaxDocs()));
+        params.put("delete_min_age", indexLifecyclePolicy.getDeleteMinAge());
+        String lifecyclePolicyContent = ResourceUtil.readUtf8Str(EasyLogConstants.ILM_PATH);
+        return StrUtil.format(lifecyclePolicyContent, params);
     }
 
     @Override

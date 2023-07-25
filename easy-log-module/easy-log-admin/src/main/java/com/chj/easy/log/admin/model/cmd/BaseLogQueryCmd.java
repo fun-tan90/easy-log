@@ -19,10 +19,6 @@ public class BaseLogQueryCmd {
 
     @NotNull
     @NotBlank
-    private String date;
-
-    @NotNull
-    @NotBlank
     private String appEnv;
 
     private List<String> appNameList;

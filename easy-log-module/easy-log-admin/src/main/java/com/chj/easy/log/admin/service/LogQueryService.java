@@ -38,7 +38,7 @@ public interface LogQueryService {
 
         String startDateTime = logQueryPageCmd.getStartDateTime();
         String endDateTime = logQueryPageCmd.getEndDateTime();
-        boolQueryBuilder.must((QueryBuilders.rangeQuery("dateTime").gte(startDateTime).lt(endDateTime)));
+        boolQueryBuilder.must((QueryBuilders.rangeQuery("@timestamp").gte(startDateTime).lt(endDateTime)));
 
         List<String> appNameList = logQueryPageCmd.getAppNameList();
         if (!CollectionUtils.isEmpty(appNameList)) {

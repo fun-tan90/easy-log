@@ -35,6 +35,7 @@
         <mybatis-flex.version>1.4.3</mybatis-flex.version>
         <tlog.version>1.5.1</tlog.version>
         <mica-mqtt.version>2.2.2</mica-mqtt.version>
+        <snack3.version>3.2.72</snack3.version>
     </properties>
 
     <dependencies>
@@ -204,6 +205,12 @@
                 <groupId>net.dreamlu</groupId>
                 <artifactId>mica-mqtt-server-spring-boot-starter</artifactId>
                 <version>${mica-mqtt.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.noear</groupId>
+                <artifactId>snack3</artifactId>
+                <version>${snack3.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

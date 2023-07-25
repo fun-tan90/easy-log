@@ -3,7 +3,6 @@ package com.chj.easy.log.admin.model.cmd;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -34,7 +33,7 @@ public class LogQueryCmd {
     @Data
     public static class BarChartParam {
 
-        private String dateHistogramField = "dateTime";
+        private String dateHistogramField = "@timestamp";
 
         private String termsField = "level";
 

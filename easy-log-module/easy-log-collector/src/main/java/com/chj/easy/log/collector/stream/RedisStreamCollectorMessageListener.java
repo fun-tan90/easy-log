@@ -41,7 +41,7 @@ public class RedisStreamCollectorMessageListener implements StreamListener<Strin
             Map<String, String> value = entries.getValue();
             LogDoc logDoc = LogDoc.builder()
                     .id(recordId)
-                    .timestamp(DateUtil.format(new Date(Long.parseLong(value.get("timeStamp"))), DatePattern.UTC_MS_PATTERN))
+                    .timestamp(DateUtil.format(new Date(Long.parseLong(value.get("timeStamp"))), DatePattern.NORM_DATETIME_MS_PATTERN))
                     .appName(value.get("appName"))
                     .appEnv(value.get("appEnv"))
                     .level(value.get("level"))

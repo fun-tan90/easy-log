@@ -17,10 +17,6 @@ import java.util.List;
 @Data
 public class LogDropBoxCmd {
 
-    @NotNull
-    @NotBlank
-    private String date;
-
     private String appEnv;
 
     @NotNull

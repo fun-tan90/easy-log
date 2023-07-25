@@ -29,7 +29,8 @@
           "type": "keyword"
         },
         "@timestamp": {
-          "type": "date"
+          "type": "date",
+          "format": "yyyy-MM-dd HH:mm:ss.SSS"
         },
         "level": {
           "type": "keyword"
