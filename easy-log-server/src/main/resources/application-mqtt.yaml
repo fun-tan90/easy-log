@@ -1,13 +1,9 @@
 mqtt:
   server:
-    enabled: true
+    enabled: ${easy-log.admin.enable}
     port: 1883
     name: Easy-Log-Mqtt-Server
     heartbeat-timeout: 20000
-    auth:
-      enable: true
-      username: mica
-      password: mica
     debug: false
     stat-enable: false
     web-port: 8083

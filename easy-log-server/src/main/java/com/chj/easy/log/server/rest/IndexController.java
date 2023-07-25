@@ -5,7 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author chj
@@ -18,9 +23,17 @@ public class IndexController {
     @Value("${easy-log.admin.enable:true}")
     private boolean adminEnable;
 
+    @Value("${easy-log.compute.enable:true}")
+    private boolean computeEnable;
+
+    @Value("${easy-log.collector.enable:true}")
+    private boolean collectorEnable;
+
     @GetMapping
     public String index(Model model) {
-        model.addAttribute("notify", "您当前使用的是Easy-log日志收集模块，无法使用日志检索等功能，当前版本为" + EasyLogConstants.EASY_LOG_VERSION);
+        List<String> modules = Arrays.asList(computeEnable ? "日志计算模块" : "", collectorEnable ? "日志收集模块" : "");
+        model.addAttribute("modules", modules.stream().filter(StringUtils::hasLength).collect(Collectors.joining("和")));
+        model.addAttribute("version", EasyLogConstants.EASY_LOG_VERSION);
         return adminEnable ? "index" : "notify";
     }
 }

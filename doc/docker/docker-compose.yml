@@ -1,0 +1,43 @@
+version: '3.7'
+services:
+  easy-log-server-admin:
+    image: tan90/easy-log-server:1.1.0
+    container_name: easy-log-server-admin
+    environment:
+      - easy-log.admin.enable=true
+      - easy-log.compute.enable=false
+      - easy-log.collector.enable=false
+    volumes:
+    - easy-log-server-admin:/app
+    ports:
+    - "2203:1203"
+    - "2204:1883"
+    - "2205:8083"
+
+  easy-log-server-compute:
+    image: tan90/easy-log-server:1.1.0
+    container_name: easy-log-server-compute
+    environment:
+      - easy-log.admin.enable=false
+      - easy-log.compute.enable=true
+      - easy-log.collector.enable=false
+    volumes:
+      - easy-log-server-compute:/app
+
+  easy-log-server-collector:
+    image: tan90/easy-log-server:1.1.0
+    container_name: easy-log-server-collector
+    environment:
+      - easy-log.admin.enable=false
+      - easy-log.compute.enable=false
+      - easy-log.collector.enable=true
+    volumes:
+      - easy-log-server-collector:/app
+
+volumes:
+  easy-log-server-admin:
+    driver: local
+  easy-log-server-compute:
+    driver: local
+  easy-log-server-collector:
+    driver: local

@@ -8,12 +8,12 @@ easy-log:
     enable: true
     banner: true
     auth: false
+    validate-captcha: false
     stats-log-speed-cron: 0/2 * * * * ?
     username: admin
     password: 123456
-    validate-captcha: false
   compute:
-    enable: ${easy-log.admin.enable}
+    enable: true
     banner: true
     consumer-global-orders: 1,2,3,4
   collector:
