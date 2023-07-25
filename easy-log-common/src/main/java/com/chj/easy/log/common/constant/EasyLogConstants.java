@@ -56,6 +56,8 @@ public interface EasyLogConstants {
 
     String LOG_ALARM = "LOG_ALARM";
 
+    String LOG_ALARM_LOCK = "LOG_ALARM_LOCK:";
+
     String S_W_LOG_INPUT_SPEED = "S_W:LOG_INPUT_SPEED:";
 
     String LOG_AFTER_FILTERED_TOPIC = "easy-log/after-filtered";

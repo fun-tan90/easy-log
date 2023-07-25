@@ -14,4 +14,5 @@ public interface LogAlarmService {
 
     String logAlarm(LogAlarmRuleAddCmd logAlarmRuleAddCmd);
 
+    void handlerLogAlarm();
 }

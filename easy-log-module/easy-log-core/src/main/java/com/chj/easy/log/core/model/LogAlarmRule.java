@@ -16,6 +16,8 @@ import java.util.List;
 @Builder
 public class LogAlarmRule {
 
+    private String ruleId;
+
     private String loggerName;
 
     private List<String> receiverList;

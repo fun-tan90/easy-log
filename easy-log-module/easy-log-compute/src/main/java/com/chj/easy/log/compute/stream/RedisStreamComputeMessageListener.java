@@ -4,6 +4,7 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
+import com.chj.easy.log.core.model.LogAlarmContent;
 import com.chj.easy.log.core.model.LogAlarmRule;
 import com.chj.easy.log.core.model.SlidingWindow;
 import com.chj.easy.log.core.service.RedisService;
@@ -91,10 +92,12 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
                 Integer windowCount = slidingWindow.getWindowCount();
                 log.info("阈值大小:{},滑动窗口内计数大小:{}", threshold, windowCount);
                 if (windowCount == threshold + 1) {
-                    JSONObject logAlarmMsg = new JSONObject();
-                    logAlarmMsg.putOnce("slidingWindow", slidingWindow);
-                    logAlarmMsg.putOnce("logAlarmRule", logAlarmRule);
-                    stringRedisTemplate.opsForList().leftPush(EasyLogConstants.LOG_ALARM, logAlarmMsg.toString());
+                    redisService.addLogAlarm(LogAlarmContent
+                            .builder()
+                            .slidingWindow(slidingWindow)
+                            .logAlarmRule(logAlarmRule)
+                            .build()
+                    );
                 }
             });
         }, EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);

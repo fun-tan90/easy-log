@@ -1,16 +1,21 @@
 package com.chj.easy.log.admin.service.impl;
 
+import cn.hutool.crypto.SecureUtil;
 import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.admin.model.cmd.LogAlarmRuleAddCmd;
 import com.chj.easy.log.admin.service.LogAlarmService;
+import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
+import com.chj.easy.log.core.model.LogAlarmContent;
 import com.chj.easy.log.core.model.LogAlarmRule;
+import com.chj.easy.log.core.service.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.concurrent.TimeUnit;
 
 /**
  * description TODO
@@ -26,6 +31,9 @@ public class LogAlarmServiceImpl implements LogAlarmService {
     @Resource
     StringRedisTemplate stringRedisTemplate;
 
+    @Resource
+    RedisService redisService;
+
     @Override
     public String logAlarm(LogAlarmRuleAddCmd logAlarmRuleAddCmd) {
         String appName = logAlarmRuleAddCmd.getAppName();
@@ -34,6 +42,7 @@ public class LogAlarmServiceImpl implements LogAlarmService {
         String loggerName = StringUtils.hasLength(logAlarmRuleAddCmd.getLoggerName()) ? logAlarmRuleAddCmd.getLoggerName() : "all";
         LogAlarmRule logAlarmRule = LogAlarmRule
                 .builder()
+                .ruleId(SecureUtil.md5(ruleKey + ":" + loggerName))
                 .loggerName(loggerName)
                 .receiverList(logAlarmRuleAddCmd.getReceiverList())
                 .alarmPlatformId(logAlarmRuleAddCmd.getAlarmPlatformId())
@@ -43,5 +52,16 @@ public class LogAlarmServiceImpl implements LogAlarmService {
                 .build();
         stringRedisTemplate.opsForHash().put(ruleKey, loggerName, JSONUtil.toJsonStr(logAlarmRule));
         return ruleKey;
+    }
+
+    @Override
+    public void handlerLogAlarm() {
+        EasyLogManager.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
+            String logAlarm = redisService.popLogAlarm(5);
+            log.info(logAlarm);
+            if (StringUtils.hasLength(logAlarm)) {
+                LogAlarmContent logAlarmContent = JSONUtil.toBean(logAlarm, LogAlarmContent.class);
+            }
+        }, 1, 1, TimeUnit.SECONDS);
     }
 }

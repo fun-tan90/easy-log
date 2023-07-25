@@ -1,6 +1,7 @@
 package com.chj.easy.log.core.service;
 
 import cn.hutool.json.JSONObject;
+import com.chj.easy.log.core.model.LogAlarmContent;
 import com.chj.easy.log.core.model.SlidingWindow;
 import org.springframework.data.redis.connection.stream.MapRecord;
 import org.springframework.data.redis.stream.StreamListener;
@@ -39,4 +40,8 @@ public interface RedisService {
     void addRealTimeFilteredLogs(String clientId, Map<String, String> logMap, double score);
 
     List<String> popRealTimeFilteredLog(String clientId);
+
+    void addLogAlarm(LogAlarmContent logAlarmContent);
+
+    String popLogAlarm(long timeout);
 }

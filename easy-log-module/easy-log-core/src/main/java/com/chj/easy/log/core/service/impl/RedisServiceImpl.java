@@ -4,6 +4,7 @@ import cn.hutool.core.lang.Singleton;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.common.constant.EasyLogConstants;
+import com.chj.easy.log.core.model.LogAlarmContent;
 import com.chj.easy.log.core.model.SlidingWindow;
 import com.chj.easy.log.core.service.RedisService;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -146,5 +148,20 @@ public class RedisServiceImpl implements RedisService {
             return new ArrayList<>();
         }
         return typedTuples.stream().sorted(Comparator.comparing(ZSetOperations.TypedTuple::getScore)).map(ZSetOperations.TypedTuple::getValue).collect(Collectors.toList());
+    }
+
+    @Override
+    public void addLogAlarm(LogAlarmContent logAlarmContent) {
+        String ruleId = logAlarmContent.getLogAlarmRule().getRuleId();
+        Integer period = logAlarmContent.getLogAlarmRule().getPeriod();
+        Boolean res = stringRedisTemplate.opsForValue().setIfAbsent(EasyLogConstants.LOG_ALARM_LOCK + ruleId, "", period, TimeUnit.SECONDS);
+        if (Boolean.TRUE.equals(res)) {
+            stringRedisTemplate.opsForList().leftPush(EasyLogConstants.LOG_ALARM, JSONUtil.toJsonStr(logAlarmContent));
+        }
+    }
+
+    @Override
+    public String popLogAlarm(long timeout) {
+        return stringRedisTemplate.opsForList().rightPop(EasyLogConstants.LOG_ALARM, timeout, TimeUnit.SECONDS);
     }
 }
