@@ -1,7 +1,7 @@
 package com.chj.easy.log.admin.rest;
 
 import com.chj.easy.log.core.convention.Res;
-import com.chj.easy.log.core.model.vo.EsIndexVo;
+import com.chj.easy.log.core.model.IndexList;
 import com.chj.easy.log.core.service.EsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +29,7 @@ public class SysEsController {
     EsService esService;
 
     @GetMapping("index")
-    public Res<List<EsIndexVo>> indexList(@RequestParam(defaultValue = "daily-easy-log-*", required = false) String indexNamePattern) {
+    public Res<List<IndexList>> indexList(@RequestParam(defaultValue = "daily-easy-log-*", required = false) String indexNamePattern) {
         return Res.ok(esService.indexList(indexNamePattern));
     }
 }

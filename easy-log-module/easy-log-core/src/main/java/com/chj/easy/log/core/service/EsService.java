@@ -2,7 +2,7 @@ package com.chj.easy.log.core.service;
 
 import com.chj.easy.log.core.convention.page.es.EsPageInfo;
 import com.chj.easy.log.core.model.Doc;
-import com.chj.easy.log.core.model.vo.EsIndexVo;
+import com.chj.easy.log.core.model.IndexList;
 import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
@@ -146,5 +146,5 @@ public interface EsService {
      *
      * @param indexNamePattern
      */
-    List<EsIndexVo> indexList(String indexNamePattern);
+    List<IndexList> indexList(String indexNamePattern);
 }

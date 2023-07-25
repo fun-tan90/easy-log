@@ -10,7 +10,7 @@ import com.chj.easy.log.core.convention.exception.ServiceException;
 import com.chj.easy.log.core.convention.page.es.EsPageHelper;
 import com.chj.easy.log.core.convention.page.es.EsPageInfo;
 import com.chj.easy.log.core.model.Doc;
-import com.chj.easy.log.core.model.vo.EsIndexVo;
+import com.chj.easy.log.core.model.IndexList;
 import com.chj.easy.log.core.property.IndexLifecyclePolicy;
 import com.chj.easy.log.core.service.EsService;
 import lombok.extern.slf4j.Slf4j;
@@ -341,11 +341,11 @@ public class EsServiceImpl implements EsService {
     }
 
     @Override
-    public List<EsIndexVo> indexList(String indexNamePattern) {
+    public List<IndexList> indexList(String indexNamePattern) {
         Request request = new Request("GET", "/_cat/indices/" + indexNamePattern + "?format=json");
         try {
             Response response = restHighLevelClient.getLowLevelClient().performRequest(request);
-            return JSONUtil.toList(IoUtil.readUtf8(response.getEntity().getContent()), EsIndexVo.class);
+            return JSONUtil.toList(IoUtil.readUtf8(response.getEntity().getContent()), IndexList.class);
         } catch (IOException e) {
             throw new ServiceException(StrUtil.format("indexList failed, {}", e));
         }

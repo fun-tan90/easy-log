@@ -1,4 +1,4 @@
-package com.chj.easy.log.core.model.vo;
+package com.chj.easy.log.core.model;
 
 import cn.hutool.core.annotation.Alias;
 import lombok.Builder;
@@ -13,7 +13,7 @@ import lombok.Data;
  */
 @Data
 @Builder
-public class EsIndexVo {
+public class IndexList {
 
     private String health;
 
