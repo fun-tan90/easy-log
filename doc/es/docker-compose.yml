@@ -10,14 +10,12 @@ services:
     - cluster.initial_master_nodes=es01,es02,es03
     - bootstrap.memory_lock=false
     - ES_JAVA_OPTS=-Xms512m -Xmx512m
-    - xpack.security.enabled=true
+    - xpack.security.enabled=false
     volumes:
-    - data11:/usr/share/elasticsearch/data
-    - plugins11:/usr/share/elasticsearch/plugins
+    - data01:/usr/share/elasticsearch/data
+    - plugins01:/usr/share/elasticsearch/plugins
     ports:
     - "9200:9200"
-    networks:
-      - el-net
   es02:
     image: ${elasticsearch}
     container_name: es02
@@ -28,14 +26,12 @@ services:
     - cluster.initial_master_nodes=es01,es02,es03
     - bootstrap.memory_lock=false
     - ES_JAVA_OPTS=-Xms512m -Xmx512m
-    - xpack.security.enabled=true
+    - xpack.security.enabled=false
     volumes:
-    - data12:/usr/share/elasticsearch/data
-    - plugins12:/usr/share/elasticsearch/plugins
+    - data02:/usr/share/elasticsearch/data
+    - plugins02:/usr/share/elasticsearch/plugins
     ports:
       - "9201:9200"
-    networks:
-      - el-net
   es03:
     image: ${elasticsearch}
     container_name: es03
@@ -46,14 +42,12 @@ services:
     - cluster.initial_master_nodes=es01,es02,es03
     - bootstrap.memory_lock=false
     - ES_JAVA_OPTS=-Xms512m -Xmx512m
-    - xpack.security.enabled=true
+    - xpack.security.enabled=false
     volumes:
-    - data13:/usr/share/elasticsearch/data
-    - plugins13:/usr/share/elasticsearch/plugins
+    - data03:/usr/share/elasticsearch/data
+    - plugins03:/usr/share/elasticsearch/plugins
     ports:
       - "9202:9200"
-    networks:
-      - el-net
   cerebro:
     image: ${cerebro}
     container_name: cerebro
@@ -65,8 +59,6 @@ services:
     - "9199:9000"
     command:
     - -Dhosts.0.host=http://es01:9200
-    networks:
-      - el-net
   kibana:
     image: ${kibana}
     container_name: kibana
@@ -80,23 +72,20 @@ services:
       - "5601:5601"
 
 volumes:
-  data11:
+  data01:
     driver: local
-  data12:
+  data02:
     driver: local
-  data13:
+  data03:
     driver: local
-  plugins11:
+  plugins01:
     driver: local
-  plugins12:
+  plugins02:
     driver: local
-  plugins13:
+  plugins03:
     driver: local
 
 networks:
-  el-net:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.30.0.0/16
-          gateway: 172.30.0.1
+  default:
+    external: true
+    name: el_net

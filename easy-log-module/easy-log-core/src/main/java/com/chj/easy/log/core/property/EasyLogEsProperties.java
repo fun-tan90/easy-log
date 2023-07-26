@@ -35,7 +35,7 @@ public class EasyLogEsProperties {
     /**
      * password of es 密码,可缺省
      */
-    private String password = "123456";
+    private String password;
 
     /**
      * maxConnectTotal 最大连接数
