@@ -25,7 +25,7 @@ GET /daily-easy-log-2023-07-14/_search
   "query":{
     "multi_match": {
       "query": "test",
-      "fields": ["appEnv","appName"]
+      "fields": ["namespace","appName"]
     }
   }
 }
@@ -42,7 +42,7 @@ GET /daily-easy-log-2023-07-14/_search
 {
   "query":{
     "term": {
-      "appEnv": {
+      "namespace": {
         "value": "dev"
       }
     }
@@ -54,7 +54,7 @@ GET /daily-easy-log-2023-07-14/_search
 {
   "query":{
     "term": {
-      "appEnv": {
+      "namespace": {
         "value": "dev"
       }
     }

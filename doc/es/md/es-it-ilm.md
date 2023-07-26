@@ -23,7 +23,7 @@ PUT _index_template/easy-log-template
         "id": {
           "type": "keyword"
         },
-        "appEnv": {
+        "namespace": {
           "type": "keyword"
         },
         "appName": {
