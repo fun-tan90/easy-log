@@ -47,11 +47,7 @@ public class CacheServiceImpl implements CacheService {
     private StreamMessageListenerContainer<String, MapRecord<String, String, String>> streamMessageListenerContainer;
 
     @Override
-    public void initGroupAndConsumers(String streamKey,
-                                      String groupName,
-                                      String consumerNamePrefix,
-                                      int[] consumerGlobalOrders,
-                                      StreamListener<String, MapRecord<String, String, String>> streamListener) {
+    public void initGroupAndConsumers(String streamKey, String groupName, String consumerNamePrefix, int[] consumerGlobalOrders, StreamListener<String, MapRecord<String, String, String>> streamListener) {
         Boolean hasKey = stringRedisTemplate.hasKey(streamKey);
         if (Boolean.FALSE.equals(hasKey)) {
             stringRedisTemplate.opsForStream().createGroup(streamKey, groupName);
@@ -120,9 +116,14 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
-    public JSONObject getLogRealTimeFilterRule(String mqttClientId) {
+    public Map<String, String> getLogRealTimeFilterRule(String mqttClientId) {
         String realTimeFilterRulesStr = stringRedisTemplate.opsForValue().get(EasyLogConstants.REAL_TIME_FILTER_RULES + mqttClientId);
-        return Optional.ofNullable(realTimeFilterRulesStr).map(JSONUtil::parseObj).orElse(new JSONObject());
+        JSONObject entries = Optional.ofNullable(realTimeFilterRulesStr).map(JSONUtil::parseObj).orElse(new JSONObject());
+        Map<String, String> realTimeFilterRules = new HashMap<>();
+        for (String key : entries.keySet()) {
+            realTimeFilterRules.put(key, entries.getStr(key));
+        }
+        return realTimeFilterRules;
     }
 
     @Override
@@ -189,7 +190,7 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
-    public LogAlarmPlatform alarmPlatform(String alarmPlatformType, String alarmPlatformId) {
+    public LogAlarmPlatform getAlarmPlatform(String alarmPlatformType, String alarmPlatformId) {
         Object res = stringRedisTemplate.opsForHash().get(EasyLogConstants.LOG_ALARM_PLATFORM + alarmPlatformType, alarmPlatformId);
         return Objects.isNull(res) ? null : JSONUtil.toBean(res.toString(), LogAlarmPlatform.class);
     }

@@ -127,14 +127,14 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
             Iterator<String> clientIdsIterator = clientIds.iterator();
             while (clientIdsIterator.hasNext()) {
                 String clientId = clientIdsIterator.next();
-                JSONObject realTimeFilterRules = cacheService.getLogRealTimeFilterRule(clientId);
+                Map<String, String> realTimeFilterRules = cacheService.getLogRealTimeFilterRule(clientId);
                 if (!realTimeFilterRules.isEmpty()) {
                     for (String realTimeFilterRule : realTimeFilterRules.keySet()) {
                         String[] split = realTimeFilterRule.split("#");
                         String ruleKey = split[0];
                         String ruleWay = split[1];
                         String logVal = logMap.get(ruleKey);
-                        String ruleVal = realTimeFilterRules.getStr(realTimeFilterRule);
+                        String ruleVal = realTimeFilterRules.get(realTimeFilterRule);
                         if ("eq".equals(ruleWay)) {
                             if (!logVal.equals(ruleVal)) {
                                 clientIdsIterator.remove();

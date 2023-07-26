@@ -45,6 +45,7 @@ public class LogAlarmServiceImpl implements LogAlarmService {
                         .alarmPlatformName(logAlarmPlatformAddCmd.getAlarmPlatformName())
                         .accessToken(logAlarmPlatformAddCmd.getAccessToken())
                         .secret(logAlarmPlatformAddCmd.getSecret())
+                        .status(logAlarmPlatformAddCmd.getStatus())
                         .build()
         );
     }

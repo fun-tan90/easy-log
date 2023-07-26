@@ -49,7 +49,5 @@ public class LogAlarmRuleAddCmd {
     @NotNull
     private Integer period;
 
-    @NotNull
-    @NotBlank
-    private String status;
+    private String status = "1";
 }

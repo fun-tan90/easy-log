@@ -47,7 +47,7 @@ public abstract class AbstractMessageCenterService  {
         String text = buildMessageContent(logAlarmContent);
         String alarmPlatformId = logAlarmContent.getAlarmPlatformId();
         String alarmPlatformType = logAlarmContent.getAlarmPlatformType();
-        LogAlarmPlatform logAlarmPlatform = cacheService.alarmPlatform(alarmPlatformType, alarmPlatformId);
+        LogAlarmPlatform logAlarmPlatform = cacheService.getAlarmPlatform(alarmPlatformType, alarmPlatformId);
         if (Objects.isNull(logAlarmPlatform)) {
             return;
         }

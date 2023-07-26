@@ -19,4 +19,6 @@ public class LogAlarmPlatform {
     private String accessToken;
 
     private String secret;
+
+    private String status;
 }
