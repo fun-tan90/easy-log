@@ -2,6 +2,7 @@ package com.chj.easy.log.admin.service;
 
 
 import com.chj.easy.log.admin.model.cmd.LogRealTimeFilterCmd;
+import com.chj.easy.log.core.model.Topic;
 
 /**
  * description TODO
@@ -12,6 +13,6 @@ import com.chj.easy.log.admin.model.cmd.LogRealTimeFilterCmd;
  */
 public interface LogRealTimeFilterService {
 
-    long submit(LogRealTimeFilterCmd logRealTimeFilterCmd);
+    Topic subscribe(LogRealTimeFilterCmd logRealTimeFilterCmd);
 
 }

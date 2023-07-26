@@ -52,7 +52,7 @@ public class LogRealTimeFilterEventHandler {
                 return;
             }
             for (String filteredLog : filteredLogs) {
-                mqttServerTemplate.publish(clientId, EasyLogConstants.LOG_AFTER_FILTERED_TOPIC, filteredLog.getBytes(StandardCharsets.UTF_8), MqttQoS.AT_LEAST_ONCE);
+                mqttServerTemplate.publish(clientId, EasyLogConstants.LOG_AFTER_FILTERED_TOPIC + clientId, filteredLog.getBytes(StandardCharsets.UTF_8), MqttQoS.AT_LEAST_ONCE);
             }
         }, 1, 50, TimeUnit.MILLISECONDS);
         SCHEDULED_FUTURE_POOL.put(clientId, scheduledFuture);

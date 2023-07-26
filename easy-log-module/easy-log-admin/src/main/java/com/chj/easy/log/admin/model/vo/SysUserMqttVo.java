@@ -1,7 +1,10 @@
 package com.chj.easy.log.admin.model.vo;
 
+import com.chj.easy.log.core.model.Topic;
 import lombok.Builder;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * description TODO
@@ -19,4 +22,6 @@ public class SysUserMqttVo {
     private String mqttUserName;
 
     private String mqttPassword;
+
+    private List<Topic> subTopics;
 }

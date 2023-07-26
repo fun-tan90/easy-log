@@ -13,10 +13,12 @@ import com.chj.easy.log.admin.service.SysUserService;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.convention.enums.IErrorCode;
 import com.chj.easy.log.core.convention.exception.ClientException;
+import com.chj.easy.log.core.model.Topic;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 
 /**
  * description TODO
@@ -72,6 +74,12 @@ public class SysUserServiceImpl implements SysUserService {
                     .mqttClientId(tokenSession.getString("mqttClientId"))
                     .mqttUserName(tokenSession.getString("mqttUserName"))
                     .mqttPassword(tokenSession.getString("mqttPassword"))
+                    .subTopics(Collections.singletonList(
+                            Topic.builder()
+                                    .topic(EasyLogConstants.LOG_INPUT_SPEED_TOPIC)
+                                    .qos(1)
+                                    .build())
+                    )
                     .build();
         }
         throw new ClientException(IErrorCode.AUTH_1001006);

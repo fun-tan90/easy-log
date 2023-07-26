@@ -60,7 +60,7 @@ public interface EasyLogConstants {
 
     String S_W_LOG_INPUT_SPEED = "S_W:LOG_INPUT_SPEED:";
 
-    String LOG_AFTER_FILTERED_TOPIC = "easy-log/after-filtered";
+    String LOG_AFTER_FILTERED_TOPIC = "easy-log/after-filtered/";
 
     String LOG_INPUT_SPEED_TOPIC = "easy-log/stats-log-input-speed";
 

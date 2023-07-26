@@ -4,6 +4,7 @@ import com.chj.easy.log.admin.model.cmd.LogRealTimeFilterCmd;
 import com.chj.easy.log.admin.service.LogRealTimeFilterService;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.event.LogAlarmRegisterEvent;
+import com.chj.easy.log.core.model.Topic;
 import com.chj.easy.log.core.service.EsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
@@ -34,7 +35,7 @@ public class LogRealTimeFilterServiceImpl implements LogRealTimeFilterService {
     EsService esService;
 
     @Override
-    public long submit(LogRealTimeFilterCmd logRealTimeFilterCmd) {
+    public Topic subscribe(LogRealTimeFilterCmd logRealTimeFilterCmd) {
         long timestamp = System.currentTimeMillis();
         Map<String, String> realTimeFilterRules = new HashMap<>();
         realTimeFilterRules.put("timeStamp#gle", String.valueOf(timestamp));
@@ -66,8 +67,12 @@ public class LogRealTimeFilterServiceImpl implements LogRealTimeFilterService {
             List<String> ikSmartWord = esService.analyze(logRealTimeFilterCmd.getAnalyzer(), content);
             realTimeFilterRules.put("content#should", String.join("%", ikSmartWord));
         }
-        applicationContext.publishEvent(new LogAlarmRegisterEvent(this, logRealTimeFilterCmd.getMqttClientId(), realTimeFilterRules));
-        return timestamp;
+        String mqttClientId = logRealTimeFilterCmd.getMqttClientId();
+        applicationContext.publishEvent(new LogAlarmRegisterEvent(this, mqttClientId, realTimeFilterRules));
+        return Topic.builder()
+                .topic(EasyLogConstants.LOG_AFTER_FILTERED_TOPIC + mqttClientId)
+                .qos(1)
+                .build();
     }
 
 }
