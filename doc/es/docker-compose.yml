@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   es01:
-    image: elasticsearch:7.9.3
+    image: ${elasticsearch}
     container_name: es01
     environment:
     - node.name=es01
@@ -15,8 +15,10 @@ services:
     - plugins01:/usr/share/elasticsearch/plugins
     ports:
     - "9200:9200"
+    networks:
+      - el-net
   es02:
-    image: elasticsearch:7.9.3
+    image: ${elasticsearch}
     container_name: es02
     environment:
     - node.name=es02
@@ -30,8 +32,10 @@ services:
     - plugins02:/usr/share/elasticsearch/plugins
     ports:
       - "9201:9200"
+    networks:
+      - el-net
   es03:
-    image: elasticsearch:7.9.3
+    image: ${elasticsearch}
     container_name: es03
     environment:
     - node.name=es03
@@ -45,8 +49,10 @@ services:
     - plugins03:/usr/share/elasticsearch/plugins
     ports:
       - "9202:9200"
+    networks:
+      - el-net
   cerebro:
-    image: lmenezes/cerebro:0.9.4
+    image: ${cerebro}
     container_name: cerebro
     depends_on:
     - es01
@@ -56,8 +62,10 @@ services:
     - "9199:9000"
     command:
     - -Dhosts.0.host=http://es01:9200
+    networks:
+      - el-net
   kibana:
-    image: kibana:7.9.3
+    image: ${kibana}
     container_name: kibana
     depends_on:
     - es01
@@ -67,6 +75,8 @@ services:
     - ./kibana.yml:/usr/share/kibana/config/kibana.yml
     ports:
     - "5601:5601"
+    networks:
+      - el-net
 
 volumes:
   data01:
@@ -83,6 +93,9 @@ volumes:
     driver: local
 
 networks:
-  default:
-    external: true
-    name: net_dev
+  el-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/16
+          gateway: 172.30.0.1
