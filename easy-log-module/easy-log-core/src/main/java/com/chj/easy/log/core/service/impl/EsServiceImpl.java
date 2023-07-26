@@ -11,6 +11,7 @@ import com.chj.easy.log.core.convention.page.es.EsPageHelper;
 import com.chj.easy.log.core.convention.page.es.EsPageInfo;
 import com.chj.easy.log.core.model.Doc;
 import com.chj.easy.log.core.model.IndexList;
+import com.chj.easy.log.core.property.EasyLogEsProperties;
 import com.chj.easy.log.core.property.IndexLifecyclePolicy;
 import com.chj.easy.log.core.service.EsService;
 import lombok.extern.slf4j.Slf4j;
@@ -60,11 +61,14 @@ import java.util.stream.Collectors;
 public class EsServiceImpl implements EsService {
 
     @Resource
+    EasyLogEsProperties easyLogEsProperties;
+
+    @Resource
     RestHighLevelClient restHighLevelClient;
 
     @Override
     public void initLifecyclePolicyAndTemplate() {
-        String lifecyclePolicyContent = generateLifecyclePolicy(new IndexLifecyclePolicy());
+        String lifecyclePolicyContent = generateLifecyclePolicy(easyLogEsProperties.getIndexLifecyclePolicy());
         boolean lifecyclePolicy = putLifecyclePolicy(EasyLogConstants.ILM_POLICY_NAME, lifecyclePolicyContent);
         if (lifecyclePolicy) {
             String templateSource = ResourceUtil.readUtf8Str(EasyLogConstants.INDEX_TEMPLATE_PATH);
