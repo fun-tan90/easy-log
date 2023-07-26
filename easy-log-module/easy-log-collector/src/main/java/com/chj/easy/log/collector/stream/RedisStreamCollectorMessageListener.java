@@ -43,7 +43,7 @@ public class RedisStreamCollectorMessageListener implements StreamListener<Strin
                     .id(recordId)
                     .timestamp(DateUtil.format(new Date(Long.parseLong(value.get("timeStamp"))), DatePattern.NORM_DATETIME_MS_PATTERN))
                     .appName(value.get("appName"))
-                    .appEnv(value.get("appEnv"))
+                    .namespace(value.get("namespace"))
                     .level(value.get("level"))
                     .loggerName(value.get("loggerName"))
                     .threadName(value.get("threadName"))

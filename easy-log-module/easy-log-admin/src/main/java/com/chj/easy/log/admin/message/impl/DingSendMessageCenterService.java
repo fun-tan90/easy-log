@@ -46,7 +46,7 @@ public class DingSendMessageCenterService extends AbstractMessageCenterService {
         String robotTemplate = Singleton.get(MESSAGE_TEMPLATE, () -> ResourceUtil.readUtf8Str(MESSAGE_TEMPLATE));
         return String.format(robotTemplate,
                 logAlarmContent.getAppName(),
-                logAlarmContent.getAppEnv(),
+                logAlarmContent.getNamespace(),
                 logAlarmContent.getLoggerName(),
                 DateUtil.format(new Date(logAlarmContent.getWindowStart()), DatePattern.NORM_DATETIME_PATTERN),
                 DateUtil.format(new Date(logAlarmContent.getWindowEnd()), DatePattern.NORM_DATETIME_PATTERN),

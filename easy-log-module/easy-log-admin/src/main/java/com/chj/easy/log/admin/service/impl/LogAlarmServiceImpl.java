@@ -57,7 +57,7 @@ public class LogAlarmServiceImpl implements LogAlarmService {
                 .alarmPlatformType(logAlarmRuleAddCmd.getAlarmPlatformType())
                 .alarmPlatformId(logAlarmRuleAddCmd.getAlarmPlatformId())
                 .appName(logAlarmRuleAddCmd.getAppName())
-                .appEnv(logAlarmRuleAddCmd.getAppEnv())
+                .namespace(logAlarmRuleAddCmd.getNamespace())
                 .loggerName(StringUtils.hasLength(logAlarmRuleAddCmd.getLoggerName()) ? logAlarmRuleAddCmd.getLoggerName() : "all")
                 .receiverList(logAlarmRuleAddCmd.getReceiverList())
                 .period(logAlarmRuleAddCmd.getPeriod())

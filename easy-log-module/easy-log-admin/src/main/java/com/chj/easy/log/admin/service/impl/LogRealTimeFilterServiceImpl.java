@@ -38,8 +38,8 @@ public class LogRealTimeFilterServiceImpl implements LogRealTimeFilterService {
         long timestamp = System.currentTimeMillis();
         Map<String, String> realTimeFilterRules = new HashMap<>();
         realTimeFilterRules.put("timeStamp#gle", String.valueOf(timestamp));
-        String appEnv = logRealTimeFilterCmd.getAppEnv();
-        realTimeFilterRules.put("appEnv#eq", appEnv);
+        String namespace = logRealTimeFilterCmd.getNamespace();
+        realTimeFilterRules.put("namespace#eq", namespace);
 
         List<String> appNameList = logRealTimeFilterCmd.getAppNameList();
         if (!CollectionUtils.isEmpty(appNameList)) {

@@ -24,7 +24,7 @@ public class LogAlarmRule {
 
     private String appName;
 
-    private String appEnv;
+    private String namespace;
 
     private String loggerName;
 

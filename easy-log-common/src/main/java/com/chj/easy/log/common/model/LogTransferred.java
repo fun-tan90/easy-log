@@ -23,7 +23,7 @@ public class LogTransferred {
 
     private String appName;
 
-    private String appEnv;
+    private String namespace;
 
     private String level;
 
@@ -51,7 +51,7 @@ public class LogTransferred {
         Map<String, String> map = new HashMap<>();
         map.put("timeStamp", String.valueOf(timeStamp));
         map.put("appName", appName);
-        map.put("appEnv", appEnv);
+        map.put("namespace", namespace);
         map.put("level", level);
         map.put("loggerName", loggerName);
         map.put("threadName", threadName);

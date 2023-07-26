@@ -38,7 +38,7 @@ public final class EasyLogRedisAppender extends AbstractAppender {
 
     private final String appName;
 
-    private final String appEnv;
+    private final String namespace;
 
     private final BlockingQueue<LogTransferred> queue;
 
@@ -52,7 +52,7 @@ public final class EasyLogRedisAppender extends AbstractAppender {
                                  final boolean ignoreExceptions,
                                  final Property[] properties,
                                  final String appName,
-                                 final String appEnv,
+                                 final String namespace,
                                  final JedisPool jedisPool,
                                  final BlockingQueue<LogTransferred> queue,
                                  final int maxPushSize,
@@ -60,7 +60,7 @@ public final class EasyLogRedisAppender extends AbstractAppender {
     ) {
         super(name, filter, layout, ignoreExceptions, properties);
         this.appName = appName;
-        this.appEnv = appEnv;
+        this.namespace = namespace;
         this.jedisPool = jedisPool;
         this.queue = queue;
         this.maxPushSize = maxPushSize;
@@ -75,8 +75,8 @@ public final class EasyLogRedisAppender extends AbstractAppender {
         @PluginAttribute(value = "appName", defaultString = "unknown")
         private String appName;
 
-        @PluginAttribute(value = "appEnv", defaultString = "default")
-        private String appEnv;
+        @PluginAttribute(value = "namespace", defaultString = "default")
+        private String namespace;
 
         @PluginAttribute(value = "maxPushSize", defaultInt = 500)
         private int maxPushSize;
@@ -119,7 +119,7 @@ public final class EasyLogRedisAppender extends AbstractAppender {
                     isIgnoreExceptions(),
                     getPropertyArray(),
                     getAppName(),
-                    getAppEnv(),
+                    getNamespace(),
                     jedisPool,
                     queue,
                     getMaxPushSize(),
@@ -197,7 +197,7 @@ public final class EasyLogRedisAppender extends AbstractAppender {
         return LogTransferred.builder()
                 .timeStamp(timeStamp)
                 .appName(appName)
-                .appEnv(appEnv)
+                .namespace(namespace)
                 .level(level.name())
                 .loggerName(loggerName)
                 .threadName(threadName)

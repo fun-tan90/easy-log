@@ -17,7 +17,6 @@ import redis.clients.jedis.JedisPool;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ScheduledFuture;
 
 /**
  * description TODO
@@ -36,7 +35,7 @@ public class EasyLogRedisAppender extends AppenderBase<ILoggingEvent> {
 
     private String appName = "unknown";
 
-    private String appEnv = "default";
+    private String namespace = "default";
 
     private int maxPushSize = 500;
 
@@ -132,7 +131,7 @@ public class EasyLogRedisAppender extends AppenderBase<ILoggingEvent> {
         return LogTransferred.builder()
                 .timeStamp(timeStamp)
                 .appName(appName)
-                .appEnv(appEnv)
+                .namespace(namespace)
                 .level(level.levelStr)
                 .loggerName(loggerName)
                 .threadName(threadName)

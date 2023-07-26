@@ -27,7 +27,7 @@ public class LogAlarmRuleAddCmd {
 
     @NotNull
     @NotBlank
-    private String appEnv;
+    private String namespace;
 
     private String loggerName;
 

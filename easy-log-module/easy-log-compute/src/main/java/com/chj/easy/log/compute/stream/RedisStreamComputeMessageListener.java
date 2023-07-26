@@ -1,6 +1,5 @@
 package com.chj.easy.log.compute.stream;
 
-import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
@@ -71,11 +70,11 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
             // TODO
             String level = logMap.get("level");
             String appName = logMap.get("appName");
-            String appEnv = logMap.get("appEnv");
+            String namespace = logMap.get("namespace");
             String loggerName = logMap.get("loggerName");
             String timeStamp = logMap.get("timeStamp");
 
-            List<Object> logAlarmRulesList = stringRedisTemplate.opsForHash().multiGet(EasyLogConstants.LOG_ALARM_RULES + appName + ":" + appEnv, Arrays.asList("all", loggerName));
+            List<Object> logAlarmRulesList = stringRedisTemplate.opsForHash().multiGet(EasyLogConstants.LOG_ALARM_RULES + appName + ":" + namespace, Arrays.asList("all", loggerName));
             Map<String, LogAlarmRule> cacheLogAlarmRuleMap = logAlarmRulesList
                     .stream()
                     .filter(n -> !Objects.isNull(n))
@@ -88,7 +87,7 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
             cacheLogAlarmRuleMap.forEach((k, logAlarmRule) -> {
                 Integer period = logAlarmRule.getPeriod();
                 Integer threshold = logAlarmRule.getThreshold();
-                SlidingWindow slidingWindow = cacheService.slidingWindow(EasyLogConstants.S_W_LOG_ALARM + appName + ":" + appEnv + ":" + k, recordId, Long.parseLong(timeStamp), period);
+                SlidingWindow slidingWindow = cacheService.slidingWindow(EasyLogConstants.S_W_LOG_ALARM + appName + ":" + namespace + ":" + k, recordId, Long.parseLong(timeStamp), period);
                 Integer windowCount = slidingWindow.getWindowCount();
                 log.info("阈值大小:{},滑动窗口内计数大小:{}", threshold, windowCount);
                 if (windowCount == threshold + 1) {
@@ -101,7 +100,7 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
                                     .windowEnd(slidingWindow.getWindowEnd())
                                     .ruleId(logAlarmRule.getRuleId())
                                     .appName(logAlarmRule.getAppName())
-                                    .appEnv(logAlarmRule.getAppEnv())
+                                    .namespace(logAlarmRule.getNamespace())
                                     .loggerName(k)
                                     .receiverList(logAlarmRule.getReceiverList())
                                     .threshold(logAlarmRule.getThreshold())

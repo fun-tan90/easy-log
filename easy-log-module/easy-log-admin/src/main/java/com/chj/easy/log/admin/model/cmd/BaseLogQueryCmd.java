@@ -19,7 +19,7 @@ public class BaseLogQueryCmd {
 
     @NotNull
     @NotBlank
-    private String appEnv;
+    private String namespace;
 
     private List<String> appNameList;
 

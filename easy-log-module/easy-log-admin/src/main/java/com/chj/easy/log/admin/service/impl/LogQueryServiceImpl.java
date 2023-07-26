@@ -44,9 +44,9 @@ public class LogQueryServiceImpl implements LogQueryService {
     @Override
     public Map<String, List<String>> queryDropBox(LogDropBoxCmd logDropBoxCmd) {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        String appEnv = logDropBoxCmd.getAppEnv();
-        if (StringUtils.hasLength(appEnv)) {
-            searchSourceBuilder.query(QueryBuilders.termQuery("appEnv", appEnv));
+        String namespace = logDropBoxCmd.getNamespace();
+        if (StringUtils.hasLength(namespace)) {
+            searchSourceBuilder.query(QueryBuilders.termQuery("namespace", namespace));
         }
         for (String condition : logDropBoxCmd.getSelectKeys()) {
             searchSourceBuilder.aggregation(

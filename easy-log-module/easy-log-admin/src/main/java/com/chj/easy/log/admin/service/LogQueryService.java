@@ -33,8 +33,8 @@ public interface LogQueryService {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         HighlightBuilder highlightBuilder = new HighlightBuilder();
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-        String appEnv = logQueryPageCmd.getAppEnv();
-        boolQueryBuilder.must(QueryBuilders.termQuery("appEnv", appEnv));
+        String namespace = logQueryPageCmd.getNamespace();
+        boolQueryBuilder.must(QueryBuilders.termQuery("namespace", namespace));
 
         String startDateTime = logQueryPageCmd.getStartDateTime();
         String endDateTime = logQueryPageCmd.getEndDateTime();

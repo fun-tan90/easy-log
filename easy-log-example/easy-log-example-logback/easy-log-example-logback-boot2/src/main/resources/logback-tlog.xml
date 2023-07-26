@@ -38,7 +38,7 @@
 
     <appender name="REDIS_STREAM_TEST" class="com.chj.easy.log.logback.appender.redis.EasyLogRedisAppender">
         <appName>easy-log-example-boot2</appName>
-        <appEnv>prod</appEnv>
+        <namespace>prod</namespace>
         <maxPushSize>100</maxPushSize>
         <queueSize>10240</queueSize>
         <redisMode>single</redisMode>

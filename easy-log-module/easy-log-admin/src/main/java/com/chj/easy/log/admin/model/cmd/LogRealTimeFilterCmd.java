@@ -1,7 +1,6 @@
 package com.chj.easy.log.admin.model.cmd;
 
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -23,7 +22,7 @@ public class LogRealTimeFilterCmd {
 
     @NotNull
     @NotBlank
-    private String appEnv;
+    private String namespace;
 
     private List<String> appNameList;
 

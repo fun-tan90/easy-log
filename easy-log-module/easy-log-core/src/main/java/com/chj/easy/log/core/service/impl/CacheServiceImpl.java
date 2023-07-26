@@ -173,8 +173,8 @@ public class CacheServiceImpl implements CacheService {
     @Override
     public String addLogAlarmRule(LogAlarmRule logAlarmRule) {
         String appName = logAlarmRule.getAppName();
-        String appEnv = logAlarmRule.getAppEnv();
-        String ruleKey = EasyLogConstants.LOG_ALARM_RULES + appName + ":" + appEnv;
+        String namespace = logAlarmRule.getNamespace();
+        String ruleKey = EasyLogConstants.LOG_ALARM_RULES + appName + ":" + namespace;
         String loggerName = logAlarmRule.getLoggerName();
         String ruleId = SecureUtil.md5(ruleKey + ":" + loggerName);
         logAlarmRule.setRuleId(ruleId);
