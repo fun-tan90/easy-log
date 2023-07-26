@@ -30,12 +30,12 @@ public class EasyLogEsProperties {
     /**
      * username of es 用户名,可缺省
      */
-    private String username;
+    private String username = "elastic";
 
     /**
      * password of es 密码,可缺省
      */
-    private String password;
+    private String password = "123456";
 
     /**
      * maxConnectTotal 最大连接数

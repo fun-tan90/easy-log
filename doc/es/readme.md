@@ -1,4 +1,4 @@
-# docker版es-7.9.3集群安装教程
+# docker版es-7.17.7集群安装教程
 ## 前置条件
 - 对elasticsearch有基础了解
 - 宿主机上安装docker，安装教程找官网或百度
@@ -24,9 +24,19 @@ docker-compose ps
 ```
 ![img.png](img/img02.png)
 ```shell
-curl localhost:9200
+docker exec -it es01 /bin/bash
 ```
-![img.png](img/img03.png)
+![img.png](img/img05.png)
+```shell
+# 设置集群密码
+./bin/elasticsearch-setup-passwords interactive
+```
+![img06.png](img%2Fimg03.png)
+```shell
+# 验证集群状态  由 elastic:密码 base64得到ZWxhc3RpYzoxMjM0NTY=
+curl --request GET --url http://localhost:9201 --header 'Authorization: Basic ZWxhc3RpYzoxMjM0NTY='
+```
+![img07.png](img%2Fimg07.png)
 #### 3、安装ik分词器
 ```
 # github地址
@@ -34,9 +44,9 @@ https://github.com/medcl/elasticsearch-analysis-ik
 支持分词器的拓展和停用词典
 ```
 
-- 1、将elasticsearch-analysis-ik-7.9.3.zip解压，文件夹名称为ik
+- 1、将elasticsearch-analysis-ik-7.17.7.zip解压，文件夹名称为ik
 ```shell
-unzip elasticsearch-analysis-ik-7.9.3.zip -d ik
+unzip elasticsearch-analysis-ik-7.17.7.zip -d ik
 ```
 - 2、将ik文件夹复制到三个es节点的plugins数据卷中,查询宿主机数据卷路径命令如下：
 ```shell

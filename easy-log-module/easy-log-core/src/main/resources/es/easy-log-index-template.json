@@ -11,6 +11,16 @@
     },
     "mappings": {
       "dynamic": "true",
+      "dynamic_templates": [
+        {
+          "mdc": {
+            "path_match": "mdc.*",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        }
+      ],
       "properties": {
         "id": {
           "type": "keyword"
@@ -22,8 +32,7 @@
           "type": "keyword"
         },
         "content": {
-          "type": "text",
-          "analyzer": "ik_smart"
+          "type": "text"
         },
         "currIp": {
           "type": "keyword"

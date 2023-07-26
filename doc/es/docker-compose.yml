@@ -10,9 +10,10 @@ services:
     - cluster.initial_master_nodes=es01,es02,es03
     - bootstrap.memory_lock=false
     - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    - xpack.security.enabled=true
     volumes:
-    - data01:/usr/share/elasticsearch/data
-    - plugins01:/usr/share/elasticsearch/plugins
+    - data11:/usr/share/elasticsearch/data
+    - plugins11:/usr/share/elasticsearch/plugins
     ports:
     - "9200:9200"
     networks:
@@ -27,9 +28,10 @@ services:
     - cluster.initial_master_nodes=es01,es02,es03
     - bootstrap.memory_lock=false
     - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    - xpack.security.enabled=true
     volumes:
-    - data02:/usr/share/elasticsearch/data
-    - plugins02:/usr/share/elasticsearch/plugins
+    - data12:/usr/share/elasticsearch/data
+    - plugins12:/usr/share/elasticsearch/plugins
     ports:
       - "9201:9200"
     networks:
@@ -44,9 +46,10 @@ services:
     - cluster.initial_master_nodes=es01,es02,es03
     - bootstrap.memory_lock=false
     - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    - xpack.security.enabled=true
     volumes:
-    - data03:/usr/share/elasticsearch/data
-    - plugins03:/usr/share/elasticsearch/plugins
+    - data13:/usr/share/elasticsearch/data
+    - plugins13:/usr/share/elasticsearch/plugins
     ports:
       - "9202:9200"
     networks:
@@ -68,28 +71,26 @@ services:
     image: ${kibana}
     container_name: kibana
     depends_on:
-    - es01
-    - es02
-    - es03
+      - es01
+      - es02
+      - es03
     volumes:
-    - ./kibana.yml:/usr/share/kibana/config/kibana.yml
+      - ./kibana.yml:/usr/share/kibana/config/kibana.yml
     ports:
-    - "5601:5601"
-    networks:
-      - el-net
+      - "5601:5601"
 
 volumes:
-  data01:
+  data11:
     driver: local
-  data02:
+  data12:
     driver: local
-  data03:
+  data13:
     driver: local
-  plugins01:
+  plugins11:
     driver: local
-  plugins02:
+  plugins12:
     driver: local
-  plugins03:
+  plugins13:
     driver: local
 
 networks:

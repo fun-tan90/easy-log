@@ -1,6 +1,8 @@
 easy-log:
   es:
     address: 172.16.8.31:9200,172.16.8.31:9201,172.16.8.31:9202
+    username: elastic
+    password: 123456
     index-lifecycle-policy:
       rollover-max-age: 10m
       delete-min-age: 1d
