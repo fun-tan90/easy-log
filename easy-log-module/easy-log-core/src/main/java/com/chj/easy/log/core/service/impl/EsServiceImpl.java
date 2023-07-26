@@ -83,9 +83,9 @@ public class EsServiceImpl implements EsService {
 
     private String generateLifecyclePolicy(IndexLifecyclePolicy indexLifecyclePolicy) {
         Map<String, String> params = new HashMap<>(4);
-        params.put("rollover_max_age", indexLifecyclePolicy.getRolloverMaxAge());
-        params.put("rollover_max_size", indexLifecyclePolicy.getRolloverMaxSize());
-        params.put("rollover_max_docs", String.valueOf(indexLifecyclePolicy.getRolloverMaxDocs()));
+        params.put("hot_max_age", indexLifecyclePolicy.getHotMaxAge());
+        params.put("hot_max_primary_shard_size", indexLifecyclePolicy.getHotMaxPrimaryShardSize());
+        params.put("hot_max_docs", String.valueOf(indexLifecyclePolicy.getHotMaxDocs()));
         params.put("delete_min_age", indexLifecyclePolicy.getDeleteMinAge());
         String lifecyclePolicyContent = ResourceUtil.readUtf8Str(EasyLogConstants.ILM_PATH);
         return StrUtil.format(lifecyclePolicyContent, params);
@@ -349,7 +349,8 @@ public class EsServiceImpl implements EsService {
         Request request = new Request("GET", "/_cat/indices/" + indexNamePattern + "?format=json");
         try {
             Response response = restHighLevelClient.getLowLevelClient().performRequest(request);
-            return JSONUtil.toList(IoUtil.readUtf8(response.getEntity().getContent()), IndexList.class);
+            List<IndexList> indexLists = JSONUtil.toList(IoUtil.readUtf8(response.getEntity().getContent()), IndexList.class);
+            return indexLists.stream().sorted(Comparator.comparing(IndexList::getIndex).reversed()).collect(Collectors.toList());
         } catch (IOException e) {
             throw new ServiceException(StrUtil.format("indexList failed, {}", e));
         }

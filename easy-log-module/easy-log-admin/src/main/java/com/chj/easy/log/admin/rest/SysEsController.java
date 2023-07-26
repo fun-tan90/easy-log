@@ -29,7 +29,7 @@ public class SysEsController {
     EsService esService;
 
     @GetMapping("index")
-    public Res<List<IndexList>> indexList(@RequestParam(defaultValue = "daily-easy-log-*", required = false) String indexNamePattern) {
+    public Res<List<IndexList>> indexList(@RequestParam(defaultValue = "easy-log-*", required = false) String indexNamePattern) {
         return Res.ok(esService.indexList(indexNamePattern));
     }
 }

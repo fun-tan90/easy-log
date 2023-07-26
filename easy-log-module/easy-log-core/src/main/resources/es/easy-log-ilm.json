@@ -2,14 +2,15 @@
   "policy": {
     "phases": {
       "hot": {
+        "min_age": "0ms",
         "actions": {
           "set_priority": {
             "priority": 100
           },
           "rollover": {
-            "max_age": "{rollover_max_age}",
-            "max_size": "{rollover_max_size}",
-            "max_docs": {rollover_max_docs}
+            "max_age": "{hot_max_age}",
+            "max_primary_shard_size": "{hot_max_primary_shard_size}",
+            "max_docs": {hot_max_docs}
           }
         }
       },

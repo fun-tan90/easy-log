@@ -12,11 +12,17 @@ import lombok.Data;
 @Data
 public class IndexLifecyclePolicy {
 
-    private String rolloverMaxAge = "5m";
+    /**
+     * 1m、1h
+     */
+    private String hotMaxAge = "5m";
 
-    private String rolloverMaxSize = "10gb";
+    /**
+     * 1mb、1gb
+     */
+    private String hotMaxPrimaryShardSize = "10gb";
 
-    private long rolloverMaxDocs = 10000000;
+    private long hotMaxDocs = 10000000;
 
-    private String deleteMinAge = "30d";
+    private String deleteMinAge = "1d";
 }

@@ -2,7 +2,9 @@ easy-log:
   es:
     address: 172.16.8.31:9200,172.16.8.31:9201,172.16.8.31:9202
     index-lifecycle-policy:
-      rollover-max-age: 10m
+      hot-max-age: 10m
+      hot-max-primary-shard-size: 1gb
+      hot-max-docs: 10000000
       delete-min-age: 1d
   stream:
     poll-timeout: 1s
