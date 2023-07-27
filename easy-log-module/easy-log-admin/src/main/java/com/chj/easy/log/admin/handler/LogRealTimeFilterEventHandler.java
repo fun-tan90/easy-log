@@ -1,7 +1,7 @@
 package com.chj.easy.log.admin.handler;
 
 import cn.hutool.core.map.SafeConcurrentHashMap;
-import com.chj.easy.log.common.EasyLogManager;
+import com.chj.easy.log.common.threadpool.EasyLogThreadPool;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.event.LogAlarmRegisterEvent;
 import com.chj.easy.log.core.event.LogAlarmUnRegisterEvent;
@@ -45,7 +45,7 @@ public class LogRealTimeFilterEventHandler {
         String clientId = logAlarmRegisterEvent.getClientId();
         Map<String, String> realTimeFilterRules = logAlarmRegisterEvent.getRealTimeFilterRules();
         cacheService.addLogRealTimeFilterRule(clientId, realTimeFilterRules);
-        ScheduledFuture<?> scheduledFuture = EasyLogManager.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
+        ScheduledFuture<?> scheduledFuture = EasyLogThreadPool.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
             List<String> filteredLogs = cacheService.popRealTimeFilteredLog(clientId);
             log.info("推送过滤后的日志，条数为{}", filteredLogs.size());
             if (CollectionUtils.isEmpty(filteredLogs)) {

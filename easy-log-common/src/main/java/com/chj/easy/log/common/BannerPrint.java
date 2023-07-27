@@ -19,7 +19,6 @@ public class BannerPrint {
 
     private static final int STRAP_LINE_SIZE = 50;
 
-
     /**
      * Print banner.
      */

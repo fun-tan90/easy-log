@@ -1,7 +1,7 @@
 package com.chj.easy.log.compute.stream;
 
 import cn.hutool.json.JSONUtil;
-import com.chj.easy.log.common.EasyLogManager;
+import com.chj.easy.log.common.threadpool.EasyLogThreadPool;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.model.LogAlarmContent;
 import com.chj.easy.log.core.model.LogAlarmRule;
@@ -57,7 +57,7 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
     private CompletableFuture<Void> logInputSpeed(Map<String, String> logMap, String recordId) {
         String level = logMap.get("level");
         String timeStamp = logMap.get("timeStamp");
-        return CompletableFuture.runAsync(() -> cacheService.slidingWindow(EasyLogConstants.S_W_LOG_INPUT_SPEED + level, recordId, Long.parseLong(timeStamp), 5), EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);
+        return CompletableFuture.runAsync(() -> cacheService.slidingWindow(EasyLogConstants.S_W_LOG_INPUT_SPEED + level, recordId, Long.parseLong(timeStamp), 5), EasyLogThreadPool.EASY_LOG_FIXED_THREAD_POOL);
     }
 
     /**
@@ -109,7 +109,7 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
                     );
                 }
             });
-        }, EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);
+        }, EasyLogThreadPool.EASY_LOG_FIXED_THREAD_POOL);
     }
 
     /**
@@ -162,6 +162,6 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
                     cacheService.addRealTimeFilteredLogs(clientId, logMap, timestamp + sequence);
                 }
             }
-        }, EasyLogManager.EASY_LOG_FIXED_THREAD_POOL);
+        }, EasyLogThreadPool.EASY_LOG_FIXED_THREAD_POOL);
     }
 }

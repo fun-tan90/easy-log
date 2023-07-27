@@ -1,6 +1,6 @@
 package com.chj.easy.log.core.config;
 
-import com.chj.easy.log.common.EasyLogManager;
+import com.chj.easy.log.common.threadpool.EasyLogThreadPool;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.convention.exception.ServiceException;
 import com.chj.easy.log.core.property.EasyLogEsProperties;
@@ -102,7 +102,7 @@ public class EasyLogCoreAutoConfiguration {
                 .builder()
                 .pollTimeout(easyLogStreamProperties.getPollTimeout())
                 .batchSize(easyLogStreamProperties.getPullBatchSize())
-                .executor(EasyLogManager.EASY_LOG_FIXED_THREAD_POOL)
+                .executor(EasyLogThreadPool.EASY_LOG_FIXED_THREAD_POOL)
                 .errorHandler(e -> {
                 })
                 .build();

@@ -1,7 +1,7 @@
 package com.chj.easy.log.example.logback.boot2.rest;
 
 
-import com.chj.easy.log.common.EasyLogManager;
+import com.chj.easy.log.common.threadpool.EasyLogThreadPool;
 import com.yomahub.tlog.core.annotation.TLogAspect;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +23,7 @@ public class DemoController {
     public String index(String id) {
 //        MDC.put("name","陈浩杰");
         for (int i = 0; i < 12; i++) {
-            EasyLogManager.EASY_LOG_FIXED_THREAD_POOL.execute(() -> {
+            EasyLogThreadPool.EASY_LOG_FIXED_THREAD_POOL.execute(() -> {
                 String threadName = Thread.currentThread().getName();
                 log.error(threadName + "error is {} ", id);
                 log.warn(threadName + "warn is {} ", id);

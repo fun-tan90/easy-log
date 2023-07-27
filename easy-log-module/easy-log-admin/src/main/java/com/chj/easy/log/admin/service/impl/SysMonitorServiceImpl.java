@@ -3,7 +3,7 @@ package com.chj.easy.log.admin.service.impl;
 import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.admin.model.vo.RedisStreamXInfoVo;
 import com.chj.easy.log.admin.service.SysMonitorService;
-import com.chj.easy.log.common.EasyLogManager;
+import com.chj.easy.log.common.threadpool.EasyLogThreadPool;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +45,7 @@ public class SysMonitorServiceImpl implements SysMonitorService {
 
     @Override
     public void statsLogInputSpeed() {
-        EasyLogManager.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
+        EasyLogThreadPool.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
             Map<String, Integer> windowCountMap = cacheService.slidingWindowCount("S_W:LOG_INPUT_SPEED:");
             if (!CollectionUtils.isEmpty(windowCountMap)) {
                 log.debug("\n{}", JSONUtil.toJsonPrettyStr(windowCountMap));

@@ -5,7 +5,7 @@ import com.chj.easy.log.admin.message.MessageCenterServiceChoose;
 import com.chj.easy.log.admin.model.cmd.LogAlarmPlatformAddCmd;
 import com.chj.easy.log.admin.model.cmd.LogAlarmRuleAddCmd;
 import com.chj.easy.log.admin.service.LogAlarmService;
-import com.chj.easy.log.common.EasyLogManager;
+import com.chj.easy.log.common.threadpool.EasyLogThreadPool;
 import com.chj.easy.log.core.model.LogAlarmContent;
 import com.chj.easy.log.core.model.LogAlarmPlatform;
 import com.chj.easy.log.core.model.LogAlarmRule;
@@ -69,7 +69,7 @@ public class LogAlarmServiceImpl implements LogAlarmService {
 
     @Override
     public void handlerLogAlarm() {
-        EasyLogManager.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
+        EasyLogThreadPool.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
             String logAlarm = cacheService.popLogAlarmContent(5);
             if (StringUtils.hasLength(logAlarm)) {
                 LogAlarmContent logAlarmContent = JSONUtil.toBean(logAlarm, LogAlarmContent.class);

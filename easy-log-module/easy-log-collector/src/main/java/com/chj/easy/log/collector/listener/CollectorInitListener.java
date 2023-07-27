@@ -3,7 +3,7 @@ package com.chj.easy.log.collector.listener;
 import cn.hutool.core.date.StopWatch;
 import com.chj.easy.log.collector.property.EasyLogCollectorProperties;
 import com.chj.easy.log.collector.stream.RedisStreamCollectorMessageListener;
-import com.chj.easy.log.common.EasyLogManager;
+import com.chj.easy.log.common.threadpool.EasyLogThreadPool;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.convention.exception.ServiceException;
 import com.chj.easy.log.core.model.Doc;
@@ -68,7 +68,7 @@ public class CollectorInitListener implements ApplicationListener<ApplicationRea
 
     private void batchInsertLogDocBySchedule() {
         List<Doc> logDocs = new ArrayList<>();
-        EasyLogManager.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
+        EasyLogThreadPool.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
             logDocBlockingQueue.drainTo(logDocs, Math.min(logDocBlockingQueue.size(), easyLogCollectorProperties.getInsertBatchSize()));
             if (!logDocs.isEmpty()) {
                 try {
