@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>easy-log-agent</module>
         <module>easy-log-appender</module>
         <module>easy-log-common</module>
         <module>easy-log-server</module>
