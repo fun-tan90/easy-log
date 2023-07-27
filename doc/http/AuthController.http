@@ -22,10 +22,6 @@ Content-Type: application/json
   "rememberMe": false
 }
 
-### 用户登出
-GET {{baseUrl}}/logout
-Authorization: {{token}}
-
 ### 用户是否登录
 GET {{baseUrl}}/isLogin
 Authorization: {{token}}
@@ -33,3 +29,8 @@ Authorization: {{token}}
 ### 登录用户mqtt连接信息
 GET {{baseUrl}}/user-mqtt-info
 Authorization: {{token}}
+
+### 用户登出
+GET {{baseUrl}}/logout
+Authorization: {{token}}
+
