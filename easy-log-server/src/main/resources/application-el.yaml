@@ -12,7 +12,7 @@ easy-log:
   admin:
     enable: true
     banner: true
-    auth: false
+    auth: true
     validate-captcha: false
     username: admin
     password: 123456
