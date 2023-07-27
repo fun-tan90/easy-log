@@ -1,6 +1,7 @@
 package com.chj.easy.log.admin.config;
 
 import cn.dev33.satoken.context.SaHolder;
+import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.filter.SaServletFilter;
 import cn.dev33.satoken.log.SaLog;
 import cn.dev33.satoken.router.SaRouter;
@@ -9,6 +10,7 @@ import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.admin.property.EasyLogAdminProperties;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.convention.Res;
+import com.chj.easy.log.core.convention.enums.IErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -40,6 +42,9 @@ public class EasyLogAdminAutoConfiguration {
                 })
                 .setError(e -> {
                     SaHolder.getResponse().setHeader("Content-Type", "application/json;charset=UTF-8");
+                    if (e instanceof NotLoginException) {
+                        return JSONUtil.toJsonStr(Res.errorCodeAndMsg(IErrorCode.AUTH_1001006.getCode(), e.getMessage()));
+                    }
                     return JSONUtil.toJsonStr(Res.errorMsg(e.getMessage()));
                 });
     }
