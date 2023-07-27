@@ -6,7 +6,7 @@
     <contextListener class="com.yomahub.tlog.core.enhance.logback.TLogLogbackTTLMdcListener"/>
     <!-- 日志输出格式 -->
     <property name="log-format"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{X-B3-TraceId},%X{X-B3-SpanId},%X{X-B3-ParentSpanId},%X{X-Span-Export}] %X{tl} %-5level [%t] {%logger{36}} Line:%-3L - %msg%n"/>
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %X{tl} %-5level [%t] {%logger{36}} Line:%-3L - %msg%n"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <!--这里替换成AspectLogbackEncoder-->
