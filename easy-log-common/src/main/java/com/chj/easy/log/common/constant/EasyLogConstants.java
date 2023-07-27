@@ -36,11 +36,7 @@ public interface EasyLogConstants {
 
     String INDEX_TEMPLATE_NAME = "easy-log-template";
 
-    String LOG_TOPIC_COLLECTOR = "easy-log-collector";
-
-    String LOG_TOPIC_COMPUTE = "easy-log-compute";
-
-    String LOG_TOPIC_ADMIN = "easy-log-admin";
+    String EASY_LOG_TOPIC = "easy-log";
 
     String CAPTCHA_IMG = "CAPTCHA_IMG:";
 

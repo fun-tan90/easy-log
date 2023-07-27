@@ -17,7 +17,7 @@ import javax.annotation.Resource;
  * @author 陈浩杰
  * @date 2023/7/18 16:55
  */
-@Slf4j(topic = EasyLogConstants.LOG_TOPIC_ADMIN)
+@Slf4j(topic = EasyLogConstants.EASY_LOG_TOPIC)
 @Component
 public class MqttConnectStatusListener implements IMqttConnectStatusListener {
 

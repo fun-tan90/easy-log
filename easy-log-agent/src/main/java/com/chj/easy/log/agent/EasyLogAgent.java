@@ -1,8 +1,8 @@
 package com.chj.easy.log.agent;
 
 import com.chj.easy.log.agent.interceptors.TimeInterceptor;
+import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.agent.builder.AgentBuilder;
-import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.implementation.MethodDelegation;
@@ -10,7 +10,6 @@ import net.bytebuddy.matcher.ElementMatchers;
 import net.bytebuddy.utility.JavaModule;
 
 import java.lang.instrument.Instrumentation;
-import java.security.ProtectionDomain;
 
 /**
  * description TODO
@@ -19,30 +18,24 @@ import java.security.ProtectionDomain;
  * @author 陈浩杰
  * @date 2023/7/27 14:52
  */
+@Slf4j
 public class EasyLogAgent {
 
     /**
      * 该方法在main方法之前运行，与main方法运行在同一个JVM中
      */
     public static void premain(String arg, Instrumentation instrumentation) {
-        System.out.println("agent的premain(String arg, Instrumentation instrumentation)方法");
+        log.info("agent的premain(String arg={}, Instrumentation instrumentation)方法", arg);
         // Byte Buddy会根据 Transformer指定的规则进行拦截并增强代码
         AgentBuilder.Transformer transformer =
-                new AgentBuilder.Transformer() {
-                    @Override
-                    public DynamicType.Builder<?> transform(DynamicType.Builder<?> builder,
-                                                            TypeDescription typeDescription,
-                                                            ClassLoader classLoader,
-                                                            JavaModule javaModule,
-                                                            ProtectionDomain protectionDomain) {
-                        // method()指定哪些方法需要被拦截，ElementMatchers.any()表
-                        // 示拦截所有方法
-                        return builder.method(ElementMatchers.<MethodDescription>any())
-                                // intercept()指明拦截上述方法的拦截器
-                                .intercept(MethodDelegation.to(
-                                        TimeInterceptor.class));
-                    }
+                (builder, typeDescription, classLoader, javaModule, protectionDomain) -> {
+                    // method()指定哪些方法需要被拦截，ElementMatchers.any()表
+                    // 示拦截所有方法
+                    return builder.method(ElementMatchers.any())
+                            // intercept()指明拦截上述方法的拦截器
+                            .intercept(MethodDelegation.to(TimeInterceptor.class));
                 };
+
         // 创建一个过滤规则
         AgentBuilder.Listener listener = new AgentBuilder.Listener() {
             /**
@@ -112,11 +105,12 @@ public class EasyLogAgent {
 
             }
         };
+
         // Byte Buddy专门有个AgentBuilder来处理Java Agent的场景
         new AgentBuilder
                 .Default()
                 // 根据包名前缀拦截类
-                .type(ElementMatchers.nameStartsWith("com.xxx"))
+                .type(ElementMatchers.nameStartsWith("com.chj.easy.log"))
                 // 拦截到的类由transformer处理
                 .transform(transformer)
                 .with(listener)

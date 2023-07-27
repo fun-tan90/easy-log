@@ -24,7 +24,7 @@ import java.util.concurrent.BlockingQueue;
  * @author 陈浩杰
  * @date 2023/7/16 8:40
  */
-@Slf4j(topic = EasyLogConstants.LOG_TOPIC_COLLECTOR)
+@Slf4j(topic = EasyLogConstants.EASY_LOG_TOPIC)
 @Component
 public class RedisStreamCollectorMessageListener implements StreamListener<String, MapRecord<String, String, String>> {
 

@@ -14,7 +14,7 @@ import org.springframework.context.annotation.ComponentScan;
  * @author 陈浩杰
  * @date 2023/7/13 8:50
  */
-@Slf4j(topic = EasyLogConstants.LOG_TOPIC_COMPUTE)
+@Slf4j(topic = EasyLogConstants.EASY_LOG_TOPIC)
 @ConditionalOnProperty(value = "easy-log.compute.enable", havingValue = "true")
 @ComponentScan(EasyLogConstants.COMPUTE_SCAN_BASE_PACKAGES)
 @EnableConfigurationProperties(EasyLogComputeProperties.class)

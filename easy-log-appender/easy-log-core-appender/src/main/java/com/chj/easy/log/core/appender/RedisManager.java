@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author 陈浩杰
  * @date 2023/7/20 17:12
  */
-@Slf4j
+@Slf4j(topic = EasyLogConstants.EASY_LOG_TOPIC)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RedisManager {
 

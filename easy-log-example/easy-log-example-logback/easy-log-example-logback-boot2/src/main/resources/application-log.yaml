@@ -2,3 +2,4 @@ logging:
   config: classpath:logback-tlog.xml
   level:
     root: info
+    easy-log: debug

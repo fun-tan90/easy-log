@@ -1,5 +1,6 @@
 package com.chj.easy.log.agent.interceptors;
 
+import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.implementation.bind.annotation.Origin;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 import net.bytebuddy.implementation.bind.annotation.SuperCall;
@@ -14,6 +15,7 @@ import java.util.concurrent.Callable;
  * @author 陈浩杰
  * @date 2023/7/27 15:47
  */
+@Slf4j
 public class TimeInterceptor {
     @RuntimeType
     public static Object intercept(@Origin Method method,

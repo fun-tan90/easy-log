@@ -38,6 +38,7 @@
         <forest.version>1.5.26</forest.version>
         <mica-mqtt.version>2.2.2</mica-mqtt.version>
         <snack3.version>3.2.72</snack3.version>
+        <byte-buddy.version>1.14.5</byte-buddy.version>
     </properties>
 
     <dependencies>

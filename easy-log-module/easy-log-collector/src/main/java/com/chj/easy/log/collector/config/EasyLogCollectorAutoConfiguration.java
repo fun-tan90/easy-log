@@ -19,7 +19,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author 陈浩杰
  * @date 2023/7/13 8:50
  */
-@Slf4j(topic = EasyLogConstants.LOG_TOPIC_COLLECTOR)
+@Slf4j(topic = EasyLogConstants.EASY_LOG_TOPIC)
 @ConditionalOnProperty(value = "easy-log.collector.enable", havingValue = "true")
 @ComponentScan(EasyLogConstants.COLLECTOR_SCAN_BASE_PACKAGES)
 @EnableConfigurationProperties(EasyLogCollectorProperties.class)
