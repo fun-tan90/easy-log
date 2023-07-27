@@ -2,6 +2,7 @@ package com.chj.easy.log.core.config;
 
 import com.chj.easy.log.common.threadpool.EasyLogThreadPool;
 import com.chj.easy.log.common.constant.EasyLogConstants;
+import com.chj.easy.log.core.convention.aspect.LogAspect;
 import com.chj.easy.log.core.convention.exception.ServiceException;
 import com.chj.easy.log.core.property.EasyLogEsProperties;
 import com.chj.easy.log.core.property.EasyLogStreamProperties;
@@ -93,6 +94,11 @@ public class EasyLogCoreAutoConfiguration {
             return requestConfigBuilder;
         });
         return new RestHighLevelClient(builder);
+    }
+
+    @Bean
+    public LogAspect logAspect() {
+        return new LogAspect();
     }
 
     @Bean

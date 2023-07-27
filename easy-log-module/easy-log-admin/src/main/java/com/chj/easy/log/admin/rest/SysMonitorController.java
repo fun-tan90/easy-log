@@ -4,6 +4,7 @@ import com.chj.easy.log.admin.model.vo.RedisStreamXInfoVo;
 import com.chj.easy.log.admin.service.SysMonitorService;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.convention.Res;
+import com.chj.easy.log.core.convention.annotation.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,7 @@ public class SysMonitorController {
     SysMonitorService sysMonitorService;
 
     @GetMapping("x-info")
+    @Log
     public Res<RedisStreamXInfoVo> streamXInfo() {
         return Res.ok(sysMonitorService.streamXInfo(EasyLogConstants.REDIS_STREAM_KEY));
     }

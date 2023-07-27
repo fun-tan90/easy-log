@@ -1,7 +1,11 @@
 logging:
+  config: classpath:logback-spring.xml
   level:
     root: info
-    tracer: trace
+#    tracer: trace
     com.chj.easy.log.admin: debug
     com.chj.easy.log.compute: debug
     com.chj.easy.log.collector: debug
+
+tlog:
+  mdc-enable: true
