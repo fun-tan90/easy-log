@@ -108,7 +108,7 @@ public class EasyLogCoreAutoConfiguration {
                 .builder()
                 .pollTimeout(easyLogStreamProperties.getPollTimeout())
                 .batchSize(easyLogStreamProperties.getPullBatchSize())
-                .executor(EasyLogThreadPool.EASY_LOG_FIXED_THREAD_POOL)
+                .executor(EasyLogThreadPool.newEasyLogFixedPoolInstance())
                 .errorHandler(e -> {
                 })
                 .build();

@@ -45,7 +45,7 @@ public class LogRealTimeFilterEventHandler {
         String clientId = logAlarmRegisterEvent.getClientId();
         Map<String, String> realTimeFilterRules = logAlarmRegisterEvent.getRealTimeFilterRules();
         cacheService.addLogRealTimeFilterRule(clientId, realTimeFilterRules);
-        ScheduledFuture<?> scheduledFuture = EasyLogThreadPool.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
+        ScheduledFuture<?> scheduledFuture = EasyLogThreadPool.newEasyLogScheduledExecutorInstance().scheduleWithFixedDelay(() -> {
             List<String> filteredLogs = cacheService.popRealTimeFilteredLog(clientId);
             log.info("推送过滤后的日志，条数为{}", filteredLogs.size());
             if (CollectionUtils.isEmpty(filteredLogs)) {

@@ -55,7 +55,7 @@ public class RedisManager {
 
     public static void schedulePush(BlockingQueue<LogTransferred> queue, JedisPool jedisPool, int maxPushSize, long redisStreamMaxLen) {
         List<LogTransferred> logTransferredList = new ArrayList<>();
-        EasyLogThreadPool.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
+        EasyLogThreadPool.newEasyLogScheduledExecutorInstance().scheduleWithFixedDelay(() -> {
             if (logTransferredList.isEmpty()) {
                 queue.drainTo(logTransferredList, Math.min(queue.size(), maxPushSize));
             }

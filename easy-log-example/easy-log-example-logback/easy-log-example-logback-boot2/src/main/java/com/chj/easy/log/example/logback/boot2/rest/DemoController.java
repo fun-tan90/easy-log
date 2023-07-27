@@ -23,7 +23,7 @@ public class DemoController {
     public String index(String id) {
 //        MDC.put("name","陈浩杰");
         for (int i = 0; i < 12; i++) {
-            EasyLogThreadPool.EASY_LOG_FIXED_THREAD_POOL.execute(() -> {
+            EasyLogThreadPool.newEasyLogFixedPoolInstance().execute(() -> {
                 String threadName = Thread.currentThread().getName();
                 log.error(threadName + "error is {} ", id);
                 log.warn(threadName + "warn is {} ", id);

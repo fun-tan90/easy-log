@@ -45,7 +45,7 @@ public class SysMonitorServiceImpl implements SysMonitorService {
 
     @Override
     public void statsLogInputSpeed() {
-        EasyLogThreadPool.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
+        EasyLogThreadPool.newEasyLogScheduledExecutorInstance().scheduleWithFixedDelay(() -> {
             Map<String, Integer> windowCountMap = cacheService.slidingWindowCount("S_W:LOG_INPUT_SPEED:");
             if (!CollectionUtils.isEmpty(windowCountMap)) {
                 log.debug("\n{}", JSONUtil.toJsonPrettyStr(windowCountMap));

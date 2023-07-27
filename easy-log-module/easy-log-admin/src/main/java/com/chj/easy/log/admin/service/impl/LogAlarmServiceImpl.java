@@ -69,7 +69,7 @@ public class LogAlarmServiceImpl implements LogAlarmService {
 
     @Override
     public void handlerLogAlarm() {
-        EasyLogThreadPool.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
+        EasyLogThreadPool.newEasyLogScheduledExecutorInstance().scheduleWithFixedDelay(() -> {
             String logAlarm = cacheService.popLogAlarmContent(5);
             if (StringUtils.hasLength(logAlarm)) {
                 LogAlarmContent logAlarmContent = JSONUtil.toBean(logAlarm, LogAlarmContent.class);

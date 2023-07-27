@@ -57,7 +57,7 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
     private CompletableFuture<Void> logInputSpeed(Map<String, String> logMap, String recordId) {
         String level = logMap.get("level");
         String timeStamp = logMap.get("timeStamp");
-        return CompletableFuture.runAsync(() -> cacheService.slidingWindow(EasyLogConstants.S_W_LOG_INPUT_SPEED + level, recordId, Long.parseLong(timeStamp), 5), EasyLogThreadPool.EASY_LOG_FIXED_THREAD_POOL);
+        return CompletableFuture.runAsync(() -> cacheService.slidingWindow(EasyLogConstants.S_W_LOG_INPUT_SPEED + level, recordId, Long.parseLong(timeStamp), 5), EasyLogThreadPool.newEasyLogFixedPoolInstance());
     }
 
     /**
@@ -109,7 +109,7 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
                     );
                 }
             });
-        }, EasyLogThreadPool.EASY_LOG_FIXED_THREAD_POOL);
+        }, EasyLogThreadPool.newEasyLogFixedPoolInstance());
     }
 
     /**
@@ -162,6 +162,6 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
                     cacheService.addRealTimeFilteredLogs(clientId, logMap, timestamp + sequence);
                 }
             }
-        }, EasyLogThreadPool.EASY_LOG_FIXED_THREAD_POOL);
+        }, EasyLogThreadPool.newEasyLogFixedPoolInstance());
     }
 }

@@ -68,7 +68,7 @@ public class CollectorInitListener implements ApplicationListener<ApplicationRea
 
     private void batchInsertLogDocBySchedule() {
         List<Doc> logDocs = new ArrayList<>();
-        EasyLogThreadPool.EASY_LOG_SCHEDULED_EXECUTOR.scheduleWithFixedDelay(() -> {
+        EasyLogThreadPool.newEasyLogScheduledExecutorInstance().scheduleWithFixedDelay(() -> {
             logDocBlockingQueue.drainTo(logDocs, Math.min(logDocBlockingQueue.size(), easyLogCollectorProperties.getInsertBatchSize()));
             if (!logDocs.isEmpty()) {
                 try {
