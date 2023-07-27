@@ -6,3 +6,6 @@ docker build --build-arg PROJECT_NAME=easy-log-server --build-arg SERVER_PORT=12
 docker push registry.cn-hangzhou.aliyuncs.com/chenhj/easy-log-server:1.1.1
 docker tag registry.cn-hangzhou.aliyuncs.com/chenhj/easy-log-server:1.1.1 registry.cn-hangzhou.aliyuncs.com/chenhj/easy-log-server:latest
 docker push registry.cn-hangzhou.aliyuncs.com/chenhj/easy-log-server:latest
+
+
+curl http://flow-openapi.aliyun.com/scm/webhook/BoVFHUT3Bv67p4ZRNxh8

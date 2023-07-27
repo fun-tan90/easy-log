@@ -1,9 +1,9 @@
 spring:
   redis:
-    host: 172.16.8.31
+    host: 114.217.55.239
     port: 6379
-    database: 10
-    password: root@123456!
+    database: 3
+    password: ICONMAN20220106R
     connect-timeout: 5000ms
     lettuce:
       pool:

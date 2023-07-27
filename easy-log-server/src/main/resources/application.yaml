@@ -16,7 +16,7 @@ spring:
       dev:
         - auth
         - actuator
-        - cache-test
+        - cache
         - el
         - log
         - mqtt

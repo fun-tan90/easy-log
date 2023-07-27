@@ -5,6 +5,7 @@ services:
     container_name: easy-log-server-admin
     environment:
       - SPRING_PROFILES_ACTIVE=dev
+      - HEAP_SIZE=512m
       - easy-log.admin.enable=true
       - easy-log.compute.enable=false
       - easy-log.collector.enable=false
@@ -26,6 +27,7 @@ services:
     container_name: easy-log-server-compute
     environment:
       - SPRING_PROFILES_ACTIVE=dev
+      - HEAP_SIZE=512m
       - easy-log.admin.enable=false
       - easy-log.compute.enable=true
       - easy-log.collector.enable=false
@@ -43,6 +45,7 @@ services:
     container_name: easy-log-server-collector
     environment:
       - SPRING_PROFILES_ACTIVE=dev
+      - HEAP_SIZE=512m
       - easy-log.admin.enable=false
       - easy-log.compute.enable=false
       - easy-log.collector.enable=true

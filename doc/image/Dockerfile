@@ -30,7 +30,7 @@ EXPOSE $SERVER_PORT $MQTT_TCP_PORT $MQTT_WEBSOCKET_PORT
 WORKDIR /app
 
 # 添加jar包
-COPY $PROJECT_NAME*.jar ./$PROJECT_NAME.jar
+COPY app/$PROJECT_NAME*.jar ./$PROJECT_NAME.jar
 
 # ENTRYPOINT 运行命令
 CMD java -jar /app/$APP_NAME.jar --spring.profiles.active=$SPRING_PROFILES_ACTIVE -Xms$HEAP_SIZE -Xmx$HEAP_SIZE -Xss1m -XX:MetaspaceSize=512m -XX:MaxMetaspaceSize=512m -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintHeapAtGC -Xloggc:./$APP_NAME.gc -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=./$APP_NAME.hprof -Duser.timezone=Asia/Shanghai
