@@ -1,0 +1,35 @@
+### 获取图形验证码
+POST {{baseUrl}}/captcha
+Content-Type: application/json
+
+{
+  "captchaKey": "12345678",
+  "width": 130,
+  "height": 48,
+  "len": 2,
+  "survival": 5
+}
+
+### 用户登录
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "123456",
+  "captchaKey": "12345678",
+  "captchaValue": "6111111111111",
+  "rememberMe": false
+}
+
+### 用户登出
+GET {{baseUrl}}/logout
+Authorization: {{token}}
+
+### 用户是否登录
+GET {{baseUrl}}/isLogin
+Authorization: {{token}}
+
+### 登录用户mqtt连接信息
+GET {{baseUrl}}/user-mqtt-info
+Authorization: {{token}}
