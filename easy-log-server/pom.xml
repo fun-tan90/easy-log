@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>easy-log-server</artifactId>
+    <description>易用的日志收集、分析和检索平台</description>
 
     <dependencies>
         <dependency>
