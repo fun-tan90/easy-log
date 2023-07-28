@@ -89,7 +89,8 @@
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>1.2.2</version>
                 <configuration>
-                    <dockerHost>http://172.16.8.31:7200</dockerHost>
+                    <!--华为云 docker-->
+                    <dockerHost>http://121.36.96.79:7200</dockerHost>
                     <imageName>registry.cn-hangzhou.aliyuncs.com/chenhj/easy-log-server:${project.version}</imageName>
                     <dockerDirectory>${project.basedir}/../doc/image</dockerDirectory>
                     <buildArgs>
