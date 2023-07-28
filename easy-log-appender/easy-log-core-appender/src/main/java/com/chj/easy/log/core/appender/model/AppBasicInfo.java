@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AppBasicInfo {
 
-    public String appName;
+    private String appName;
 
-    public String namespace;
+    private String namespace;
 }
