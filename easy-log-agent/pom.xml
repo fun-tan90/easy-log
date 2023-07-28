@@ -86,8 +86,8 @@
                             <configuration>
                                 <target>
                                     <mkdir dir="${project.basedir}/../agents"/>
-                                    <copy file="${project.build.directory}/${build.finalName}-jar-with-dependencies.jar"
-                                          tofile="${project.basedir}/../agents/${build.finalName}-jar-with-dependencies.jar"/>
+                                    <copy file="${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar"
+                                          tofile="${project.basedir}/../agents/${project.build.finalName}-jar-with-dependencies.jar"/>
                                 </target>
                             </configuration>
                         </execution>
