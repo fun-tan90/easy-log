@@ -1,20 +1,29 @@
 package com.chj.easy.log.core.appender;
 
 import cn.hutool.core.lang.Singleton;
+import cn.hutool.extra.spring.SpringUtil;
+import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.common.model.LogTransferred;
+import com.chj.easy.log.common.model.LoggerConfig;
 import com.chj.easy.log.common.threadpool.EasyLogThreadPool;
+import com.chj.easy.log.core.appender.model.AppBasicInfo;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.logging.LoggerConfiguration;
+import org.springframework.boot.logging.LoggingSystem;
 import redis.clients.jedis.*;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * description RedisManager
@@ -31,6 +40,7 @@ public class RedisManager {
 
     public static AtomicInteger JEDIS_CONNECTION_ERROR_TIMES = new AtomicInteger(0);
 
+
     public static JedisPool initJedisPool(String redisMode,
                                           String redisAddress,
                                           String redisPass,
@@ -38,22 +48,22 @@ public class RedisManager {
                                           int redisPoolMaxIdle,
                                           int redisPoolMaxTotal,
                                           int redisConnectionTimeout) {
-        return Singleton.get("jedis_pool", () -> {
-            JedisPoolConfig config = new JedisPoolConfig();
-            config.setMaxIdle(redisPoolMaxIdle);
-            config.setMaxTotal(redisPoolMaxTotal);
-            config.setTestOnBorrow(true);
-            if ("single".equals(redisMode)) {
-                // TODO redisAddress 正则校验
-                String[] arrays = redisAddress.split(":");
-                return new JedisPool(config, arrays[0], Integer.parseInt(arrays[1]), redisConnectionTimeout, redisPass, redisDb, "easy_log");
-            }
-            // TODO sentinel cluster
-            return null;
-        });
+        JedisPoolConfig config = new JedisPoolConfig();
+        config.setMaxIdle(redisPoolMaxIdle);
+        config.setMaxTotal(redisPoolMaxTotal);
+        config.setTestOnBorrow(true);
+        JedisPool jedisPool = null;
+        if ("single".equals(redisMode)) {
+            String[] arrays = redisAddress.split(":");
+            jedisPool = new JedisPool(config, arrays[0], Integer.parseInt(arrays[1]), redisConnectionTimeout, redisPass, redisDb, "easy_log");
+        }
+        if (!Objects.isNull(jedisPool)) {
+            Singleton.put(jedisPool);
+        }
+        return jedisPool;
     }
 
-    public static void schedulePush(BlockingQueue<LogTransferred> queue, JedisPool jedisPool, int maxPushSize, long redisStreamMaxLen) {
+    public static void schedulePushLog(BlockingQueue<LogTransferred> queue, JedisPool jedisPool, int maxPushSize, long redisStreamMaxLen) {
         List<LogTransferred> logTransferredList = new ArrayList<>();
         EasyLogThreadPool.newEasyLogScheduledExecutorInstance().scheduleWithFixedDelay(() -> {
             if (logTransferredList.isEmpty()) {
@@ -85,5 +95,22 @@ public class RedisManager {
                 log.error(e.getMessage());
             }
         }, 5, 50, TimeUnit.MILLISECONDS);
+    }
+
+    public static void pushLoggerConfig() {
+        JedisPool jedisPool = Singleton.get(JedisPool.class);
+        AppBasicInfo appBasicInfo = Singleton.get(AppBasicInfo.class);
+        LoggingSystem loggingSystem = SpringUtil.getBean(LoggingSystem.class);
+        List<LoggerConfiguration> loggerConfigurations = loggingSystem.getLoggerConfigurations();
+        List<LoggerConfig> loggerConfigs = loggerConfigurations.stream().map(n -> LoggerConfig.builder()
+                .loggerName(n.getName())
+                .configuredLevel(Optional.ofNullable(n.getConfiguredLevel()).map(Enum::name).orElse("null"))
+                .effectiveLevel(Optional.ofNullable(n.getEffectiveLevel()).map(Enum::name).orElse("null"))
+                .build()).collect(Collectors.toList());
+        try (Jedis jedis = jedisPool.getResource()) {
+            jedis.hset(EasyLogConstants.LOGGER_CONFIG + appBasicInfo.getAppName(), appBasicInfo.getNamespace(), JSONUtil.toJsonStr(loggerConfigs));
+        } catch (JedisConnectionException e) {
+            log.error("delayPushLoggerConfig error [{}]", e.getMessage());
+        }
     }
 }

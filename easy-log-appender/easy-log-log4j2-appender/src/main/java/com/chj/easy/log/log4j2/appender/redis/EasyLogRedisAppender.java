@@ -2,8 +2,10 @@ package com.chj.easy.log.log4j2.appender.redis;
 
 
 import cn.hutool.core.exceptions.ExceptionUtil;
+import cn.hutool.core.lang.Singleton;
 import com.chj.easy.log.common.model.LogTransferred;
 import com.chj.easy.log.core.appender.RedisManager;
+import com.chj.easy.log.core.appender.model.AppBasicInfo;
 import com.yomahub.tlog.context.TLogContext;
 import lombok.Getter;
 import lombok.Setter;
@@ -135,7 +137,8 @@ public final class EasyLogRedisAppender extends AbstractAppender {
 
     @Override
     public void start() {
-        RedisManager.schedulePush(queue, jedisPool, maxPushSize, redisStreamMaxLen);
+        RedisManager.schedulePushLog(queue, jedisPool, maxPushSize, redisStreamMaxLen);
+        Singleton.put(AppBasicInfo.builder().appName(appName).namespace(namespace).build());
         super.start();
     }
 

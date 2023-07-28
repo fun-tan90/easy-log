@@ -6,8 +6,10 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.ThrowableProxy;
 import ch.qos.logback.core.AppenderBase;
 import cn.hutool.core.exceptions.ExceptionUtil;
+import cn.hutool.core.lang.Singleton;
 import com.chj.easy.log.common.model.LogTransferred;
 import com.chj.easy.log.core.appender.RedisManager;
+import com.chj.easy.log.core.appender.model.AppBasicInfo;
 import com.yomahub.tlog.context.TLogContext;
 import lombok.Getter;
 import lombok.Setter;
@@ -67,7 +69,8 @@ public class EasyLogRedisAppender extends AppenderBase<ILoggingEvent> {
         }
         this.jedisPool = RedisManager.initJedisPool(redisMode, redisAddress, redisPass, redisDb, redisPoolMaxIdle, redisPoolMaxTotal, redisConnectionTimeout);
         this.queue = new ArrayBlockingQueue<>(queueSize);
-        RedisManager.schedulePush(queue, jedisPool, maxPushSize, redisStreamMaxLen);
+        RedisManager.schedulePushLog(queue, jedisPool, maxPushSize, redisStreamMaxLen);
+        Singleton.put(AppBasicInfo.builder().appName(appName).namespace(namespace).build());
         super.start();
     }
 
