@@ -1,7 +1,7 @@
-package com.chj.easy.log.agent.mvc.log;
+package com.chj.easy.log.mvc.log.enhance;
 
-import com.chj.easy.log.agent.mvc.log.listeners.AgentListener;
-import com.chj.easy.log.agent.mvc.log.transformers.AgentTransformer;
+import com.chj.easy.log.mvc.log.enhance.listeners.AgentListener;
+import com.chj.easy.log.mvc.log.enhance.transformers.AgentTransformer;
 import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.description.NamedElement;

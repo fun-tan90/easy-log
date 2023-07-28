@@ -9,7 +9,7 @@
         <version>1.1.1</version>
     </parent>
 
-    <artifactId>easy-log-agent-mvc-log</artifactId>
+    <artifactId>easy-log-mvc-log-enhance</artifactId>
 
     <build>
         <plugins>
@@ -19,7 +19,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Premain-Class>com.chj.easy.log.agent.mvc.log.EasyLogAgent</Premain-Class>
+                            <Premain-Class>com.chj.easy.log.mvc.log.enhance.EasyLogAgent</Premain-Class>
                         </manifestEntries>
                     </archive>
                 </configuration>
