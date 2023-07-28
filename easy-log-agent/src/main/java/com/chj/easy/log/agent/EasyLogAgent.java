@@ -1,15 +1,15 @@
 package com.chj.easy.log.agent;
 
-import com.chj.easy.log.agent.interceptors.TimeInterceptor;
+import com.chj.easy.log.agent.transformers.AgentTransformer;
 import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.agent.builder.AgentBuilder;
-import net.bytebuddy.description.type.TypeDescription;
-import net.bytebuddy.dynamic.DynamicType;
-import net.bytebuddy.implementation.MethodDelegation;
-import net.bytebuddy.matcher.ElementMatchers;
-import net.bytebuddy.utility.JavaModule;
+import net.bytebuddy.description.NamedElement;
+import net.bytebuddy.description.annotation.AnnotationSource;
+import net.bytebuddy.matcher.ElementMatcher;
 
 import java.lang.instrument.Instrumentation;
+
+import static net.bytebuddy.matcher.ElementMatchers.*;
 
 /**
  * description TODO
@@ -21,100 +21,36 @@ import java.lang.instrument.Instrumentation;
 @Slf4j
 public class EasyLogAgent {
 
-    /**
-     * 该方法在main方法之前运行，与main方法运行在同一个JVM中
-     */
     public static void premain(String arg, Instrumentation instrumentation) {
-        log.info("agent的premain(String arg={}, Instrumentation instrumentation)方法", arg);
-        // Byte Buddy会根据 Transformer指定的规则进行拦截并增强代码
-        AgentBuilder.Transformer transformer =
-                (builder, typeDescription, classLoader, javaModule, protectionDomain) -> {
-                    // method()指定哪些方法需要被拦截，ElementMatchers.any()表
-                    // 示拦截所有方法
-                    return builder.method(ElementMatchers.any())
-                            // intercept()指明拦截上述方法的拦截器
-                            .intercept(MethodDelegation.to(TimeInterceptor.class));
-                };
-
-        // 创建一个过滤规则
-        AgentBuilder.Listener listener = new AgentBuilder.Listener() {
-            /**
-             * 在提供给转换器的类型上调用。
-             *
-             * @param typeName      插入指令的类型的二进制名称。
-             * @param classLoader   正在加载此类型的类加载器
-             * @param module        检测类型的模块或{@code null}（如果当前VM不支持模块）。
-             * @param loaded        {@code true} 如果类型已加载。
-             */
-            @Override
-            public void onDiscovery(String typeName, ClassLoader classLoader, JavaModule module, boolean loaded) {
-
-            }
-
-            /**
-             * 在成功应用转换之前调用。
-             *
-             * @param typeDescription   正在转换的类型。
-             * @param classLoader       加载此类型的类加载器。
-             * @param module            转换类型的模块或 {@code null}（如果当前VM不支持模块）。
-             * @param loaded            {@code true} 如果类型已加载。
-             * @param dynamicType       创建的动态类型。
-             */
-            @Override
-            public void onTransformation(TypeDescription typeDescription, ClassLoader classLoader, JavaModule module, boolean loaded, DynamicType dynamicType) {
-
-            }
-
-            /**
-             * 当类型未转换但被忽略时调用。
-             *
-             * @param typeDescription    转换时忽略的类型。
-             * @param classLoader        加载此类型的类加载器。
-             * @param module             如果当前VM不支持模块，则忽略类型的模块或{@code null}。
-             * @param loaded             {@code true}如果类型已加载。
-             */
-            @Override
-            public void onIgnored(TypeDescription typeDescription, ClassLoader classLoader, JavaModule module, boolean loaded) {
-
-            }
-
-            /**
-             * 在转换过程中发生错误时调用。
-             *
-             * @param typeName      插入指令的类型的二进制名称。
-             * @param classLoader   加载此类型的类加载器。
-             * @param module        插入指令的类型的模块或{@code null}（如果当前VM不支持模块）。
-             * @param loaded        {@code true}如果类型已加载。
-             * @param throwable     发生错误。
-             */
-            @Override
-            public void onError(String typeName, ClassLoader classLoader, JavaModule module, boolean loaded, Throwable throwable) {
-
-            }
-
-            /**
-             * 在尝试加载类之后调用，与类的处理无关。
-             *
-             * @param typeName      插入指令的类型的二进制名称。
-             * @param classLoader   加载此类型的类加载器。
-             * @param module        插入指令的类型的模块或{@code null}（如果当前VM不支持模块）。
-             * @param loaded        {@code true}如果类型已加载。
-             */
-            @Override
-            public void onComplete(String typeName, ClassLoader classLoader, JavaModule module, boolean loaded) {
-
-            }
-        };
-
-        // Byte Buddy专门有个AgentBuilder来处理Java Agent的场景
+        log.info("arg = {}", arg);
         new AgentBuilder
                 .Default()
+                // 忽略哪些类
+                .ignore(ignoreType())
                 // 根据包名前缀拦截类
-                .type(ElementMatchers.nameStartsWith("com.chj.easy.log"))
+                .type(type())
                 // 拦截到的类由transformer处理
-                .transform(transformer)
-                .with(listener)
+                .transform(new AgentTransformer())
+                // 配置增强监听器
+                // .with(new AgentListener())
                 .installOn(instrumentation); // 安装到 Instrumentation
+    }
+
+    private static ElementMatcher.Junction<AnnotationSource> type() {
+        return isAnnotatedWith(named("org.springframework.web.bind.annotation.RestController")
+                .or(named("org.springframework.stereotype.Controller"))
+        );
+    }
+
+    private static ElementMatcher.Junction<NamedElement> ignoreType() {
+        return nameStartsWith("net.bytebuddy.")
+                .or(nameStartsWith("org.slf4j."))
+                .or(nameStartsWith("org.groovy."))
+                .or(nameStartsWith("org.springframework."))
+                .or(nameStartsWith("sun.reflect"))
+                .or(nameContains("javassist"))
+                .or(nameContains(".asm."))
+                .or(nameContains(".reflectasm."));
     }
 
     /**
