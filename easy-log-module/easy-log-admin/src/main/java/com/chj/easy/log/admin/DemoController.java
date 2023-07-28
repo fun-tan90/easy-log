@@ -3,15 +3,18 @@ package com.chj.easy.log.admin;
 
 import com.chj.easy.log.core.convention.Res;
 import com.chj.easy.log.core.model.SlidingWindow;
-import com.chj.easy.log.core.service.EsService;
 import com.chj.easy.log.core.service.CacheService;
+import com.chj.easy.log.core.service.EsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -49,5 +52,11 @@ public class DemoController {
     @GetMapping("sliding-window-count")
     public Map<String, Integer> slidingWindowCount() {
         return cacheService.slidingWindowCount("S_W:LOG_INPUT_SPEED:");
+    }
+
+
+    @GetMapping
+    public String index(HttpServletRequest request, HttpServletResponse response, @RequestParam("file") MultipartFile file) {
+        return "ok";
     }
 }

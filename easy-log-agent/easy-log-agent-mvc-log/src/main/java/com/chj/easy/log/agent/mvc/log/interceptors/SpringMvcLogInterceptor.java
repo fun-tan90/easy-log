@@ -1,4 +1,4 @@
-package com.chj.easy.log.agent.interceptors;
+package com.chj.easy.log.agent.mvc.log.interceptors;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;

@@ -1,6 +1,7 @@
-package com.chj.easy.log.agent;
+package com.chj.easy.log.agent.mvc.log;
 
-import com.chj.easy.log.agent.transformers.AgentTransformer;
+import com.chj.easy.log.agent.mvc.log.listeners.AgentListener;
+import com.chj.easy.log.agent.mvc.log.transformers.AgentTransformer;
 import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.description.NamedElement;
@@ -32,7 +33,7 @@ public class EasyLogAgent {
                 // 拦截到的类由transformer处理
                 .transform(new AgentTransformer())
                 // 配置增强监听器
-                // .with(new AgentListener())
+                .with(new AgentListener())
                 .installOn(instrumentation); // 安装到 Instrumentation
     }
 

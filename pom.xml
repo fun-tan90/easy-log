@@ -269,22 +269,22 @@
                     </execution>
                 </executions>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-javadoc-plugin</artifactId>-->
-<!--                <version>2.10.3</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>attach-javadocs</id>-->
-<!--                        <goals>-->
-<!--                            <goal>jar</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <additionalparam>-Xdoclint:none</additionalparam>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                <artifactId>maven-javadoc-plugin</artifactId>-->
+            <!--                <version>2.10.3</version>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <id>attach-javadocs</id>-->
+            <!--                        <goals>-->
+            <!--                            <goal>jar</goal>-->
+            <!--                        </goals>-->
+            <!--                        <configuration>-->
+            <!--                            <additionalparam>-Xdoclint:none</additionalparam>-->
+            <!--                        </configuration>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--            </plugin>-->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
@@ -317,6 +317,39 @@
                                 <goal>build-info</goal>
                                 <goal>repackage</goal>
                             </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.8</version>
+                    <executions>
+                        <execution>
+                            <id>clean</id>
+                            <phase>clean</phase>
+                            <goals>
+                                <goal>run</goal>
+                            </goals>
+                            <configuration>
+                                <target>
+                                    <delete dir="${project.basedir}/../doc/image/app"/>
+                                </target>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>package</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>run</goal>
+                            </goals>
+                            <configuration>
+                                <target>
+                                    <mkdir dir="${project.basedir}/../doc/image/app"/>
+                                    <copy file="${project.build.directory}/${build.finalName}.jar"
+                                          tofile="${project.basedir}/../doc/image/app/${build.finalName}.jar"/>
+                                </target>
+                            </configuration>
                         </execution>
                     </executions>
                 </plugin>
