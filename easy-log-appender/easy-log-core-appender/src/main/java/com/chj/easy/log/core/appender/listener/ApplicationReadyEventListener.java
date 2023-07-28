@@ -17,7 +17,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @date 2023/7/13 10:15
  */
 @Slf4j
-@Component
 public class ApplicationReadyEventListener implements ApplicationListener<ApplicationReadyEvent> {
 
     private final AtomicBoolean initialized = new AtomicBoolean(false);
