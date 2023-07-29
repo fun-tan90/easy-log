@@ -53,7 +53,7 @@ public class SysUserServiceImpl implements SysUserService {
         StpUtil.login(username, saLoginModel.setIsLastingCookie(rememberMe));
         String tokenValue = StpUtil.getTokenValue();
 
-        StpUtil.getTokenSession().set("mqttClientId", tokenValue);
+        StpUtil.getTokenSession().set("mqttClientId", EasyLogConstants.MQTT_CLIENT_ID_FRONT_PREFIX + tokenValue);
         StpUtil.getTokenSession().set("mqttUserName", RandomUtil.randomString(6));
         StpUtil.getTokenSession().set("mqttPassword", RandomUtil.randomString(8));
         return SysUserAuthVo.builder()

@@ -20,7 +20,6 @@ import org.apache.logging.log4j.core.config.plugins.PluginBuilderFactory;
 import org.apache.logging.log4j.core.impl.ThrowableProxy;
 import org.apache.logging.log4j.message.Message;
 import org.slf4j.helpers.MessageFormatter;
-import redis.clients.jedis.JedisPool;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -43,9 +42,7 @@ public final class EasyLogRedisAppender extends AbstractAppender {
 
     private final String namespace;
 
-    private final BlockingQueue<LogTransferred> queue;
-
-    private final JedisPool jedisPool;
+    private final BlockingQueue<LogTransferred> blockingQueue;
 
     private final int maxPushSize;
 
@@ -62,8 +59,7 @@ public final class EasyLogRedisAppender extends AbstractAppender {
                                  final Property[] properties,
                                  final String appName,
                                  final String namespace,
-                                 final JedisPool jedisPool,
-                                 final BlockingQueue<LogTransferred> queue,
+                                 final BlockingQueue<LogTransferred> blockingQueue,
                                  final int maxPushSize,
                                  final int redisStreamMaxLen,
                                  final String mqttIp,
@@ -72,8 +68,7 @@ public final class EasyLogRedisAppender extends AbstractAppender {
         super(name, filter, layout, ignoreExceptions, properties);
         this.appName = appName;
         this.namespace = namespace;
-        this.jedisPool = jedisPool;
-        this.queue = queue;
+        this.blockingQueue = blockingQueue;
         this.maxPushSize = maxPushSize;
         this.redisStreamMaxLen = redisStreamMaxLen;
         this.mqttIp = mqttIp;
@@ -129,8 +124,8 @@ public final class EasyLogRedisAppender extends AbstractAppender {
 
         @Override
         public EasyLogRedisAppender build() {
-            JedisPool jedisPool = RedisManager.initJedisPool(redisMode, redisAddress, redisPass, redisDb, redisPoolMaxIdle, redisPoolMaxTotal, redisConnectionTimeout);
-            BlockingQueue<LogTransferred> queue = new ArrayBlockingQueue<>(queueSize);
+            RedisManager.initJedisPool(redisMode, redisAddress, redisPass, redisDb, redisPoolMaxIdle, redisPoolMaxTotal, redisConnectionTimeout);
+            BlockingQueue<LogTransferred> blockingQueue = new ArrayBlockingQueue<>(queueSize);
             return new EasyLogRedisAppender(
                     getName(),
                     getLayout(),
@@ -139,8 +134,7 @@ public final class EasyLogRedisAppender extends AbstractAppender {
                     getPropertyArray(),
                     getAppName(),
                     getNamespace(),
-                    jedisPool,
-                    queue,
+                    blockingQueue,
                     getMaxPushSize(),
                     getRedisStreamMaxLen(),
                     getMqttIp(),
@@ -157,8 +151,8 @@ public final class EasyLogRedisAppender extends AbstractAppender {
     @Override
     public void start() {
         AppBasicInfo appBasicInfo = AppBasicInfo.builder().appName(appName).namespace(namespace).build();
-        MqttManager.initMqtt(appBasicInfo, mqttIp, mqttPort);
-        RedisManager.schedulePushLog(queue, jedisPool, maxPushSize, redisStreamMaxLen);
+        MqttManager.initMessageChannel(appBasicInfo, mqttIp, mqttPort);
+        RedisManager.schedulePushLog(blockingQueue, maxPushSize, redisStreamMaxLen);
         super.start();
     }
 
@@ -168,7 +162,7 @@ public final class EasyLogRedisAppender extends AbstractAppender {
             return;
         }
         LogTransferred logTransferred = transferLog(logEvent);
-        if (!queue.offer(logTransferred)) {
+        if (!blockingQueue.offer(logTransferred)) {
             System.err.println("Easy-Log BlockingQueue add failed");
         }
     }

@@ -15,7 +15,6 @@ import com.yomahub.tlog.context.TLogContext;
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.helpers.MessageFormatter;
-import redis.clients.jedis.JedisPool;
 
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -33,8 +32,6 @@ import java.util.concurrent.BlockingQueue;
 public class EasyLogRedisAppender extends AppenderBase<ILoggingEvent> {
 
     private BlockingQueue<LogTransferred> queue;
-
-    private JedisPool jedisPool;
 
     private String appName = "unknown";
 
@@ -72,11 +69,11 @@ public class EasyLogRedisAppender extends AppenderBase<ILoggingEvent> {
         if (isStarted()) {
             return;
         }
-        this.jedisPool = RedisManager.initJedisPool(redisMode, redisAddress, redisPass, redisDb, redisPoolMaxIdle, redisPoolMaxTotal, redisConnectionTimeout);
+        RedisManager.initJedisPool(redisMode, redisAddress, redisPass, redisDb, redisPoolMaxIdle, redisPoolMaxTotal, redisConnectionTimeout);
         this.queue = new ArrayBlockingQueue<>(queueSize);
         AppBasicInfo appBasicInfo = AppBasicInfo.builder().appName(appName).namespace(namespace).build();
-        MqttManager.initMqtt(appBasicInfo, mqttIp, mqttPort);
-        RedisManager.schedulePushLog(queue, jedisPool, maxPushSize, redisStreamMaxLen);
+        MqttManager.initMessageChannel(appBasicInfo, mqttIp, mqttPort);
+        RedisManager.schedulePushLog(queue, maxPushSize, redisStreamMaxLen);
         super.start();
     }
 

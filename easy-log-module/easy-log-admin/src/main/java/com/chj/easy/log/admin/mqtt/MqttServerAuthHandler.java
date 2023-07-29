@@ -20,7 +20,7 @@ import org.tio.core.ChannelContext;
 public class MqttServerAuthHandler implements IMqttServerAuthHandler {
     @Override
     public boolean authenticate(ChannelContext context, String uniqueId, String clientId, String userName, String password) {
-        if (clientId.startsWith(EasyLogConstants.MQTT_CLIENT_ID_PREFIX) && EasyLogConstants.MQTT_CLIENT_USERNAME.equals(userName) && EasyLogConstants.MQTT_CLIENT_PASSWORD.equals(password)) {
+        if (clientId.startsWith(EasyLogConstants.MQTT_CLIENT_ID_APP_PREFIX) && EasyLogConstants.MQTT_CLIENT_USERNAME.equals(userName) && EasyLogConstants.MQTT_CLIENT_PASSWORD.equals(password)) {
             return true;
         }
         SaSession tokenSession = StpUtil.getTokenSessionByToken(clientId);
