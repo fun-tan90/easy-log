@@ -1,10 +1,11 @@
 package com.chj.easy.log.admin.model.vo;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * description TODO
@@ -15,8 +16,9 @@ import java.util.Map;
  */
 @Data
 @Builder
-public class SysUserAuthVo {
-    private String token;
+@NoArgsConstructor
+@AllArgsConstructor
+public class SysUserInfoVo {
 
     private String userId;
 

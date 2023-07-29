@@ -2,7 +2,7 @@ package com.chj.easy.log.admin.service;
 
 
 import com.chj.easy.log.admin.model.cmd.SysUserLoginCmd;
-import com.chj.easy.log.admin.model.vo.SysUserAuthVo;
+import com.chj.easy.log.admin.model.vo.SysUserInfoVo;
 import com.chj.easy.log.admin.model.vo.SysUserMqttVo;
 
 /**
@@ -14,7 +14,9 @@ import com.chj.easy.log.admin.model.vo.SysUserMqttVo;
  */
 public interface SysUserService {
 
-    SysUserAuthVo basicAuth(SysUserLoginCmd sysUserLoginCmd);
+    String basicAuth(SysUserLoginCmd sysUserLoginCmd);
+
+    SysUserInfoVo getUserInfo();
 
     SysUserMqttVo userMqttInfo();
 }

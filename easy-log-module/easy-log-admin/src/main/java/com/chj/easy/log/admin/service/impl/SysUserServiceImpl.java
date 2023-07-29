@@ -5,7 +5,7 @@ import cn.dev33.satoken.stp.SaLoginModel;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.chj.easy.log.admin.model.cmd.SysUserLoginCmd;
-import com.chj.easy.log.admin.model.vo.SysUserAuthVo;
+import com.chj.easy.log.admin.model.vo.SysUserInfoVo;
 import com.chj.easy.log.admin.model.vo.SysUserMqttVo;
 import com.chj.easy.log.admin.property.EasyLogAdminProperties;
 import com.chj.easy.log.admin.service.SysCaptchaService;
@@ -38,7 +38,7 @@ public class SysUserServiceImpl implements SysUserService {
     SysCaptchaService sysCaptchaService;
 
     @Override
-    public SysUserAuthVo basicAuth(SysUserLoginCmd sysUserLoginCmd) {
+    public String basicAuth(SysUserLoginCmd sysUserLoginCmd) {
         sysCaptchaService.validate(sysUserLoginCmd.getCaptchaKey(), sysUserLoginCmd.getCaptchaValue());
         String username = sysUserLoginCmd.getUsername();
         String password = sysUserLoginCmd.getPassword();
@@ -53,16 +53,25 @@ public class SysUserServiceImpl implements SysUserService {
         StpUtil.login(username, saLoginModel.setIsLastingCookie(rememberMe));
         String tokenValue = StpUtil.getTokenValue();
 
-        StpUtil.getTokenSession().set("mqttClientId", EasyLogConstants.MQTT_CLIENT_ID_FRONT_PREFIX + tokenValue);
-        StpUtil.getTokenSession().set("mqttUserName", RandomUtil.randomString(6));
-        StpUtil.getTokenSession().set("mqttPassword", RandomUtil.randomString(8));
-        return SysUserAuthVo.builder()
-                .token(tokenValue)
+        SysUserInfoVo sysUserInfoVo = SysUserInfoVo.builder()
                 .userId("1")
                 .userName("管理员")
                 .roles(StpUtil.getRoleList())
                 .permissions(StpUtil.getPermissionList())
                 .build();
+        StpUtil.getTokenSession().set("mqttClientId", EasyLogConstants.MQTT_CLIENT_ID_FRONT_PREFIX + tokenValue);
+        StpUtil.getTokenSession().set("mqttUserName", RandomUtil.randomString(6));
+        StpUtil.getTokenSession().set("mqttPassword", RandomUtil.randomString(8));
+        StpUtil.getSession().set("sysUserInfo", sysUserInfoVo);
+        return tokenValue;
+    }
+
+    @Override
+    public SysUserInfoVo getUserInfo() {
+        if (!StpUtil.isLogin()) {
+            throw new ClientException(IErrorCode.AUTH_1001006);
+        }
+        return StpUtil.getSession().getModel("sysUserInfo", SysUserInfoVo.class);
     }
 
     @Override

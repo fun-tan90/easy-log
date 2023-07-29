@@ -13,7 +13,7 @@ easy-log:
     enable: true
     banner: true
     auth: true
-    validate-captcha: false
+    validate-captcha: true
     username: admin
     password: 123456
   compute:
