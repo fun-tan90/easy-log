@@ -23,7 +23,8 @@ public class MqttServerAuthHandler implements IMqttServerAuthHandler {
         if (clientId.startsWith(EasyLogConstants.MQTT_CLIENT_ID_APP_PREFIX) && EasyLogConstants.MQTT_CLIENT_USERNAME.equals(userName) && EasyLogConstants.MQTT_CLIENT_PASSWORD.equals(password)) {
             return true;
         }
-        SaSession tokenSession = StpUtil.getTokenSessionByToken(clientId);
+        String tokenValue = clientId.split(":")[1];
+        SaSession tokenSession = StpUtil.getTokenSessionByToken(tokenValue);
         String mqttUserName = tokenSession.get("mqttUserName", () -> "");
         String mqttPassword = tokenSession.get("mqttPassword", () -> "");
         return userName.equals(mqttUserName) && password.equals(mqttPassword);

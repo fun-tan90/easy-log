@@ -74,7 +74,11 @@ public interface EasyLogConstants {
 
     String MQTT_CLIENT_PASSWORD = "mica";
 
-    String MQTT_CMD_DOWN = "cmd/down/{}/{}";
+    String MQTT_CMD_DOWN_PREFIX = "cmd/down";
 
-    String MQTT_CMD_UP = "cmd/up/{}/{}";
+    String MQTT_CMD_DOWN = MQTT_CMD_DOWN_PREFIX + "/{}/{}";
+
+    String MQTT_CMD_UP_PREFIX = "cmd/up";
+
+    String MQTT_CMD_UP = MQTT_CMD_UP_PREFIX + "/{}/{}";
 }

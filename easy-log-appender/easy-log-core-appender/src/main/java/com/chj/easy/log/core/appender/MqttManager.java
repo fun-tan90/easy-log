@@ -18,8 +18,7 @@ import net.dreamlu.iot.mqtt.codec.MqttPublishMessage;
 import net.dreamlu.iot.mqtt.codec.MqttQoS;
 import net.dreamlu.iot.mqtt.core.client.IMqttClientMessageListener;
 import net.dreamlu.iot.mqtt.core.client.MqttClient;
-import org.springframework.boot.logging.LoggerConfiguration;
-import org.springframework.boot.logging.LoggingSystem;
+import org.springframework.boot.logging.*;
 import org.springframework.util.StringUtils;
 import org.tio.core.ChannelContext;
 
@@ -62,33 +61,50 @@ public class MqttManager {
 
                 @Override
                 public void onMessage(ChannelContext context, String topic, MqttPublishMessage message, byte[] payload) {
-                    String cmdDownStr = new String(payload, StandardCharsets.UTF_8);
-                    log.debug("mqtt onMessage {}\n{}", topic, cmdDownStr);
-                    if (!StringUtils.hasLength(cmdDownStr)) {
+                    String msg = new String(payload, StandardCharsets.UTF_8);
+                    log.debug("mqtt onMessage {}\n{}", topic, msg);
+                    if (!StringUtils.hasLength(msg)) {
                         return;
                     }
-                    CmdDown cmdDown = JSONUtil.toBean(cmdDownStr, CmdDown.class);
-                    CmdTypeEnum cmdType = cmdDown.getCmdType();
-                    if (CmdTypeEnum.GET_LOGGER_CONFIGURATIONS.equals(cmdType)) {
-                        LoggingSystem loggingSystem = SpringUtil.getBean(LoggingSystem.class);
-                        List<LoggerConfiguration> loggerConfigurations = loggingSystem.getLoggerConfigurations();
-                        List<LoggerConfig> loggerConfigs = loggerConfigurations.stream().map(n -> LoggerConfig.builder()
-                                .loggerName(n.getName())
-                                .configuredLevel(Optional.ofNullable(n.getConfiguredLevel()).map(Enum::name).orElse("null"))
-                                .effectiveLevel(Optional.ofNullable(n.getEffectiveLevel()).map(Enum::name).orElse("null"))
-                                .build()).collect(Collectors.toList());
-                        log.debug(JSONUtil.toJsonPrettyStr(loggerConfigs));
-                        CmdUp cmdUp = CmdUp.builder()
-                                .cmdType(cmdType)
-                                .appName(appName)
-                                .namespace(namespace)
-                                .currIp(LocalhostUtil.getHostIp())
-                                .loggerConfigs(loggerConfigs)
-                                .build();
-                        client.publish(StrUtil.format(EasyLogConstants.MQTT_CMD_UP, namespace, appName), JSONUtil.toJsonStr(cmdUp).getBytes(StandardCharsets.UTF_8), MqttQoS.EXACTLY_ONCE);
-                    }
+                    handlerCmd(appBasicInfo, topic, msg, client);
                 }
             });
+        }
+    }
+
+    private static void handlerCmd(AppBasicInfo appBasicInfo, String topic, String msg, MqttClient client) {
+        String appName = appBasicInfo.getAppName();
+        String namespace = appBasicInfo.getNamespace();
+        if (topic.startsWith(EasyLogConstants.MQTT_CMD_DOWN_PREFIX)) {
+            LoggingSystem loggingSystem = SpringUtil.getBean(LoggingSystem.class);
+            CmdDown cmdDown = JSONUtil.toBean(msg, CmdDown.class);
+            CmdTypeEnum cmdType = cmdDown.getCmdType();
+            if (CmdTypeEnum.GET_LOGGER_CONFIGURATIONS.equals(cmdType)) {
+                List<LoggerConfiguration> loggerConfigurations = loggingSystem.getLoggerConfigurations();
+                List<LoggerConfig> loggerConfigs = loggerConfigurations.stream().map(n -> LoggerConfig.builder()
+                        .loggerName(n.getName())
+                        .configuredLevel(Optional.ofNullable(n.getConfiguredLevel()).map(Enum::name).orElse("null"))
+                        .effectiveLevel(Optional.ofNullable(n.getEffectiveLevel()).map(Enum::name).orElse("null"))
+                        .build()).collect(Collectors.toList());
+                CmdUp cmdUp = CmdUp.builder()
+                        .cmdType(cmdType)
+                        .appName(appName)
+                        .namespace(namespace)
+                        .currIp(LocalhostUtil.getHostIp())
+                        .loggerConfigs(loggerConfigs)
+                        .build();
+                client.publish(StrUtil.format(EasyLogConstants.MQTT_CMD_UP, namespace, appName), JSONUtil.toJsonStr(cmdUp).getBytes(StandardCharsets.UTF_8), MqttQoS.EXACTLY_ONCE);
+            } else if (CmdTypeEnum.SET_LOGGER_LEVEL_CONFIG.equals(cmdType)) {
+                String loggerName = cmdDown.getLoggerName();
+                LogLevel logLevel = cmdDown.getLogLevel();
+                LoggerGroups loggerGroups = SpringUtil.getBean(LoggerGroups.class);
+                LoggerGroup group = loggerGroups.get(loggerName);
+                if (group != null && group.hasMembers()) {
+                    group.configureLogLevel(logLevel, loggingSystem::setLogLevel);
+                    return;
+                }
+                loggingSystem.setLogLevel(loggerName, logLevel);
+            }
         }
     }
 }

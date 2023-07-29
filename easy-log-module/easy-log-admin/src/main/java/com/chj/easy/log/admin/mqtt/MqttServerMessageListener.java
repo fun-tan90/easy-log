@@ -1,5 +1,10 @@
 package com.chj.easy.log.admin.mqtt;
 
+import cn.hutool.json.JSONUtil;
+import com.chj.easy.log.common.constant.EasyLogConstants;
+import com.chj.easy.log.common.enums.CmdTypeEnum;
+import com.chj.easy.log.common.model.CmdUp;
+import com.chj.easy.log.common.model.LoggerConfig;
 import lombok.extern.slf4j.Slf4j;
 import net.dreamlu.iot.mqtt.codec.MqttPublishMessage;
 import net.dreamlu.iot.mqtt.codec.MqttQoS;
@@ -12,6 +17,7 @@ import org.tio.core.ChannelContext;
 
 import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 
 /**
@@ -31,7 +37,20 @@ public class MqttServerMessageListener implements IMqttMessageListener, SmartIni
 
     @Override
     public void onMessage(ChannelContext context, String clientId, String topic, MqttQoS qos, MqttPublishMessage message) {
-        log.info("context:{} clientId:{} message:{} payload:{}", context, clientId, message, new String(message.payload(), StandardCharsets.UTF_8));
+        String msg = new String(message.payload(), StandardCharsets.UTF_8);
+        log.info("context:{} clientId:{} message:{} payload:{}", context, clientId, message, msg);
+        if (clientId.startsWith(EasyLogConstants.MQTT_CLIENT_ID_APP_PREFIX)) {
+            if (topic.startsWith(EasyLogConstants.MQTT_CMD_UP_PREFIX)) {
+                CmdUp cmdUp = JSONUtil.toBean(msg, CmdUp.class);
+                String appName = cmdUp.getAppName();
+                String namespace = cmdUp.getNamespace();
+                String currIp = cmdUp.getCurrIp();
+                CmdTypeEnum cmdType = cmdUp.getCmdType();
+                if (CmdTypeEnum.GET_LOGGER_CONFIGURATIONS.equals(cmdType)) {
+                    List<LoggerConfig> loggerConfigs = cmdUp.getLoggerConfigs();
+                }
+            }
+        }
     }
 
     @Override
