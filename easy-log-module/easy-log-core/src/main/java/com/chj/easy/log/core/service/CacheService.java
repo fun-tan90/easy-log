@@ -29,7 +29,7 @@ public interface CacheService {
      * @param consumerGlobalOrders
      * @param streamListener
      */
-    void initGroupAndConsumers(String streamKey, String groupName, String consumerNamePrefix, int[] consumerGlobalOrders, StreamListener<String, MapRecord<String, String, String>> streamListener);
+    void initGroupAndConsumers(String streamKey, String groupName, String consumerNamePrefix, int[] consumerGlobalOrders, StreamListener<String, MapRecord<String, String, byte[]>> streamListener);
 
     /**
      * 滑动窗口算法
@@ -101,7 +101,7 @@ public interface CacheService {
      * @param logMap
      * @param score
      */
-    void addRealTimeFilteredLogs(String clientId, Map<String, String> logMap, double score);
+    void addRealTimeFilteredLogs(String clientId, Map<String, byte[]> logMap, double score);
 
     /**
      * 获取过滤后的日志

@@ -7,3 +7,10 @@ mqtt:
     debug: false
     stat-enable: false
     web-port: 8083
+
+mica:
+  redis:
+    stream:
+      enable: true
+      poll-timeout: 1s
+      poll-batch-size: 100

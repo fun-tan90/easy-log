@@ -44,10 +44,10 @@ public class CacheServiceImpl implements CacheService {
     private StringRedisTemplate stringRedisTemplate;
 
     @Resource
-    private StreamMessageListenerContainer<String, MapRecord<String, String, String>> streamMessageListenerContainer;
+    private StreamMessageListenerContainer<String, MapRecord<String, String, byte[]>> streamMessageListenerContainer;
 
     @Override
-    public void initGroupAndConsumers(String streamKey, String groupName, String consumerNamePrefix, int[] consumerGlobalOrders, StreamListener<String, MapRecord<String, String, String>> streamListener) {
+    public void initGroupAndConsumers(String streamKey, String groupName, String consumerNamePrefix, int[] consumerGlobalOrders, StreamListener<String, MapRecord<String, String, byte[]>> streamListener) {
         Boolean hasKey = stringRedisTemplate.hasKey(streamKey);
         if (Boolean.FALSE.equals(hasKey)) {
             stringRedisTemplate.opsForStream().createGroup(streamKey, groupName);
@@ -142,7 +142,7 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
-    public void addRealTimeFilteredLogs(String clientId, Map<String, String> logMap, double score) {
+    public void addRealTimeFilteredLogs(String clientId, Map<String, byte[]> logMap, double score) {
         stringRedisTemplate.opsForZSet().add(EasyLogConstants.REAL_TIME_FILTER_Z_SET + clientId, JSONUtil.toJsonStr(logMap), score);
     }
 

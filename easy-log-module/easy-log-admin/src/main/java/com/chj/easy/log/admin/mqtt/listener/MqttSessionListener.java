@@ -1,4 +1,4 @@
-package com.chj.easy.log.admin.mqtt;
+package com.chj.easy.log.admin.mqtt.listener;
 
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.event.LogAlarmUnRegisterEvent;
@@ -13,7 +13,7 @@ import org.tio.core.ChannelContext;
 import javax.annotation.Resource;
 
 /**
- * description TODO
+ * description 监听订阅
  * company 铁人科技
  *
  * @author 陈浩杰

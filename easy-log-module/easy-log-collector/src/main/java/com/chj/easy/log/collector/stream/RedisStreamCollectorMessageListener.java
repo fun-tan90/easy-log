@@ -26,7 +26,7 @@ import java.util.concurrent.BlockingQueue;
  */
 @Slf4j(topic = EasyLogConstants.EASY_LOG_TOPIC)
 @Component
-public class RedisStreamCollectorMessageListener implements StreamListener<String, MapRecord<String, String, String>> {
+public class RedisStreamCollectorMessageListener implements StreamListener<String, MapRecord<String, String, byte[]>> {
 
     @Resource
     private BlockingQueue<LogDoc> logDocBlockingQueue;
@@ -35,26 +35,26 @@ public class RedisStreamCollectorMessageListener implements StreamListener<Strin
     private StringRedisTemplate stringRedisTemplate;
 
     @Override
-    public void onMessage(MapRecord<String, String, String> entries) {
+    public void onMessage(MapRecord<String, String, byte[]> entries) {
         if (entries != null) {
             String recordId = entries.getId().getValue();
-            Map<String, String> value = entries.getValue();
+            Map<String, byte[]> value = entries.getValue();
             LogDoc logDoc = LogDoc.builder()
                     .id(recordId)
-                    .timestamp(DateUtil.format(new Date(Long.parseLong(value.get("timeStamp"))), DatePattern.NORM_DATETIME_MS_PATTERN))
-                    .appName(value.get("appName"))
-                    .namespace(value.get("namespace"))
-                    .level(value.get("level"))
-                    .loggerName(value.get("loggerName"))
-                    .threadName(value.get("threadName"))
-                    .traceId(value.get("traceId"))
-                    .spanId(value.get("spanId"))
-                    .currIp(value.get("currIp"))
-                    .preIp(value.get("preIp"))
-                    .method(value.get("method"))
-                    .lineNumber(value.get("lineNumber"))
-                    .content(value.get("content"))
-                    .mdc(JSONUtil.parseObj(value.get("mdc")))
+                    .timestamp(DateUtil.format(new Date(Long.parseLong(new String(value.get("timeStamp")))), DatePattern.NORM_DATETIME_MS_PATTERN))
+                    .appName(new String(value.get("appName")))
+                    .namespace(new String(value.get("namespace")))
+                    .level(new String(value.get("level")))
+                    .loggerName(new String(value.get("loggerName")))
+                    .threadName(new String(value.get("threadName")))
+                    .traceId(new String(value.get("traceId")))
+                    .spanId(new String(value.get("spanId")))
+                    .currIp(new String(value.get("currIp")))
+                    .preIp(new String(value.get("preIp")))
+                    .method(new String(value.get("method")))
+                    .lineNumber(new String(value.get("lineNumber")))
+                    .content(new String(value.get("content")))
+                    .mdc(JSONUtil.parseObj(new String(value.get("mdc"))))
                     .build();
             boolean offer = logDocBlockingQueue.offer(logDoc);
             if (!offer) {

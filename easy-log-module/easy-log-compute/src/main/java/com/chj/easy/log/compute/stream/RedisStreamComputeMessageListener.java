@@ -1,8 +1,8 @@
 package com.chj.easy.log.compute.stream;
 
 import cn.hutool.json.JSONUtil;
-import com.chj.easy.log.common.threadpool.EasyLogThreadPool;
 import com.chj.easy.log.common.constant.EasyLogConstants;
+import com.chj.easy.log.common.threadpool.EasyLogThreadPool;
 import com.chj.easy.log.core.model.LogAlarmContent;
 import com.chj.easy.log.core.model.LogAlarmRule;
 import com.chj.easy.log.core.model.SlidingWindow;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Component
-public class RedisStreamComputeMessageListener implements StreamListener<String, MapRecord<String, String, String>> {
+public class RedisStreamComputeMessageListener implements StreamListener<String, MapRecord<String, String, byte[]>> {
 
     @Resource
     StringRedisTemplate stringRedisTemplate;
@@ -39,13 +39,13 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
     CacheService cacheService;
 
     @Override
-    public void onMessage(MapRecord<String, String, String> entries) {
+    public void onMessage(MapRecord<String, String, byte[]> entries) {
         if (entries != null) {
             String recordId = entries.getId().getValue();
             Long timestamp = entries.getId().getTimestamp();
             Long sequence = entries.getId().getSequence();
             stringRedisTemplate.opsForStream().acknowledge(EasyLogConstants.REDIS_STREAM_KEY, EasyLogConstants.GROUP_COMPUTE_NAME, recordId);
-            Map<String, String> logMap = entries.getValue();
+            Map<String, byte[]> logMap = entries.getValue();
             CompletableFuture<Void> cfAll = CompletableFuture.allOf(logInputSpeed(logMap, recordId), logAlarm(logMap, recordId), logRealTimeFilter(logMap, timestamp, sequence));
             cfAll.join();
         }
@@ -54,9 +54,9 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
     /**
      * 日志收集速率
      */
-    private CompletableFuture<Void> logInputSpeed(Map<String, String> logMap, String recordId) {
-        String level = logMap.get("level");
-        String timeStamp = logMap.get("timeStamp");
+    private CompletableFuture<Void> logInputSpeed(Map<String, byte[]> logMap, String recordId) {
+        String level = new String(logMap.get("level"));
+        String timeStamp = new String(logMap.get("timeStamp"));
         return CompletableFuture.runAsync(() -> cacheService.slidingWindow(EasyLogConstants.S_W_LOG_INPUT_SPEED + level, recordId, Long.parseLong(timeStamp), 5), EasyLogThreadPool.newEasyLogFixedPoolInstance());
     }
 
@@ -65,14 +65,14 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
      *
      * @param logMap
      */
-    private CompletableFuture<Void> logAlarm(Map<String, String> logMap, String recordId) {
+    private CompletableFuture<Void> logAlarm(Map<String, byte[]> logMap, String recordId) {
         return CompletableFuture.runAsync(() -> {
             // TODO
-            String level = logMap.get("level");
-            String appName = logMap.get("appName");
-            String namespace = logMap.get("namespace");
-            String loggerName = logMap.get("loggerName");
-            String timeStamp = logMap.get("timeStamp");
+            String level = new String(logMap.get("level"));
+            String appName = new String(logMap.get("appName"));
+            String namespace = new String(logMap.get("namespace"));
+            String loggerName = new String(logMap.get("loggerName"));
+            String timeStamp = new String(logMap.get("timeStamp"));
 
             List<Object> logAlarmRulesList = stringRedisTemplate.opsForHash().multiGet(EasyLogConstants.LOG_ALARM_RULES + appName + ":" + namespace, Arrays.asList("all", loggerName));
             Map<String, LogAlarmRule> cacheLogAlarmRuleMap = logAlarmRulesList
@@ -117,7 +117,7 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
      *
      * @param logMap
      */
-    private CompletableFuture<Void> logRealTimeFilter(Map<String, String> logMap, Long timestamp, Long sequence) {
+    private CompletableFuture<Void> logRealTimeFilter(Map<String, byte[]> logMap, Long timestamp, Long sequence) {
         return CompletableFuture.runAsync(() -> {
             Set<String> clientIds = cacheService.getRealTimeFilterSubscribingClients();
             if (CollectionUtils.isEmpty(clientIds)) {
@@ -132,7 +132,7 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
                         String[] split = realTimeFilterRule.split("#");
                         String ruleKey = split[0];
                         String ruleWay = split[1];
-                        String logVal = logMap.get(ruleKey);
+                        String logVal = new String(logMap.get(ruleKey));
                         String ruleVal = realTimeFilterRules.get(realTimeFilterRule);
                         if ("eq".equals(ruleWay)) {
                             if (!logVal.equals(ruleVal)) {

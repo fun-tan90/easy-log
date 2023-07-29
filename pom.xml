@@ -36,6 +36,7 @@
         <mybatis-flex.version>1.4.3</mybatis-flex.version>
         <tlog.version>1.5.1</tlog.version>
         <forest.version>1.5.26</forest.version>
+        <mica.version>2.7.12</mica.version>
         <mica-mqtt.version>2.2.2</mica-mqtt.version>
         <snack3.version>3.2.72</snack3.version>
         <byte-buddy.version>1.14.5</byte-buddy.version>
@@ -209,13 +210,22 @@
                 <artifactId>tlog-web-spring-boot-starter</artifactId>
                 <version>${tlog.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.yomahub</groupId>
                 <artifactId>tlog-all-spring-boot-starter</artifactId>
                 <version>${tlog.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>net.dreamlu</groupId>
+                <artifactId>mica-lite</artifactId>
+                <version>${mica.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.dreamlu</groupId>
+                <artifactId>mica-redis</artifactId>
+                <version>${mica.version}</version>
+            </dependency>
             <dependency>
                 <groupId>net.dreamlu</groupId>
                 <artifactId>mica-mqtt-client</artifactId>

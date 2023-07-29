@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.chj.easy.log.admin.config.EasyLogAdminAutoConfiguration
+  com.chj.easy.log.admin.config.EasyLogAdminAutoConfiguration,\
+    com.chj.easy.log.admin.config.MqttBrokerConfiguration
