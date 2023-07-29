@@ -1,9 +1,8 @@
 package com.chj.easy.log.common.model;
 
+import com.chj.easy.log.common.enums.CmdTypeEnum;
 import lombok.Builder;
 import lombok.Data;
-
-import java.util.List;
 
 /**
  * description TODO
@@ -16,6 +15,6 @@ import java.util.List;
 @Builder
 public class CmdDown {
 
-    private String cmdType;
+    private CmdTypeEnum cmdType;
 
 }

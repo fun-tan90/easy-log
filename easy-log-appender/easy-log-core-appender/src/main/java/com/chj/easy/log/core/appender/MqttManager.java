@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.common.constant.EasyLogConstants;
+import com.chj.easy.log.common.enums.CmdTypeEnum;
 import com.chj.easy.log.common.model.CmdDown;
 import com.chj.easy.log.common.model.CmdUp;
 import com.chj.easy.log.common.model.LoggerConfig;
@@ -56,20 +57,19 @@ public class MqttManager {
             client.subQos2(StrUtil.format(EasyLogConstants.MQTT_CMD_DOWN, namespace, appName), new IMqttClientMessageListener() {
                 @Override
                 public void onSubscribed(ChannelContext context, String topicFilter, MqttQoS mqttQoS) {
-                    // 订阅成功之后触发，可在此处做一些业务逻辑
                     log.debug("topicFilter:{} MqttQoS:{} 订阅成功！！！", topicFilter, mqttQoS);
                 }
 
                 @Override
                 public void onMessage(ChannelContext context, String topic, MqttPublishMessage message, byte[] payload) {
                     String cmdDownStr = new String(payload, StandardCharsets.UTF_8);
-                    log.debug(topic + '\t' + cmdDownStr);
+                    log.debug("mqtt onMessage {}\n{}", topic, cmdDownStr);
                     if (!StringUtils.hasLength(cmdDownStr)) {
                         return;
                     }
                     CmdDown cmdDown = JSONUtil.toBean(cmdDownStr, CmdDown.class);
-                    String cmdType = cmdDown.getCmdType();
-                    if ("get_logger_configurations".equals(cmdType)) {
+                    CmdTypeEnum cmdType = cmdDown.getCmdType();
+                    if (CmdTypeEnum.GET_LOGGER_CONFIGURATIONS.equals(cmdType)) {
                         LoggingSystem loggingSystem = SpringUtil.getBean(LoggingSystem.class);
                         List<LoggerConfiguration> loggerConfigurations = loggingSystem.getLoggerConfigurations();
                         List<LoggerConfig> loggerConfigs = loggerConfigurations.stream().map(n -> LoggerConfig.builder()
@@ -82,7 +82,7 @@ public class MqttManager {
                                 .cmdType(cmdType)
                                 .appName(appName)
                                 .namespace(namespace)
-                                .appIp(LocalhostUtil.getHostIp())
+                                .currIp(LocalhostUtil.getHostIp())
                                 .loggerConfigs(loggerConfigs)
                                 .build();
                         client.publish(StrUtil.format(EasyLogConstants.MQTT_CMD_UP, namespace, appName), JSONUtil.toJsonStr(cmdUp).getBytes(StandardCharsets.UTF_8), MqttQoS.EXACTLY_ONCE);

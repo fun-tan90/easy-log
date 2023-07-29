@@ -1,5 +1,6 @@
 package com.chj.easy.log.common.model;
 
+import com.chj.easy.log.common.enums.CmdTypeEnum;
 import lombok.Builder;
 import lombok.Data;
 
@@ -16,13 +17,13 @@ import java.util.List;
 @Builder
 public class CmdUp {
 
-    private String cmdType;
+    private CmdTypeEnum cmdType;
 
     private String appName;
 
     private String namespace;
 
-    private String appIp;
+    private String currIp;
 
     private List<LoggerConfig> loggerConfigs;
 }

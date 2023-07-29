@@ -1,6 +1,5 @@
 package com.chj.easy.log.core.appender;
 
-import cn.hutool.core.lang.Singleton;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.common.model.LogTransferred;
 import com.chj.easy.log.common.threadpool.EasyLogThreadPool;
@@ -60,6 +59,9 @@ public class RedisManager {
 
     public static void schedulePushLog(BlockingQueue<LogTransferred> queue, int maxPushSize, long redisStreamMaxLen) {
         if (SCHEDULE_PUSH_LOG_INITIALIZED.compareAndSet(false, true)) {
+            if (Objects.isNull(JEDIS_POOL)) {
+                return;
+            }
             List<LogTransferred> logTransferredList = new ArrayList<>();
             EasyLogThreadPool.newEasyLogScheduledExecutorInstance().scheduleWithFixedDelay(() -> {
                 if (logTransferredList.isEmpty()) {
