@@ -24,6 +24,10 @@
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
         </dependency>
+        <dependency>
+            <groupId>net.dreamlu</groupId>
+            <artifactId>mica-mqtt-client</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

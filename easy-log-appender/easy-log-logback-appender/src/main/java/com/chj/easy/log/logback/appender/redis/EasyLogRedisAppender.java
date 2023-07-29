@@ -6,8 +6,9 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.ThrowableProxy;
 import ch.qos.logback.core.AppenderBase;
 import cn.hutool.core.exceptions.ExceptionUtil;
-import cn.hutool.core.lang.Singleton;
 import com.chj.easy.log.common.model.LogTransferred;
+import com.chj.easy.log.common.utils.LocalhostUtil;
+import com.chj.easy.log.core.appender.MqttManager;
 import com.chj.easy.log.core.appender.RedisManager;
 import com.chj.easy.log.core.appender.model.AppBasicInfo;
 import com.yomahub.tlog.context.TLogContext;
@@ -62,6 +63,10 @@ public class EasyLogRedisAppender extends AppenderBase<ILoggingEvent> {
 
     private int redisPoolMaxIdle = 30;
 
+    private String mqttIp = "127.0.0.1";
+
+    private int mqttPort = 1883;
+
     @Override
     public void start() {
         if (isStarted()) {
@@ -69,8 +74,9 @@ public class EasyLogRedisAppender extends AppenderBase<ILoggingEvent> {
         }
         this.jedisPool = RedisManager.initJedisPool(redisMode, redisAddress, redisPass, redisDb, redisPoolMaxIdle, redisPoolMaxTotal, redisConnectionTimeout);
         this.queue = new ArrayBlockingQueue<>(queueSize);
+        AppBasicInfo appBasicInfo = AppBasicInfo.builder().appName(appName).namespace(namespace).build();
+        MqttManager.initMqtt(appBasicInfo, mqttIp, mqttPort);
         RedisManager.schedulePushLog(queue, jedisPool, maxPushSize, redisStreamMaxLen);
-        Singleton.put(AppBasicInfo.builder().appName(appName).namespace(namespace).build());
         super.start();
     }
 
@@ -140,7 +146,7 @@ public class EasyLogRedisAppender extends AppenderBase<ILoggingEvent> {
                 .threadName(threadName)
                 .traceId(TLogContext.getTraceId())
                 .spanId(TLogContext.getSpanId())
-                .currIp(TLogContext.getCurrIp())
+                .currIp(LocalhostUtil.getHostIp())
                 .preIp(TLogContext.getPreIp())
                 .method(method)
                 .lineNumber(lineNumber)

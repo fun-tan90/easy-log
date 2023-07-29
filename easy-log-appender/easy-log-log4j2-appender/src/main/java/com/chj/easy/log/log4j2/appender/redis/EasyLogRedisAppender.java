@@ -2,8 +2,9 @@ package com.chj.easy.log.log4j2.appender.redis;
 
 
 import cn.hutool.core.exceptions.ExceptionUtil;
-import cn.hutool.core.lang.Singleton;
 import com.chj.easy.log.common.model.LogTransferred;
+import com.chj.easy.log.common.utils.LocalhostUtil;
+import com.chj.easy.log.core.appender.MqttManager;
 import com.chj.easy.log.core.appender.RedisManager;
 import com.chj.easy.log.core.appender.model.AppBasicInfo;
 import com.yomahub.tlog.context.TLogContext;
@@ -45,8 +46,14 @@ public final class EasyLogRedisAppender extends AbstractAppender {
     private final BlockingQueue<LogTransferred> queue;
 
     private final JedisPool jedisPool;
+
     private final int maxPushSize;
+
     private final int redisStreamMaxLen;
+
+    private final String mqttIp;
+
+    private final int mqttPort;
 
     private EasyLogRedisAppender(final String name,
                                  final Layout<? extends Serializable> layout,
@@ -58,7 +65,9 @@ public final class EasyLogRedisAppender extends AbstractAppender {
                                  final JedisPool jedisPool,
                                  final BlockingQueue<LogTransferred> queue,
                                  final int maxPushSize,
-                                 final int redisStreamMaxLen
+                                 final int redisStreamMaxLen,
+                                 final String mqttIp,
+                                 final int mqttPort
     ) {
         super(name, filter, layout, ignoreExceptions, properties);
         this.appName = appName;
@@ -67,6 +76,8 @@ public final class EasyLogRedisAppender extends AbstractAppender {
         this.queue = queue;
         this.maxPushSize = maxPushSize;
         this.redisStreamMaxLen = redisStreamMaxLen;
+        this.mqttIp = mqttIp;
+        this.mqttPort = mqttPort;
     }
 
     @Getter
@@ -110,6 +121,12 @@ public final class EasyLogRedisAppender extends AbstractAppender {
         @PluginAttribute(value = "redisPoolMaxIdle", defaultInt = 30)
         private int redisPoolMaxIdle;
 
+        @PluginAttribute(value = "mqttIp", defaultString = "127.0.0.1")
+        private String mqttIp;
+
+        @PluginAttribute(value = "mqttPort", defaultInt = 1883)
+        private int mqttPort;
+
         @Override
         public EasyLogRedisAppender build() {
             JedisPool jedisPool = RedisManager.initJedisPool(redisMode, redisAddress, redisPass, redisDb, redisPoolMaxIdle, redisPoolMaxTotal, redisConnectionTimeout);
@@ -125,7 +142,9 @@ public final class EasyLogRedisAppender extends AbstractAppender {
                     jedisPool,
                     queue,
                     getMaxPushSize(),
-                    getRedisStreamMaxLen()
+                    getRedisStreamMaxLen(),
+                    getMqttIp(),
+                    getMqttPort()
             );
         }
     }
@@ -137,8 +156,9 @@ public final class EasyLogRedisAppender extends AbstractAppender {
 
     @Override
     public void start() {
+        AppBasicInfo appBasicInfo = AppBasicInfo.builder().appName(appName).namespace(namespace).build();
+        MqttManager.initMqtt(appBasicInfo, mqttIp, mqttPort);
         RedisManager.schedulePushLog(queue, jedisPool, maxPushSize, redisStreamMaxLen);
-        Singleton.put(AppBasicInfo.builder().appName(appName).namespace(namespace).build());
         super.start();
     }
 
@@ -206,7 +226,7 @@ public final class EasyLogRedisAppender extends AbstractAppender {
                 .threadName(threadName)
                 .traceId(TLogContext.getTraceId())
                 .spanId(TLogContext.getSpanId())
-                .currIp(TLogContext.getCurrIp())
+                .currIp(LocalhostUtil.getHostIp())
                 .preIp(TLogContext.getPreIp())
                 .method(method)
                 .lineNumber(lineNumber)

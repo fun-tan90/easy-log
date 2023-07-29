@@ -2,6 +2,7 @@ package com.chj.easy.log.admin.mqtt;
 
 import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.StpUtil;
+import com.chj.easy.log.common.constant.EasyLogConstants;
 import lombok.extern.slf4j.Slf4j;
 import net.dreamlu.iot.mqtt.core.server.auth.IMqttServerAuthHandler;
 import org.springframework.stereotype.Component;
@@ -19,9 +20,12 @@ import org.tio.core.ChannelContext;
 public class MqttServerAuthHandler implements IMqttServerAuthHandler {
     @Override
     public boolean authenticate(ChannelContext context, String uniqueId, String clientId, String userName, String password) {
+        if (clientId.startsWith(EasyLogConstants.MQTT_CLIENT_ID_PREFIX) && EasyLogConstants.MQTT_CLIENT_USERNAME.equals(userName) && EasyLogConstants.MQTT_CLIENT_PASSWORD.equals(password)) {
+            return true;
+        }
         SaSession tokenSession = StpUtil.getTokenSessionByToken(clientId);
-        String mqttUserName = tokenSession.get("mqttUserName", () -> null);
-        String mqttPassword = tokenSession.get("mqttPassword", () -> null);
+        String mqttUserName = tokenSession.get("mqttUserName", () -> "");
+        String mqttPassword = tokenSession.get("mqttPassword", () -> "");
         return userName.equals(mqttUserName) && password.equals(mqttPassword);
     }
 }

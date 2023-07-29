@@ -66,5 +66,13 @@ public interface EasyLogConstants {
 
     String LOG_ALARM_PLATFORM = "LOG_ALARM_PLATFORM:";
 
-    String LOGGER_CONFIG = "LOGGER_CONFIG:";
+    String MQTT_CLIENT_ID_PREFIX = "EASY_LOG:";
+
+    String MQTT_CLIENT_USERNAME = "mica";
+
+    String MQTT_CLIENT_PASSWORD = "mica";
+
+    String MQTT_CMD_DOWN = "cmd/down/{}/{}";
+
+    String MQTT_CMD_UP = "cmd/up/{}/{}";
 }

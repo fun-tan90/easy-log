@@ -40,22 +40,16 @@
                       redisConnectionTimeout="1000"
                       redisStreamMaxLen="1000000"
                       redisPoolMaxTotal="30"
-                      redisPoolMaxIdle="30"/>
+                      redisPoolMaxIdle="30"
+                      mqttIp="127.0.0.1"
+                      mqttPort="1883"/>
 
-<!--        <Kafka name="kafka" retryCount="1" topic="demo" key="key">-->
-<!--            <PatternLayout>-->
-<!--                <pattern>%5p [%t] %d{yyyy-MM-dd HH:mm:ss} (%F:%L) %m%n</pattern>-->
-<!--            </PatternLayout>-->
-<!--            <Property name="bootstrap.servers">server3:9092,server4.server5:9092</Property>-->
-<!--            <Property name="max.block.ms">2000</Property>-->
-<!--        </Kafka>-->
     </Appenders>
     <Loggers>
         <root level="info">
             <appender-ref ref="console"/>
             <appender-ref ref="file"/>
             <appender-ref ref="REDIS_STREAM_TEST"/>
-<!--            <appender-ref ref="kafka"/>-->
         </root>
     </Loggers>
 </Configuration>
