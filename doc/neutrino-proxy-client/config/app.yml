@@ -20,4 +20,4 @@ neutrino:
       server-port: ${SERVER_PORT:9002}
       ssl-enable: ${SSL_ENABLE:true}
       obtain-license-interval: 5
-      license-key: ${LICENSE_KEY:f360ff6925454ced9bd9d63182bffe7a}
+      license-key: ${LICENSE_KEY:da12f17ea6b94febaee0dfe4d7c55c79}
