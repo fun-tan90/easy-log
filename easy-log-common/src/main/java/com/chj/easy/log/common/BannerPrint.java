@@ -15,7 +15,9 @@ public class BannerPrint {
 
     private static final String PROJECT_NAME = " :: easy-log :: ";
 
-    private static final String GITEE = "Gitee:  git@gitee.com:easy-log/easy-log.git";
+    private static final String GITEE = "Gitee: git@gitee.com:easy-log/easy-log.git";
+
+    private static final String GITHUB = "Github: git@github.com:easy-log/easy-log.git";
 
     private static final int STRAP_LINE_SIZE = 50;
 
@@ -23,8 +25,7 @@ public class BannerPrint {
      * Print banner.
      */
     public static void printCollectorBanner() {
-        String banner = "\n" +
-                "                              _                             _ _           _             \n" +
+        String banner = "                              _                             _ _           _             \n" +
                 "                             | |                           | | |         | |            \n" +
                 "   ___  __ _ ___ _   _ ______| | ___   __ _ ______ ___ ___ | | | ___  ___| |_ ___  _ __ \n" +
                 "  / _ \\/ _` / __| | | |______| |/ _ \\ / _` |______/ __/ _ \\| | |/ _ \\/ __| __/ _ \\| '__|\n" +
@@ -40,8 +41,7 @@ public class BannerPrint {
         while (padding.length() < STRAP_LINE_SIZE - (version.length() + PROJECT_NAME.length())) {
             padding.append(" ");
         }
-        System.out.println(AnsiOutput.toString(banner, AnsiColor.GREEN, PROJECT_NAME, AnsiColor.DEFAULT,
-                padding.toString(), AnsiStyle.FAINT, version, "\n", GITEE));
+        print(banner, padding, version);
     }
 
     /**
@@ -64,16 +64,14 @@ public class BannerPrint {
         while (padding.length() < STRAP_LINE_SIZE - (version.length() + PROJECT_NAME.length())) {
             padding.append(" ");
         }
-        System.out.println(AnsiOutput.toString(banner, AnsiColor.GREEN, PROJECT_NAME, AnsiColor.DEFAULT,
-                padding.toString(), AnsiStyle.FAINT, version, "\n", GITEE));
+        print(banner, padding, version);
     }
 
     /**
      * Print banner.
      */
     public static void printAdminBanner() {
-        String banner = "\n" +
-                "                              _                             _           _       \n" +
+        String banner = "                              _                             _           _       \n" +
                 "                             | |                           | |         (_)      \n" +
                 "   ___  __ _ ___ _   _ ______| | ___   __ _ ______ __ _  __| |_ __ ___  _ _ __  \n" +
                 "  / _ \\/ _` / __| | | |______| |/ _ \\ / _` |______/ _` |/ _` | '_ ` _ \\| | '_ \\ \n" +
@@ -89,8 +87,7 @@ public class BannerPrint {
         while (padding.length() < STRAP_LINE_SIZE - (version.length() + PROJECT_NAME.length())) {
             padding.append(" ");
         }
-        System.out.println(AnsiOutput.toString(banner, AnsiColor.GREEN, PROJECT_NAME, AnsiColor.DEFAULT,
-                padding.toString(), AnsiStyle.FAINT, version, "\n", GITEE));
+        print(banner, padding, version);
     }
 
     /**
@@ -101,5 +98,10 @@ public class BannerPrint {
     public static String getVersion() {
         Package pkg = Package.getPackage("java.util");
         return pkg != null ? pkg.getImplementationVersion() : "";
+    }
+
+    public static void print(String banner, StringBuilder padding, String version) {
+        System.out.println(AnsiOutput.toString(banner, AnsiColor.GREEN, PROJECT_NAME, AnsiColor.DEFAULT,
+                padding.toString(), AnsiStyle.FAINT, version, "\n", GITEE, "\n", GITHUB, "\n"));
     }
 }
