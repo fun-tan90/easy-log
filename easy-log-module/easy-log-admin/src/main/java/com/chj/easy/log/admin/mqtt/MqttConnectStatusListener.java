@@ -26,10 +26,16 @@ public class MqttConnectStatusListener implements IMqttConnectStatusListener {
 
     @Override
     public void online(ChannelContext context, String clientId, String username) {
+        log.info("{} is online", clientId);
     }
 
     @Override
     public void offline(ChannelContext context, String clientId, String username, String reason) {
-        applicationContext.publishEvent(new LogAlarmUnRegisterEvent(this, clientId));
+        log.info("{} is offline", clientId);
+        if (clientId.startsWith(EasyLogConstants.MQTT_CLIENT_ID_FRONT_PREFIX)) {
+            applicationContext.publishEvent(new LogAlarmUnRegisterEvent(this, clientId));
+        } else if (clientId.startsWith(EasyLogConstants.MQTT_CLIENT_ID_APP_PREFIX)) {
+
+        }
     }
 }

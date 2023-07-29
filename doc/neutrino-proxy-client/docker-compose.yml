@@ -1,0 +1,19 @@
+version: '3.7'
+services:
+  neutrino-proxy-client:
+    image: registry.cn-hangzhou.aliyuncs.com/asgc/neutrino-proxy-client:1.8.5
+    container_name: neutrino-proxy-client
+    privileged: true
+    restart: always
+    volumes:
+      - ./config/app.yml:/root/neutrino-proxy/config/app.yml
+    networks:
+      - neutrino-proxy
+
+networks:
+  neutrino-proxy:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/16
+          gateway: 172.30.0.1

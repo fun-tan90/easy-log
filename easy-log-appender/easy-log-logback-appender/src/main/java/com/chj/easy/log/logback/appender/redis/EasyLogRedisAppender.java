@@ -7,12 +7,14 @@ import ch.qos.logback.classic.spi.ThrowableProxy;
 import ch.qos.logback.core.AppenderBase;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import com.chj.easy.log.common.model.LogTransferred;
+import com.chj.easy.log.common.utils.LocalhostUtil;
+import com.chj.easy.log.core.appender.MqttManager;
 import com.chj.easy.log.core.appender.RedisManager;
+import com.chj.easy.log.core.appender.model.AppBasicInfo;
 import com.yomahub.tlog.context.TLogContext;
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.helpers.MessageFormatter;
-import redis.clients.jedis.JedisPool;
 
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -30,8 +32,6 @@ import java.util.concurrent.BlockingQueue;
 public class EasyLogRedisAppender extends AppenderBase<ILoggingEvent> {
 
     private BlockingQueue<LogTransferred> queue;
-
-    private JedisPool jedisPool;
 
     private String appName = "unknown";
 
@@ -60,14 +60,20 @@ public class EasyLogRedisAppender extends AppenderBase<ILoggingEvent> {
 
     private int redisPoolMaxIdle = 30;
 
+    private String mqttIp = "127.0.0.1";
+
+    private int mqttPort = 1883;
+
     @Override
     public void start() {
         if (isStarted()) {
             return;
         }
-        this.jedisPool = RedisManager.initJedisPool(redisMode, redisAddress, redisPass, redisDb, redisPoolMaxIdle, redisPoolMaxTotal, redisConnectionTimeout);
+        RedisManager.initJedisPool(redisMode, redisAddress, redisPass, redisDb, redisPoolMaxIdle, redisPoolMaxTotal, redisConnectionTimeout);
         this.queue = new ArrayBlockingQueue<>(queueSize);
-        RedisManager.schedulePush(queue, jedisPool, maxPushSize, redisStreamMaxLen);
+        AppBasicInfo appBasicInfo = AppBasicInfo.builder().appName(appName).namespace(namespace).build();
+        MqttManager.initMessageChannel(appBasicInfo, mqttIp, mqttPort);
+        RedisManager.schedulePushLog(queue, maxPushSize, redisStreamMaxLen);
         super.start();
     }
 
@@ -137,7 +143,7 @@ public class EasyLogRedisAppender extends AppenderBase<ILoggingEvent> {
                 .threadName(threadName)
                 .traceId(TLogContext.getTraceId())
                 .spanId(TLogContext.getSpanId())
-                .currIp(TLogContext.getCurrIp())
+                .currIp(LocalhostUtil.getHostIp())
                 .preIp(TLogContext.getPreIp())
                 .method(method)
                 .lineNumber(lineNumber)

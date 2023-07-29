@@ -6,6 +6,8 @@ import com.chj.easy.log.core.model.SlidingWindow;
 import com.chj.easy.log.core.service.CacheService;
 import com.chj.easy.log.core.service.EsService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.logging.LoggerConfiguration;
+import org.springframework.boot.logging.LoggingSystem;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,6 +31,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/demo")
 public class DemoController {
+
+    @Resource
+    LoggingSystem loggingSystem;
 
     @Resource
     EsService esService;
@@ -56,7 +61,9 @@ public class DemoController {
 
 
     @GetMapping
-    public String index(HttpServletRequest request, HttpServletResponse response, @RequestParam("file") MultipartFile file) {
+    public String index() {
+        List<LoggerConfiguration> loggerConfigurations = loggingSystem.getLoggerConfigurations();
+        System.out.println("loggerConfigurations = " + loggerConfigurations);
         return "ok";
     }
 }

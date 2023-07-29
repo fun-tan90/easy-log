@@ -15,6 +15,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!--引用 log4j2 spring boot 启动器，内部依赖了 slf4j、log4j-->
         <dependency>
@@ -28,10 +34,6 @@
         <dependency>
             <groupId>com.yomahub</groupId>
             <artifactId>tlog-all-spring-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka</artifactId>
         </dependency>
     </dependencies>
 
