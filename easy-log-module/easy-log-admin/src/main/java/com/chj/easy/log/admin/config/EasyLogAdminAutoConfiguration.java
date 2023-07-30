@@ -43,7 +43,36 @@ public class EasyLogAdminAutoConfiguration {
                 .setError(e -> {
                     SaHolder.getResponse().setHeader("Content-Type", "application/json;charset=UTF-8");
                     if (e instanceof NotLoginException) {
-                        return JSONUtil.toJsonStr(Res.errorCodeAndMsg(IErrorCode.AUTH_1001006.getCode(), e.getMessage()));
+                        NotLoginException notLoginException = (NotLoginException) e;
+                        String type = notLoginException.getType();
+                        IErrorCode iErrorCode;
+                        switch (type) {
+                            case "-1": //未能读取到有效 token
+                                iErrorCode = IErrorCode.AUTH_1001003;
+                                break;
+                            case "-2": //token 无效
+                                iErrorCode = IErrorCode.AUTH_1001004;
+                                break;
+                            case "-3": //token 已过期
+                                iErrorCode = IErrorCode.AUTH_1001005;
+                                break;
+                            case "-4": //token 已被顶下线
+                                iErrorCode = IErrorCode.AUTH_1001006;
+                                break;
+                            case "-5": //token 已被踢下线
+                                iErrorCode = IErrorCode.AUTH_1001007;
+                                break;
+                            case "-6": //token 已被冻结
+                                iErrorCode = IErrorCode.AUTH_1001008;
+                                break;
+                            case "-7": //未按照指定前缀提交 token
+                                iErrorCode = IErrorCode.AUTH_1001009;
+                                break;
+                            default:
+                                iErrorCode = IErrorCode.AUTH_1001010;
+                                break;
+                        }
+                        return JSONUtil.toJsonStr(Res.error(iErrorCode));
                     }
                     return JSONUtil.toJsonStr(Res.errorMsg(e.getMessage()));
                 });

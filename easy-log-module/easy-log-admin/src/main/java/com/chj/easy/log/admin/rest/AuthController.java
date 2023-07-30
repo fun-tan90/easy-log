@@ -8,7 +8,6 @@ import com.chj.easy.log.admin.model.vo.SysUserMqttVo;
 import com.chj.easy.log.admin.service.SysCaptchaService;
 import com.chj.easy.log.admin.service.SysUserService;
 import com.chj.easy.log.core.convention.Res;
-import com.chj.easy.log.core.convention.enums.IErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -65,10 +64,7 @@ public class AuthController {
 
     @GetMapping("/logout")
     public Res<Void> logout() {
-        if (StpUtil.isLogin()) {
-            StpUtil.logout();
-            return Res.ok();
-        }
-        return Res.error(IErrorCode.AUTH_1001006);
+        StpUtil.logout();
+        return Res.ok();
     }
 }

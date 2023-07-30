@@ -69,7 +69,7 @@ public class SysUserServiceImpl implements SysUserService {
     @Override
     public SysUserInfoVo getUserInfo() {
         if (!StpUtil.isLogin()) {
-            throw new ClientException(IErrorCode.AUTH_1001006);
+            throw new ClientException(IErrorCode.AUTH_1001005);
         }
         return StpUtil.getSession().getModel("sysUserInfo", SysUserInfoVo.class);
     }
@@ -91,6 +91,6 @@ public class SysUserServiceImpl implements SysUserService {
                     )
                     .build();
         }
-        throw new ClientException(IErrorCode.AUTH_1001006);
+        throw new ClientException(IErrorCode.AUTH_1001005);
     }
 }

@@ -51,7 +51,7 @@ public class SysCaptchaServiceImpl implements SysCaptchaService {
         }
         try {
             if (!captchaRightValue.equalsIgnoreCase(captchaValue.trim())) {
-                throw new ClientException(IErrorCode.AUTH_1001004);
+                throw new ClientException(IErrorCode.AUTH_1001000);
             }
         } finally {
             stringRedisTemplate.delete(EasyLogConstants.CAPTCHA_IMG + captchaKey);
