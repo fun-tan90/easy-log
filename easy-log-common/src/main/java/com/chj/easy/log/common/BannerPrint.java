@@ -25,7 +25,8 @@ public class BannerPrint {
      * Print banner.
      */
     public static void printCollectorBanner() {
-        String banner = "                              _                             _ _           _             \n" +
+        String banner =
+                "                              _                             _ _           _             \n" +
                 "                             | |                           | | |         | |            \n" +
                 "   ___  __ _ ___ _   _ ______| | ___   __ _ ______ ___ ___ | | | ___  ___| |_ ___  _ __ \n" +
                 "  / _ \\/ _` / __| | | |______| |/ _ \\ / _` |______/ __/ _ \\| | |/ _ \\/ __| __/ _ \\| '__|\n" +
@@ -48,7 +49,8 @@ public class BannerPrint {
      * Print banner.
      */
     public static void printComputeBanner() {
-        String banner = "                             _                                                   _       \n" +
+        String banner =
+                "                             _                                                   _       \n" +
                 "                            | |                                                 | |      \n" +
                 "  ___  __ _ ___ _   _ ______| | ___   __ _ ______ ___ ___  _ __ ___  _ __  _   _| |_ ___ \n" +
                 " / _ \\/ _` / __| | | |______| |/ _ \\ / _` |______/ __/ _ \\| '_ ` _ \\| '_ \\| | | | __/ _ \\\n" +
@@ -71,7 +73,8 @@ public class BannerPrint {
      * Print banner.
      */
     public static void printAdminBanner() {
-        String banner = "                              _                             _           _       \n" +
+        String banner =
+                "                              _                             _           _       \n" +
                 "                             | |                           | |         (_)      \n" +
                 "   ___  __ _ ___ _   _ ______| | ___   __ _ ______ __ _  __| |_ __ ___  _ _ __  \n" +
                 "  / _ \\/ _` / __| | | |______| |/ _ \\ / _` |______/ _` |/ _` | '_ ` _ \\| | '_ \\ \n" +
