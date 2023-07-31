@@ -14,14 +14,14 @@ import net.dreamlu.mica.core.utils.JsonUtil;
  */
 public class JacksonMessageSerializer implements IMessageSerializer {
 
-	@Override
-	public byte[] serialize(Message message) {
-		return JsonUtil.toJsonAsBytes(message);
-	}
+    @Override
+    public byte[] serialize(Message message) {
+        return JsonUtil.toJsonAsBytes(message);
+    }
 
-	@Override
-	public Message deserialize(byte[] data) {
-		return JsonUtil.readValue(data, Message.class);
-	}
+    @Override
+    public Message deserialize(byte[] data) {
+        return JsonUtil.readValue(data, Message.class);
+    }
 
 }

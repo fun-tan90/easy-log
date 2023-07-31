@@ -16,27 +16,28 @@ import java.util.Objects;
  * @date 2023/7/29 21:36
  */
 public class RedisMqttMessageDispatcher implements IMqttMessageDispatcher {
-	private final RStreamTemplate streamTemplate;
 
-	private final IMessageSerializer messageSerializer;
+    private final RStreamTemplate streamTemplate;
 
-	private final String channel;
+    private final IMessageSerializer messageSerializer;
 
-	public RedisMqttMessageDispatcher(RStreamTemplate streamTemplate,
-									  IMessageSerializer messageSerializer,
-									  String channel) {
-		this.streamTemplate = streamTemplate;
-		this.messageSerializer = messageSerializer;
-		this.channel = Objects.requireNonNull(channel, "Redis pub/sub channel is null.");
-	}
+    private final String channel;
 
-	@Override
-	public boolean send(Message message) {
-		// 手动序列化和反序列化，避免 redis 序列化不一致问题
-		String topic = message.getTopic();
-		String key = topic == null ? message.getClientId() : topic;
-		streamTemplate.send(channel, key, message, messageSerializer::serialize);
-		return true;
-	}
+    public RedisMqttMessageDispatcher(RStreamTemplate streamTemplate,
+                                      IMessageSerializer messageSerializer,
+                                      String channel) {
+        this.streamTemplate = streamTemplate;
+        this.messageSerializer = messageSerializer;
+        this.channel = Objects.requireNonNull(channel, "Redis pub/sub channel is null.");
+    }
+
+    @Override
+    public boolean send(Message message) {
+        // 手动序列化和反序列化，避免 redis 序列化不一致问题
+        String topic = message.getTopic();
+        String key = topic == null ? message.getClientId() : topic;
+        streamTemplate.send(channel, key, message, messageSerializer::serialize);
+        return true;
+    }
 
 }

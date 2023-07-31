@@ -14,12 +14,15 @@ import org.springframework.beans.factory.SmartInitializingSingleton;
  *
  * @author L.cm
  */
-public class RedisMqttServerManage implements SmartInitializingSingleton, DisposableBean {
+public class RedisMqttServerManager implements SmartInitializingSingleton, DisposableBean {
+
     private final MicaRedisCache redisCache;
+
     private final String nodeName;
+
     private final String hostName;
 
-    public RedisMqttServerManage(MicaRedisCache redisCache, MqttServer mqttServer) {
+    public RedisMqttServerManager(MicaRedisCache redisCache, MqttServer mqttServer) {
         this.redisCache = redisCache;
         this.nodeName = mqttServer.getServerCreator().getNodeName();
         this.hostName = getHostName(mqttServer.getServerCreator());

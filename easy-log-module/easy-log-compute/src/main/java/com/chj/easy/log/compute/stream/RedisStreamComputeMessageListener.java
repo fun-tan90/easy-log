@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * @author 陈浩杰
  * @date 2023/7/16 8:40
  */
-@Slf4j
+@Slf4j(topic = EasyLogConstants.EASY_LOG_TOPIC)
 @Component
 public class RedisStreamComputeMessageListener implements StreamListener<String, MapRecord<String, String, byte[]>> {
 

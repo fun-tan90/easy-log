@@ -16,10 +16,10 @@ import org.tio.core.ChannelContext;
 @Configuration(proxyBeanMethods = false)
 public class MqttSubscribeValidator implements IMqttServerSubscribeValidator {
 
-	@Override
-	public boolean isValid(ChannelContext context, String clientId, String topicFilter, MqttQoS qoS) {
-		// 校验客户端订阅的 topic，校验成功返回 true，失败返回 false
-		return true;
-	}
+    @Override
+    public boolean isValid(ChannelContext context, String clientId, String topicFilter, MqttQoS qoS) {
+        // 校验客户端订阅的 topic，校验成功返回 true，失败返回 false
+        return true;
+    }
 
 }

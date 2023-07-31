@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  * @author 陈浩杰
  * @date 2023/7/18 20:33
  */
-@Slf4j
+@Slf4j(topic = EasyLogConstants.EASY_LOG_TOPIC)
 @Service
 public class CacheServiceImpl implements CacheService {
 

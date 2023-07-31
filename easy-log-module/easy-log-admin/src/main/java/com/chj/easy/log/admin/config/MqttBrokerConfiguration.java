@@ -61,9 +61,9 @@ public class MqttBrokerConfiguration {
     }
 
     @Bean
-    public RedisMqttServerManage mqttServerManage(MicaRedisCache redisCache,
-                                                  MqttServer mqttServer) {
-        return new RedisMqttServerManage(redisCache, mqttServer);
+    public RedisMqttServerManager mqttServerManage(MicaRedisCache redisCache,
+                                                   MqttServer mqttServer) {
+        return new RedisMqttServerManager(redisCache, mqttServer);
     }
 
 }

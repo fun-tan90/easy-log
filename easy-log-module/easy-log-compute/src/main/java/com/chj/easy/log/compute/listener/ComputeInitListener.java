@@ -21,7 +21,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author 陈浩杰
  * @date 2023/7/13 10:15
  */
-@Slf4j
 @Component
 public class ComputeInitListener implements ApplicationListener<ApplicationReadyEvent> {
 

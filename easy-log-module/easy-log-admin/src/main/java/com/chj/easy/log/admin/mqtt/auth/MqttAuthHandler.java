@@ -21,20 +21,20 @@ import org.tio.core.Node;
 @Configuration(proxyBeanMethods = false)
 public class MqttAuthHandler implements IMqttServerAuthHandler {
 
-	@Override
-	public boolean authenticate(ChannelContext context, String uniqueId, String clientId, String userName, String password) {
-		// 获取客户端信息
-		Node clientNode = context.getClientNode();
-		log.info(JSONUtil.toJsonStr(clientNode));
-		// 客户端认证逻辑实现
-		if (clientId.startsWith(EasyLogConstants.MQTT_CLIENT_ID_APP_PREFIX) && EasyLogConstants.MQTT_CLIENT_USERNAME.equals(userName) && EasyLogConstants.MQTT_CLIENT_PASSWORD.equals(password)) {
-			return true;
-		}
-		String tokenValue = clientId.split(":")[1];
-		SaSession tokenSession = StpUtil.getTokenSessionByToken(tokenValue);
-		String mqttUserName = tokenSession.get("mqttUserName", () -> "");
-		String mqttPassword = tokenSession.get("mqttPassword", () -> "");
-		return userName.equals(mqttUserName) && password.equals(mqttPassword);
-	}
+    @Override
+    public boolean authenticate(ChannelContext context, String uniqueId, String clientId, String userName, String password) {
+        // 获取客户端信息
+        Node clientNode = context.getClientNode();
+        log.info(JSONUtil.toJsonStr(clientNode));
+        // 客户端认证逻辑实现
+        if (clientId.startsWith(EasyLogConstants.MQTT_CLIENT_ID_APP_PREFIX) && EasyLogConstants.MQTT_CLIENT_USERNAME.equals(userName) && EasyLogConstants.MQTT_CLIENT_PASSWORD.equals(password)) {
+            return true;
+        }
+        String tokenValue = clientId.split(":")[1];
+        SaSession tokenSession = StpUtil.getTokenSessionByToken(tokenValue);
+        String mqttUserName = tokenSession.get("mqttUserName", () -> "");
+        String mqttPassword = tokenSession.get("mqttPassword", () -> "");
+        return userName.equals(mqttUserName) && password.equals(mqttPassword);
+    }
 
 }
