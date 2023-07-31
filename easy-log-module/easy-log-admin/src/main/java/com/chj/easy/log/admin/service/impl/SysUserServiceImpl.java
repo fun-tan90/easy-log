@@ -68,7 +68,7 @@ public class SysUserServiceImpl implements SysUserService {
     }
 
     @Override
-    public SysUserInfoVo getUserInfo() {
+    public SysUserInfoVo userInfo() {
         if (!StpUtil.isLogin()) {
             throw new ClientException(IErrorCode.AUTH_1001005);
         }

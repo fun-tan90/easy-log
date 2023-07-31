@@ -47,9 +47,9 @@ public class AuthController {
         return Res.ok(sysUserService.basicAuth(userLoginCmd));
     }
 
-    @GetMapping("/getUserInfo")
-    public Res<SysUserInfoVo> getUserInfo() {
-        return Res.ok(sysUserService.getUserInfo());
+    @GetMapping("/user-info")
+    public Res<SysUserInfoVo> userInfo() {
+        return Res.ok(sysUserService.userInfo());
     }
 
     @GetMapping("/user-mqtt-info")

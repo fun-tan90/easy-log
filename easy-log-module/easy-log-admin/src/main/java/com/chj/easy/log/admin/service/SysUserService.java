@@ -16,7 +16,7 @@ public interface SysUserService {
 
     String basicAuth(SysUserLoginCmd sysUserLoginCmd);
 
-    SysUserInfoVo getUserInfo();
+    SysUserInfoVo userInfo();
 
     SysUserMqttVo userMqttInfo();
 }
