@@ -26,7 +26,7 @@ sa-token:
   # 是否打开自动续签 （如果此值为true, 框架会在每次直接或间接调用 getLoginId() 时进行一次过期检查与续签操作）
   auto-renew: true
   # token前缀
-  # token-prefix: Bearer
+  token-prefix: Bearer
   # 是否在初始化配置时打印版本字符画
   is-print: false
   # 是否输出操作日志

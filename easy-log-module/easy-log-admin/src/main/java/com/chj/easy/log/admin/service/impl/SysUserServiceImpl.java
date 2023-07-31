@@ -3,6 +3,7 @@ package com.chj.easy.log.admin.service.impl;
 import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.SaLoginModel;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.dev33.satoken.util.SaTokenConsts;
 import cn.hutool.core.util.RandomUtil;
 import com.chj.easy.log.admin.model.cmd.SysUserLoginCmd;
 import com.chj.easy.log.admin.model.vo.SysUserInfoVo;
@@ -63,7 +64,7 @@ public class SysUserServiceImpl implements SysUserService {
         StpUtil.getTokenSession().set("mqttUserName", RandomUtil.randomString(6));
         StpUtil.getTokenSession().set("mqttPassword", RandomUtil.randomString(8));
         StpUtil.getSession().set("sysUserInfo", sysUserInfoVo);
-        return tokenValue;
+        return StpUtil.getStpLogic().getConfigOrGlobal().getTokenPrefix() + SaTokenConsts.TOKEN_CONNECTOR_CHAT + tokenValue;
     }
 
     @Override
