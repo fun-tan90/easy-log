@@ -57,7 +57,7 @@ public class AuthController {
         return Res.ok(sysUserService.userMqttInfo());
     }
 
-    @GetMapping("/isLogin")
+    @GetMapping("/is-login")
     public Res<Boolean> isLogin() {
         return Res.ok(StpUtil.isLogin());
     }

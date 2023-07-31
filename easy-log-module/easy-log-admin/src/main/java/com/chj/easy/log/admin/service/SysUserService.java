@@ -14,9 +14,22 @@ import com.chj.easy.log.admin.model.vo.SysUserMqttVo;
  */
 public interface SysUserService {
 
+    /**
+     * 认证
+     * @param sysUserLoginCmd
+     * @return
+     */
     String basicAuth(SysUserLoginCmd sysUserLoginCmd);
 
+    /**
+     * 用户基础信息
+     * @return
+     */
     SysUserInfoVo userInfo();
 
+    /**
+     * 当前用户mqtt连接信息
+     * @return
+     */
     SysUserMqttVo userMqttInfo();
 }
