@@ -7,7 +7,7 @@ easy-log:
       hot-max-docs: 10000000
       delete-min-age: 1d
   admin:
-    enable: true
+    enable: false
     banner: true
     auth: true
     validate-captcha: true
@@ -21,6 +21,6 @@ easy-log:
   collector:
     enable: true
     banner: true
-    consumer-global-orders: 1,2,3,4
-    insert-batch-size: 200
     queue-capacity: 10240
+    insert-batch-size: 200
+    consumer-global-orders: 1,2,3,4

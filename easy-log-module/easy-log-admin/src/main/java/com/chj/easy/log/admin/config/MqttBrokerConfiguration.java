@@ -4,6 +4,7 @@ import com.chj.easy.log.admin.mqtt.cluster.*;
 import com.chj.easy.log.admin.mqtt.config.JacksonMessageSerializer;
 import com.chj.easy.log.admin.mqtt.enums.RedisKeys;
 import com.chj.easy.log.admin.mqtt.listener.RedisMqttConnectStatusListener;
+import lombok.extern.slf4j.Slf4j;
 import net.dreamlu.iot.mqtt.core.server.MqttServer;
 import net.dreamlu.iot.mqtt.core.server.dispatcher.IMqttMessageDispatcher;
 import net.dreamlu.iot.mqtt.core.server.event.IMqttConnectStatusListener;
@@ -11,6 +12,7 @@ import net.dreamlu.iot.mqtt.core.server.serializer.IMessageSerializer;
 import net.dreamlu.iot.mqtt.core.server.store.IMqttMessageStore;
 import net.dreamlu.mica.redis.cache.MicaRedisCache;
 import net.dreamlu.mica.redis.stream.RStreamTemplate;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
@@ -19,6 +21,8 @@ import org.springframework.context.annotation.Bean;
  *
  * @author L.cm
  */
+@Slf4j
+@ConditionalOnProperty(value = "easy-log.admin.enable", havingValue = "true")
 public class MqttBrokerConfiguration {
 
     @Bean
