@@ -36,7 +36,7 @@ public class EasyLogAdminAutoConfiguration {
     public SaServletFilter saServletFilter() {
         return new SaServletFilter()
                 .addInclude("/**")
-                .addExclude("/favicon.ico", "/captcha", "/login")
+                .addExclude("/favicon.ico", "/monitor/**", "/captcha", "/login")
                 .setAuth(obj -> {
                     SaRouter.match("/**", StpUtil::checkLogin);
                 })
