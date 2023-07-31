@@ -17,6 +17,8 @@ import java.util.List;
 @Builder
 public class SysUserMqttVo {
 
+    private String mqttBrokerUrl;
+
     private String mqttClientId;
 
     private String mqttUserName;

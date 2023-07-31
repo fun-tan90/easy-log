@@ -78,8 +78,10 @@ public class SysUserServiceImpl implements SysUserService {
     public SysUserMqttVo userMqttInfo() {
         if (StpUtil.isLogin()) {
             SaSession tokenSession = StpUtil.getTokenSession();
+
             return SysUserMqttVo
                     .builder()
+                    .mqttBrokerUrl(easyLogAdminProperties.getMqttBrokerUrl())
                     .mqttClientId(tokenSession.getString("mqttClientId"))
                     .mqttUserName(tokenSession.getString("mqttUserName"))
                     .mqttPassword(tokenSession.getString("mqttPassword"))

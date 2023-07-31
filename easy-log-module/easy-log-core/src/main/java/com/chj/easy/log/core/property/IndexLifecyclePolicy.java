@@ -15,7 +15,7 @@ public class IndexLifecyclePolicy {
     /**
      * 1m、1h
      */
-    private String hotMaxAge = "5m";
+    private String hotMaxAge = "1h";
 
     /**
      * 1mb、1gb
@@ -24,5 +24,5 @@ public class IndexLifecyclePolicy {
 
     private long hotMaxDocs = 10000000;
 
-    private String deleteMinAge = "1d";
+    private String deleteMinAge = "60d";
 }

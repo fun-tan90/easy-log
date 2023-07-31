@@ -1,5 +1,7 @@
 package com.chj.easy.log.common.constant;
 
+import cn.hutool.core.date.DateUtil;
+
 /**
  * 静态变量类
  *
@@ -8,7 +10,11 @@ package com.chj.easy.log.common.constant;
  */
 public interface EasyLogConstants {
 
-    String EASY_LOG_VERSION = "1.0.3";
+    String EASY_LOG_VERSION = "1.1.2";
+
+    String EASY_LOG_BUILD_DATE = "2023-07-31 09:42:00";
+
+    String EASY_LOG_START_UP_TIME = DateUtil.now();
 
     String COLLECTOR_SCAN_BASE_PACKAGES = "com.chj.easy.log.collector";
 

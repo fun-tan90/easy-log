@@ -3,8 +3,8 @@ package com.chj.easy.log.admin.service.impl;
 import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.admin.model.vo.RedisStreamXInfoVo;
 import com.chj.easy.log.admin.service.SysMonitorService;
-import com.chj.easy.log.common.threadpool.EasyLogThreadPool;
 import com.chj.easy.log.common.constant.EasyLogConstants;
+import com.chj.easy.log.common.threadpool.EasyLogThreadPool;
 import com.chj.easy.log.core.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
 import net.dreamlu.iot.mqtt.codec.MqttQoS;
@@ -15,7 +15,6 @@ import org.springframework.data.redis.connection.stream.PendingMessages;
 import org.springframework.data.redis.connection.stream.StreamInfo;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
@@ -47,9 +46,8 @@ public class SysMonitorServiceImpl implements SysMonitorService {
     public void statsLogInputSpeed() {
         EasyLogThreadPool.newEasyLogScheduledExecutorInstance().scheduleWithFixedDelay(() -> {
             Map<String, Integer> windowCountMap = cacheService.slidingWindowCount("S_W:LOG_INPUT_SPEED:");
-            if (!CollectionUtils.isEmpty(windowCountMap)) {
-                log.debug("\n{}", JSONUtil.toJsonPrettyStr(windowCountMap));
-            }
+            Arrays.asList("ERROR", "INFO", "WARN", "DEBUG", "TRACE").forEach(n -> windowCountMap.putIfAbsent(n, 0));
+            log.debug("\n{}", JSONUtil.toJsonPrettyStr(windowCountMap));
             mqttServerTemplate.publishAll(EasyLogConstants.LOG_INPUT_SPEED_TOPIC, JSONUtil.toJsonStr(windowCountMap).getBytes(StandardCharsets.UTF_8), MqttQoS.AT_MOST_ONCE);
         }, 1, 2, TimeUnit.SECONDS);
     }

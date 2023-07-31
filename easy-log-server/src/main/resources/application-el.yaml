@@ -6,9 +6,6 @@ easy-log:
       hot-max-primary-shard-size: 1gb
       hot-max-docs: 10000000
       delete-min-age: 1d
-  stream:
-    poll-timeout: 1s
-    pull-batch-size: 100
   admin:
     enable: true
     banner: true
@@ -16,6 +13,7 @@ easy-log:
     validate-captcha: true
     username: admin
     password: 123456
+    mqtt-broker-url: ws://121.36.96.79:9183/mqtt
   compute:
     enable: true
     banner: true
