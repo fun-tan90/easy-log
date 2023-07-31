@@ -62,7 +62,7 @@
                 <configuration>
                     <!--华为云 docker-->
                     <dockerHost>http://121.36.96.79:7200</dockerHost>
-                    <imageName>registry.cn-hangzhou.aliyuncs.com/chenhj/easy-log-server:${project.version}</imageName>
+                    <imageName>registry.cn-hangzhou.aliyuncs.com/chenhj/easy-log:${project.version}</imageName>
                     <dockerDirectory>${project.basedir}/../doc/image</dockerDirectory>
                     <buildArgs>
                         <PROJECT_NAME>easy-log-server</PROJECT_NAME>

@@ -1,0 +1,35 @@
+version: '3.7'
+services:
+  easy-log:
+    image: ${image}
+    container_name: easy-log
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - HEAP_SIZE=${heap_size}
+      - easy-log.admin.enable=true
+      - easy-log.compute.enable=true
+      - easy-log.collector.enable=true
+    volumes:
+      - easy-log:/app
+    ports:
+      - "2203:1203"
+      - "2204:1883"
+      - "2205:8083"
+    networks:
+      - easy-log
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:1203/monitor/health" ]
+      start_period: 3s
+      retries: 3
+
+volumes:
+  easy-log:
+    driver: local
+
+networks:
+  easy-log:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/16
+          gateway: 172.30.0.1
