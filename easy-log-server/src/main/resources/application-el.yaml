@@ -7,7 +7,7 @@ easy-log:
       hot-max-docs: 10000000
       delete-min-age: 1d
   admin:
-    enable: false
+    enable: true
     banner: true
     auth: true
     validate-captcha: true

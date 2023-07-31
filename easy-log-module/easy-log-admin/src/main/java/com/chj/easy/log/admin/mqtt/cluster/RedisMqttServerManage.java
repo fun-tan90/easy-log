@@ -15,28 +15,28 @@ import org.springframework.beans.factory.SmartInitializingSingleton;
  * @author L.cm
  */
 public class RedisMqttServerManage implements SmartInitializingSingleton, DisposableBean {
-	private final MicaRedisCache redisCache;
-	private final String nodeName;
-	private final String hostName;
+    private final MicaRedisCache redisCache;
+    private final String nodeName;
+    private final String hostName;
 
-	public RedisMqttServerManage(MicaRedisCache redisCache, MqttServer mqttServer) {
-		this.redisCache = redisCache;
-		this.nodeName = mqttServer.getServerCreator().getNodeName();
-		this.hostName = getHostName(mqttServer.getServerCreator());
-	}
+    public RedisMqttServerManage(MicaRedisCache redisCache, MqttServer mqttServer) {
+        this.redisCache = redisCache;
+        this.nodeName = mqttServer.getServerCreator().getNodeName();
+        this.hostName = getHostName(mqttServer.getServerCreator());
+    }
 
-	@Override
-	public void afterSingletonsInstantiated() {
-		redisCache.set(RedisKeys.SERVER_NODES.getKey(nodeName), hostName);
-	}
+    @Override
+    public void afterSingletonsInstantiated() {
+        redisCache.set(RedisKeys.SERVER_NODES.getKey(nodeName), hostName);
+    }
 
-	@Override
-	public void destroy() throws Exception {
-		redisCache.del(RedisKeys.SERVER_NODES.getKey(nodeName));
-	}
+    @Override
+    public void destroy() throws Exception {
+        redisCache.del(RedisKeys.SERVER_NODES.getKey(nodeName));
+    }
 
-	private static String getHostName(MqttServerCreator mqttServerCreator) {
-		return INetUtil.getHostIp() + CharPool.COLON + mqttServerCreator.getPort();
-	}
+    private static String getHostName(MqttServerCreator mqttServerCreator) {
+        return INetUtil.getHostIp() + CharPool.COLON + mqttServerCreator.getPort();
+    }
 
 }
