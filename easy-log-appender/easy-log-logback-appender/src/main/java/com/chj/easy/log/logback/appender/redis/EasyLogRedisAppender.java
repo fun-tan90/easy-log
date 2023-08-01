@@ -6,6 +6,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.ThrowableProxy;
 import ch.qos.logback.core.AppenderBase;
 import cn.hutool.core.exceptions.ExceptionUtil;
+import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.common.model.LogTransferred;
 import com.chj.easy.log.common.utils.LocalhostUtil;
 import com.chj.easy.log.core.appender.MqttManager;
@@ -133,7 +134,6 @@ public class EasyLogRedisAppender extends AppenderBase<ILoggingEvent> {
         } else {
             content = logEvent.getFormattedMessage();
         }
-
         return LogTransferred.builder()
                 .timeStamp(timeStamp)
                 .appName(appName)
@@ -141,10 +141,10 @@ public class EasyLogRedisAppender extends AppenderBase<ILoggingEvent> {
                 .level(level.levelStr)
                 .loggerName(loggerName)
                 .threadName(threadName)
-                .traceId(TLogContext.getTraceId())
-                .spanId(TLogContext.getSpanId())
+                .traceId(EasyLogConstants.T_LOG_CONTEXT_PRESENT ? TLogContext.getTraceId() : "-")
+                .spanId(EasyLogConstants.T_LOG_CONTEXT_PRESENT ? TLogContext.getSpanId() : "-")
                 .currIp(LocalhostUtil.getHostIp())
-                .preIp(TLogContext.getPreIp())
+                .preIp(EasyLogConstants.T_LOG_CONTEXT_PRESENT ? TLogContext.getPreIp() : "-")
                 .method(method)
                 .lineNumber(lineNumber)
                 .content(content)

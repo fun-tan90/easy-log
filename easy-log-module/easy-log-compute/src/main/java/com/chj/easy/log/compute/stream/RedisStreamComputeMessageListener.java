@@ -67,8 +67,11 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
      */
     private CompletableFuture<Void> logAlarm(Map<String, byte[]> logMap, String recordId) {
         return CompletableFuture.runAsync(() -> {
-            // TODO
             String level = new String(logMap.get("level"));
+            // TODO
+            if ("error".equalsIgnoreCase(level)) {
+
+            }
             String appName = new String(logMap.get("appName"));
             String namespace = new String(logMap.get("namespace"));
             String loggerName = new String(logMap.get("loggerName"));

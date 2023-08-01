@@ -2,6 +2,7 @@ package com.chj.easy.log.log4j2.appender.redis;
 
 
 import cn.hutool.core.exceptions.ExceptionUtil;
+import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.common.model.LogTransferred;
 import com.chj.easy.log.common.utils.LocalhostUtil;
 import com.chj.easy.log.core.appender.MqttManager;
@@ -218,10 +219,10 @@ public final class EasyLogRedisAppender extends AbstractAppender {
                 .level(level.name())
                 .loggerName(loggerName)
                 .threadName(threadName)
-                .traceId(TLogContext.getTraceId())
-                .spanId(TLogContext.getSpanId())
+                .traceId(EasyLogConstants.T_LOG_CONTEXT_PRESENT ? TLogContext.getTraceId() : "-")
+                .spanId(EasyLogConstants.T_LOG_CONTEXT_PRESENT ? TLogContext.getSpanId() : "-")
                 .currIp(LocalhostUtil.getHostIp())
-                .preIp(TLogContext.getPreIp())
+                .preIp(EasyLogConstants.T_LOG_CONTEXT_PRESENT ? TLogContext.getPreIp() : "-")
                 .method(method)
                 .lineNumber(lineNumber)
                 .content(content)
