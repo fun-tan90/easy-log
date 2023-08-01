@@ -1,5 +1,6 @@
 package com.chj.easy.log.common;
 
+import com.chj.easy.log.common.constant.EasyLogConstants;
 import org.springframework.boot.ansi.AnsiColor;
 import org.springframework.boot.ansi.AnsiOutput;
 import org.springframework.boot.ansi.AnsiStyle;
@@ -13,7 +14,7 @@ import org.springframework.boot.ansi.AnsiStyle;
  */
 public class BannerPrint {
 
-    private static final String PROJECT_NAME = " :: easy-log :: ";
+    private static final String PROJECT_NAME = " ~~ easy-log ~~ ";
 
     private static final String GITEE = "Gitee: git@gitee.com:easy-log/easy-log.git";
 
@@ -26,14 +27,14 @@ public class BannerPrint {
      */
     public static void printCollectorBanner() {
         String banner =
-                "                              _                             _ _           _             \n" +
-                "                             | |                           | | |         | |            \n" +
-                "   ___  __ _ ___ _   _ ______| | ___   __ _ ______ ___ ___ | | | ___  ___| |_ ___  _ __ \n" +
-                "  / _ \\/ _` / __| | | |______| |/ _ \\ / _` |______/ __/ _ \\| | |/ _ \\/ __| __/ _ \\| '__|\n" +
-                " |  __/ (_| \\__ \\ |_| |      | | (_) | (_| |     | (_| (_) | | |  __/ (__| || (_) | |   \n" +
-                "  \\___|\\__,_|___/\\__, |      |_|\\___/ \\__, |      \\___\\___/|_|_|\\___|\\___|\\__\\___/|_|   \n" +
-                "                  __/ |                __/ |                                            \n" +
-                "                 |___/                |___/                                             \n";
+                        "                              _                             _ _           _             \n" +
+                        "                             | |                           | | |         | |            \n" +
+                        "   ___  __ _ ___ _   _ ______| | ___   __ _ ______ ___ ___ | | | ___  ___| |_ ___  _ __ \n" +
+                        "  / _ \\/ _` / __| | | |______| |/ _ \\ / _` |______/ __/ _ \\| | |/ _ \\/ __| __/ _ \\| '__|\n" +
+                        " |  __/ (_| \\__ \\ |_| |      | | (_) | (_| |     | (_| (_) | | |  __/ (__| || (_) | |   \n" +
+                        "  \\___|\\__,_|___/\\__, |      |_|\\___/ \\__, |      \\___\\___/|_|_|\\___|\\___|\\__\\___/|_|   \n" +
+                        "                  __/ |                __/ |                                            \n" +
+                        "                 |___/                |___/                                             \n";
 
         String version = getVersion();
         version = (version != null) ? " jdk (v" + version + ")" : "no version.";
@@ -50,14 +51,14 @@ public class BannerPrint {
      */
     public static void printComputeBanner() {
         String banner =
-                "                             _                                                   _       \n" +
-                "                            | |                                                 | |      \n" +
-                "  ___  __ _ ___ _   _ ______| | ___   __ _ ______ ___ ___  _ __ ___  _ __  _   _| |_ ___ \n" +
-                " / _ \\/ _` / __| | | |______| |/ _ \\ / _` |______/ __/ _ \\| '_ ` _ \\| '_ \\| | | | __/ _ \\\n" +
-                "|  __/ (_| \\__ \\ |_| |      | | (_) | (_| |     | (_| (_) | | | | | | |_) | |_| | ||  __/\n" +
-                " \\___|\\__,_|___/\\__, |      |_|\\___/ \\__, |      \\___\\___/|_| |_| |_| .__/ \\__,_|\\__\\___|\n" +
-                "                 __/ |                __/ |                         | |                  \n" +
-                "                |___/                |___/                          |_|                  \n";
+                        "                             _                                                   _       \n" +
+                        "                            | |                                                 | |      \n" +
+                        "  ___  __ _ ___ _   _ ______| | ___   __ _ ______ ___ ___  _ __ ___  _ __  _   _| |_ ___ \n" +
+                        " / _ \\/ _` / __| | | |______| |/ _ \\ / _` |______/ __/ _ \\| '_ ` _ \\| '_ \\| | | | __/ _ \\\n" +
+                        "|  __/ (_| \\__ \\ |_| |      | | (_) | (_| |     | (_| (_) | | | | | | |_) | |_| | ||  __/\n" +
+                        " \\___|\\__,_|___/\\__, |      |_|\\___/ \\__, |      \\___\\___/|_| |_| |_| .__/ \\__,_|\\__\\___|\n" +
+                        "                 __/ |                __/ |                         | |                  \n" +
+                        "                |___/                |___/                          |_|                  \n";
 
         String version = getVersion();
         version = (version != null) ? " jdk (v" + version + ")" : "no version.";
@@ -74,14 +75,14 @@ public class BannerPrint {
      */
     public static void printAdminBanner() {
         String banner =
-                "                              _                             _           _       \n" +
-                "                             | |                           | |         (_)      \n" +
-                "   ___  __ _ ___ _   _ ______| | ___   __ _ ______ __ _  __| |_ __ ___  _ _ __  \n" +
-                "  / _ \\/ _` / __| | | |______| |/ _ \\ / _` |______/ _` |/ _` | '_ ` _ \\| | '_ \\ \n" +
-                " |  __/ (_| \\__ \\ |_| |      | | (_) | (_| |     | (_| | (_| | | | | | | | | | |\n" +
-                "  \\___|\\__,_|___/\\__, |      |_|\\___/ \\__, |      \\__,_|\\__,_|_| |_| |_|_|_| |_|\n" +
-                "                  __/ |                __/ |                                    \n" +
-                "                 |___/                |___/                                     \n";
+                        "                              _                             _           _       \n" +
+                        "                             | |                           | |         (_)      \n" +
+                        "   ___  __ _ ___ _   _ ______| | ___   __ _ ______ __ _  __| |_ __ ___  _ _ __  \n" +
+                        "  / _ \\/ _` / __| | | |______| |/ _ \\ / _` |______/ _` |/ _` | '_ ` _ \\| | '_ \\ \n" +
+                        " |  __/ (_| \\__ \\ |_| |      | | (_) | (_| |     | (_| | (_| | | | | | | | | | |\n" +
+                        "  \\___|\\__,_|___/\\__, |      |_|\\___/ \\__, |      \\__,_|\\__,_|_| |_| |_|_|_| |_|\n" +
+                        "                  __/ |                __/ |                                    \n" +
+                        "                 |___/                |___/                                     \n";
 
         String version = getVersion();
         version = (version != null) ? " jdk (v" + version + ")" : "no version.";
@@ -104,7 +105,7 @@ public class BannerPrint {
     }
 
     public static void print(String banner, StringBuilder padding, String version) {
-        System.out.println(AnsiOutput.toString(banner, AnsiColor.GREEN, PROJECT_NAME, AnsiColor.DEFAULT,
+        System.out.println(AnsiOutput.toString(banner, AnsiColor.GREEN, PROJECT_NAME, EasyLogConstants.EASY_LOG_VERSION, AnsiColor.DEFAULT,
                 padding.toString(), AnsiStyle.FAINT, version, "\n", GITEE, "\n", GITHUB, "\n"));
     }
 }
