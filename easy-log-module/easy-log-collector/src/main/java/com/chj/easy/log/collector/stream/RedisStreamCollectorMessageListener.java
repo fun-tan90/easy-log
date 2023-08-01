@@ -31,9 +31,6 @@ public class RedisStreamCollectorMessageListener implements StreamListener<Strin
     @Resource
     private BlockingQueue<LogDoc> logDocBlockingQueue;
 
-    @Resource
-    private StringRedisTemplate stringRedisTemplate;
-
     @Override
     public void onMessage(MapRecord<String, String, byte[]> entries) {
         if (entries != null) {
@@ -60,7 +57,6 @@ public class RedisStreamCollectorMessageListener implements StreamListener<Strin
             if (!offer) {
                 log.error("offer LogDoc failed");
             }
-            stringRedisTemplate.opsForStream().acknowledge(EasyLogConstants.REDIS_STREAM_KEY, EasyLogConstants.GROUP_COLLECTOR_NAME, recordId);
         }
     }
 }

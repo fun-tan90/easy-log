@@ -60,7 +60,7 @@ public class CacheServiceImpl implements CacheService {
         for (int consumerGlobalOrder : consumerGlobalOrders) {
             String consumerName = consumerNamePrefix + consumerGlobalOrder;
             streamMessageListenerContainer
-                    .receive(
+                    .receiveAutoAck(
                             Consumer.from(groupName, consumerName),
                             StreamOffset.create(streamKey, ReadOffset.lastConsumed()),
                             streamListener

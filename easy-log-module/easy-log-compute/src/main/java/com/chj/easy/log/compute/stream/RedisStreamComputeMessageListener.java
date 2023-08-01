@@ -44,7 +44,6 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
             String recordId = entries.getId().getValue();
             Long timestamp = entries.getId().getTimestamp();
             Long sequence = entries.getId().getSequence();
-            stringRedisTemplate.opsForStream().acknowledge(EasyLogConstants.REDIS_STREAM_KEY, EasyLogConstants.GROUP_COMPUTE_NAME, recordId);
             Map<String, byte[]> logMap = entries.getValue();
             CompletableFuture<Void> cfAll = CompletableFuture.allOf(logInputSpeed(logMap, recordId), logAlarm(logMap, recordId), logRealTimeFilter(logMap, timestamp, sequence));
             cfAll.join();
