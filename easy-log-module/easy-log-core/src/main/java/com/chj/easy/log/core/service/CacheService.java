@@ -124,7 +124,7 @@ public interface CacheService {
      * @param timeout
      * @return
      */
-    String popLogAlarmContent(long timeout);
+    LogAlarmContent popLogAlarmContent(long timeout);
 
     /**
      * 添加日志告警规则

@@ -166,8 +166,12 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
-    public String popLogAlarmContent(long timeout) {
-        return stringRedisTemplate.opsForList().rightPop(EasyLogConstants.LOG_ALARM, timeout, TimeUnit.SECONDS);
+    public LogAlarmContent popLogAlarmContent(long timeout) {
+        String rightPop = stringRedisTemplate.opsForList().rightPop(EasyLogConstants.LOG_ALARM, timeout, TimeUnit.SECONDS);
+        if (StringUtils.hasLength(rightPop)) {
+            return JSONUtil.toBean(rightPop, LogAlarmContent.class);
+        }
+        return null;
     }
 
     @Override

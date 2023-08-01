@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -48,6 +49,9 @@ public class MessageCenterServiceChoose implements ApplicationListener<ContextRe
     }
 
     public final void execute(LogAlarmContent logAlarmContent) {
+        if (Objects.isNull(logAlarmContent)) {
+            return;
+        }
         AbstractMessageCenterService executeStrategy = choose(logAlarmContent.getAlarmPlatformType());
         executeStrategy.sendAlarmMessage(logAlarmContent);
     }

@@ -11,7 +11,6 @@ import com.chj.easy.log.core.model.LogAlarmPlatform;
 import com.chj.easy.log.core.model.LogAlarmRule;
 import com.chj.easy.log.core.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -28,9 +27,6 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 public class LogAlarmServiceImpl implements LogAlarmService {
-
-    @Resource
-    StringRedisTemplate stringRedisTemplate;
 
     @Resource
     CacheService cacheService;
@@ -70,12 +66,9 @@ public class LogAlarmServiceImpl implements LogAlarmService {
     @Override
     public void handlerLogAlarm() {
         EasyLogThreadPool.newEasyLogScheduledExecutorInstance().scheduleWithFixedDelay(() -> {
-            String logAlarm = cacheService.popLogAlarmContent(5);
-            if (StringUtils.hasLength(logAlarm)) {
-                LogAlarmContent logAlarmContent = JSONUtil.toBean(logAlarm, LogAlarmContent.class);
-                log.debug("\n{}", JSONUtil.toJsonPrettyStr(logAlarmContent));
-                messageCenterServiceChoose.execute(logAlarmContent);
-            }
+            LogAlarmContent logAlarmContent = cacheService.popLogAlarmContent(5);
+            log.debug("\n{}", JSONUtil.toJsonPrettyStr(logAlarmContent));
+            messageCenterServiceChoose.execute(logAlarmContent);
         }, 1, 1, TimeUnit.SECONDS);
     }
 }
