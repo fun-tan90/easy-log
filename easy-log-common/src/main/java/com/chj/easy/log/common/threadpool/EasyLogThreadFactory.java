@@ -37,9 +37,6 @@ public class EasyLogThreadFactory implements ThreadFactory {
         if (t.getPriority() != Thread.NORM_PRIORITY) {
             t.setPriority(Thread.NORM_PRIORITY);
         }
-        t.setUncaughtExceptionHandler((thread, throwable) -> {
-            System.err.println(thread.getName() + "发生异常" + throwable.getMessage());
-        });
         return t;
     }
 }

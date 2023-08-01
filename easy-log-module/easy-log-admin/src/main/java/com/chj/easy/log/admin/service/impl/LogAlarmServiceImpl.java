@@ -66,9 +66,13 @@ public class LogAlarmServiceImpl implements LogAlarmService {
     @Override
     public void handlerLogAlarm() {
         EasyLogThreadPool.newEasyLogScheduledExecutorInstance().scheduleWithFixedDelay(() -> {
-            LogAlarmContent logAlarmContent = cacheService.popLogAlarmContent(5);
-            log.debug("告警信息:\n{}", JSONUtil.toJsonPrettyStr(logAlarmContent));
-            messageCenterServiceChoose.execute(logAlarmContent);
+            try {
+                LogAlarmContent logAlarmContent = cacheService.popLogAlarmContent(5);
+                log.debug("告警信息:\n{}", JSONUtil.toJsonPrettyStr(logAlarmContent));
+                messageCenterServiceChoose.execute(logAlarmContent);
+            } catch (Exception e) {
+                log.error("handlerLogAlarm {}", e.getMessage());
+            }
         }, 1, 1, TimeUnit.SECONDS);
     }
 }

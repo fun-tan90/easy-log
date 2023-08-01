@@ -32,7 +32,7 @@ import java.util.concurrent.BlockingQueue;
 @Setter
 public class EasyLogRedisAppender extends AppenderBase<ILoggingEvent> {
 
-    private BlockingQueue<LogTransferred> queue;
+    private BlockingQueue<LogTransferred> blockingQueue;
 
     private String appName = "unknown";
 
@@ -71,10 +71,10 @@ public class EasyLogRedisAppender extends AppenderBase<ILoggingEvent> {
             return;
         }
         RedisManager.initJedisPool(redisMode, redisAddress, redisPass, redisDb, redisPoolMaxIdle, redisPoolMaxTotal, redisConnectionTimeout);
-        this.queue = new ArrayBlockingQueue<>(queueSize);
+        this.blockingQueue = new ArrayBlockingQueue<>(queueSize);
         AppBasicInfo appBasicInfo = AppBasicInfo.builder().appName(appName).namespace(namespace).build();
         MqttManager.initMessageChannel(appBasicInfo, mqttIp, mqttPort);
-        RedisManager.schedulePushLog(queue, maxPushSize, redisStreamMaxLen);
+        RedisManager.schedulePushLog(blockingQueue, maxPushSize, redisStreamMaxLen);
         super.start();
     }
 
@@ -84,7 +84,7 @@ public class EasyLogRedisAppender extends AppenderBase<ILoggingEvent> {
             return;
         }
         LogTransferred logTransferred = transferLog(logEvent);
-        if (!this.queue.offer(logTransferred)) {
+        if (!this.blockingQueue.offer(logTransferred)) {
             addError("Easy-Log BlockingQueue add failed");
         }
     }

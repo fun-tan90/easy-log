@@ -26,10 +26,11 @@ public class DemoController {
         for (int i = 0; i < 12; i++) {
             Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()).execute(() -> {
                 String threadName = Thread.currentThread().getName();
-                log.error(threadName + "error is {} ", id);
-                log.warn(threadName + "warn is {} ", id);
-                log.info(threadName + "info is {} ", id);
-                log.debug(threadName + "debug is {} ", id);
+                log.error("{} error is {} ", threadName, id);
+                log.warn("{} warn is {} ", threadName, id);
+                log.info("{} info is {} ", threadName, id);
+                log.debug("{} debug is {} ", threadName, id);
+                log.trace("{} trace is {} ", threadName, id);
             });
         }
         return id;

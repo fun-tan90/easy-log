@@ -30,8 +30,6 @@ public class RedisManager {
 
     public static AtomicInteger RETRY_TIMES = new AtomicInteger(0);
 
-    public static AtomicInteger JEDIS_CONNECTION_ERROR_TIMES = new AtomicInteger(0);
-
     private final static AtomicBoolean INIT_JEDIS_POOL_INITIALIZED = new AtomicBoolean(false);
 
     private final static AtomicBoolean SCHEDULE_PUSH_LOG_INITIALIZED = new AtomicBoolean(false);
@@ -57,7 +55,7 @@ public class RedisManager {
         }
     }
 
-    public static void schedulePushLog(BlockingQueue<LogTransferred> queue, int maxPushSize, long redisStreamMaxLen) {
+    public static void schedulePushLog(BlockingQueue<LogTransferred> blockingQueue, int maxPushSize, long redisStreamMaxLen) {
         if (SCHEDULE_PUSH_LOG_INITIALIZED.compareAndSet(false, true)) {
             if (Objects.isNull(JEDIS_POOL)) {
                 return;
@@ -65,7 +63,7 @@ public class RedisManager {
             List<LogTransferred> logTransferredList = new ArrayList<>();
             EasyLogThreadPool.newEasyLogScheduledExecutorInstance().scheduleWithFixedDelay(() -> {
                 if (logTransferredList.isEmpty()) {
-                    queue.drainTo(logTransferredList, Math.min(queue.size(), maxPushSize));
+                    blockingQueue.drainTo(logTransferredList, Math.min(blockingQueue.size(), maxPushSize));
                 }
                 if (logTransferredList.isEmpty()) {
                     return;
@@ -87,10 +85,11 @@ public class RedisManager {
                         }
                     }
                 } catch (JedisConnectionException e) {
-                    if (JEDIS_CONNECTION_ERROR_TIMES.getAndIncrement() > 100) {
-                        throw e;
-                    }
                     log.error(e.getMessage());
+                    try {
+                        TimeUnit.SECONDS.sleep(5);
+                    } catch (InterruptedException ignored) {
+                    }
                 }
             }, 5, 50, TimeUnit.MILLISECONDS);
         }

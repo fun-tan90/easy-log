@@ -45,15 +45,19 @@ public class SysMonitorServiceImpl implements SysMonitorService {
     @Override
     public void statsLogInputSpeed() {
         EasyLogThreadPool.newEasyLogScheduledExecutorInstance().scheduleWithFixedDelay(() -> {
-            Boolean lock = stringRedisTemplate.opsForValue().setIfAbsent(EasyLogConstants.LOG_INPUT_SPEED_LOCK, "", 4, TimeUnit.SECONDS);
-            if (Boolean.TRUE.equals(lock)) {
-                try {
-                    Map<String, Integer> windowCountMap = cacheService.slidingWindowCount("S_W:LOG_INPUT_SPEED:");
-                    log.debug("日志流入速率:\n{}", JSONUtil.toJsonPrettyStr(windowCountMap));
-                    mqttServerTemplate.publishAll(EasyLogConstants.LOG_INPUT_SPEED_TOPIC, JSONUtil.toJsonStr(windowCountMap).getBytes(StandardCharsets.UTF_8), MqttQoS.AT_MOST_ONCE);
-                } finally {
-                    stringRedisTemplate.delete(EasyLogConstants.LOG_INPUT_SPEED_LOCK);
+            try {
+                Boolean lock = stringRedisTemplate.opsForValue().setIfAbsent(EasyLogConstants.LOG_INPUT_SPEED_LOCK, "", 4, TimeUnit.SECONDS);
+                if (Boolean.TRUE.equals(lock)) {
+                    try {
+                        Map<String, Integer> windowCountMap = cacheService.slidingWindowCount("S_W:LOG_INPUT_SPEED:");
+                        log.debug("日志流入速率:\n{}", JSONUtil.toJsonPrettyStr(windowCountMap));
+                        mqttServerTemplate.publishAll(EasyLogConstants.LOG_INPUT_SPEED_TOPIC, JSONUtil.toJsonStr(windowCountMap).getBytes(StandardCharsets.UTF_8), MqttQoS.AT_MOST_ONCE);
+                    } finally {
+                        stringRedisTemplate.delete(EasyLogConstants.LOG_INPUT_SPEED_LOCK);
+                    }
                 }
+            } catch (Exception e) {
+                log.error("statsLogInputSpeed {}", e.getMessage());
             }
         }, 1, 2, TimeUnit.SECONDS);
     }
