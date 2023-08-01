@@ -1,8 +1,8 @@
 version: '3.7'
 services:
-  easy-log-server-admin01:
+  easy-log-admin01:
     image: ${image}
-    container_name: easy-log-server-admin01
+    container_name: easy-log-admin01
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - HEAP_SIZE=${heap_size}
@@ -10,21 +10,19 @@ services:
       - easy-log.compute.enable=false
       - easy-log.collector.enable=false
     volumes:
-      - easy-log-server-admin01:/app
+      - easy-log-admin01:/app
     ports:
       - "2203:1203"
       - "2204:1883"
       - "2205:8083"
-    networks:
-      - easy-log
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:1203/monitor/health" ]
       start_period: 3s
       retries: 3
 
-  easy-log-server-compute01:
+  easy-log-compute01:
     image: ${image}
-    container_name: easy-log-server-compute01
+    container_name: easy-log-compute01
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - HEAP_SIZE=${heap_size}
@@ -33,17 +31,15 @@ services:
       - easy-log.collector.enable=false
       - consumer-global-orders=5,6,7,8
     volumes:
-      - easy-log-server-compute01:/app
-    networks:
-      - easy-log
+      - easy-log-compute01:/app
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:1203/monitor/health" ]
       start_period: 3s
       retries: 3
 
-  easy-log-server-collector01:
+  easy-log-collector01:
     image: ${image}
-    container_name: easy-log-server-collector01
+    container_name: easy-log-collector01
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - HEAP_SIZE=${heap_size}
@@ -52,26 +48,21 @@ services:
       - easy-log.collector.enable=true
       - consumer-global-orders=5,6,7,8
     volumes:
-      - easy-log-server-collector01:/app
-    networks:
-      - easy-log
+      - easy-log-collector01:/app
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:1203/monitor/health" ]
       start_period: 3s
       retries: 3
 
 volumes:
-  easy-log-server-admin01:
+  easy-log-admin01:
     driver: local
-  easy-log-server-compute01:
+  easy-log-compute01:
     driver: local
-  easy-log-server-collector01:
+  easy-log-collector01:
     driver: local
 
 networks:
-  easy-log:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.30.0.0/16
-          gateway: 172.30.0.1
+  default:
+    external: true
+    name: el_net
