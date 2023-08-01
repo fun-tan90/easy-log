@@ -96,13 +96,15 @@ public class CacheServiceImpl implements CacheService {
             redisScript.setResultType(String.class);
             return redisScript;
         });
+        Map<String, Integer> windowCountMap = new HashMap<>();
         String execute = stringRedisTemplate.execute(actual, Collections.singletonList(keyPrefix));
         if (StringUtils.hasLength(execute)) {
-            return Arrays.stream(execute.split(",")).collect(Collectors.toMap(
+            windowCountMap.putAll(Arrays.stream(execute.split(",")).collect(Collectors.toMap(
                     n -> n.split("#")[0].replace(keyPrefix, ""),
-                    m -> Integer.parseInt(m.split("#")[1])));
+                    m -> Integer.parseInt(m.split("#")[1]))));
         }
-        return new HashMap<>();
+        Arrays.asList("ERROR", "INFO", "WARN", "DEBUG", "TRACE").forEach(n -> windowCountMap.putIfAbsent(n, 0));
+        return windowCountMap;
     }
 
     @Override

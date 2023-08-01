@@ -46,7 +46,6 @@ public class SysMonitorServiceImpl implements SysMonitorService {
     public void statsLogInputSpeed() {
         EasyLogThreadPool.newEasyLogScheduledExecutorInstance().scheduleWithFixedDelay(() -> {
             Map<String, Integer> windowCountMap = cacheService.slidingWindowCount("S_W:LOG_INPUT_SPEED:");
-            Arrays.asList("ERROR", "INFO", "WARN", "DEBUG", "TRACE").forEach(n -> windowCountMap.putIfAbsent(n, 0));
             log.debug("\n{}", JSONUtil.toJsonPrettyStr(windowCountMap));
             mqttServerTemplate.publishAll(EasyLogConstants.LOG_INPUT_SPEED_TOPIC, JSONUtil.toJsonStr(windowCountMap).getBytes(StandardCharsets.UTF_8), MqttQoS.AT_MOST_ONCE);
         }, 1, 2, TimeUnit.SECONDS);
