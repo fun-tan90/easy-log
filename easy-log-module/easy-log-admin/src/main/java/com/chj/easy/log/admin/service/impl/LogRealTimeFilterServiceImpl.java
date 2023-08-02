@@ -1,18 +1,22 @@
 package com.chj.easy.log.admin.service.impl;
 
+import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.admin.model.cmd.LogRealTimeFilterCmd;
 import com.chj.easy.log.admin.service.LogRealTimeFilterService;
 import com.chj.easy.log.common.constant.EasyLogConstants;
-import com.chj.easy.log.core.event.LogAlarmRegisterEvent;
+import com.chj.easy.log.core.model.LogRealTimeFilterRule;
 import com.chj.easy.log.core.model.Topic;
 import com.chj.easy.log.core.service.EsService;
 import lombok.extern.slf4j.Slf4j;
+import net.dreamlu.iot.mqtt.codec.MqttQoS;
+import net.dreamlu.iot.mqtt.spring.server.MqttServerTemplate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +33,7 @@ import java.util.Map;
 public class LogRealTimeFilterServiceImpl implements LogRealTimeFilterService {
 
     @Resource
-    ApplicationContext applicationContext;
+    MqttServerTemplate mqttServerTemplate;
 
     @Resource
     EsService esService;
@@ -68,7 +72,8 @@ public class LogRealTimeFilterServiceImpl implements LogRealTimeFilterService {
             realTimeFilterRules.put("content#should", String.join("%", ikSmartWord));
         }
         String mqttClientId = logRealTimeFilterCmd.getMqttClientId();
-        applicationContext.publishEvent(new LogAlarmRegisterEvent(this, mqttClientId, realTimeFilterRules));
+        LogRealTimeFilterRule logRealTimeFilterRule = LogRealTimeFilterRule.builder().clientId(mqttClientId).realTimeFilterRules(realTimeFilterRules).build();
+        mqttServerTemplate.publishAll(EasyLogConstants.LOG_REAL_TIME_FILTER_RULES_TOPIC + "put", JSONUtil.toJsonStr(logRealTimeFilterRule).getBytes(StandardCharsets.UTF_8), MqttQoS.EXACTLY_ONCE);
         return Topic.builder()
                 .topic(EasyLogConstants.LOG_AFTER_FILTERED_TOPIC + mqttClientId)
                 .qos(1)

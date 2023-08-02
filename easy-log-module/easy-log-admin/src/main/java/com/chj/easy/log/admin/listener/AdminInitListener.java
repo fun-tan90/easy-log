@@ -29,17 +29,12 @@ public class AdminInitListener implements ApplicationListener<ApplicationReadyEv
     EsService esService;
 
     @Resource
-    LogAlarmService logAlarmService;
-
-    @Resource
     SysMonitorService sysMonitorService;
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         if (initialized.compareAndSet(false, true)) {
             esService.initLifecyclePolicyAndTemplate();
-
-            logAlarmService.handlerLogAlarm();
 
             sysMonitorService.statsLogInputSpeed();
         }

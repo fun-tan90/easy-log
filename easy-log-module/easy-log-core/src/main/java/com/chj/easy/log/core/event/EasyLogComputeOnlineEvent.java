@@ -1,6 +1,5 @@
 package com.chj.easy.log.core.event;
 
-import com.chj.easy.log.core.model.LogAlarmRule;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.ApplicationEvent;
@@ -14,11 +13,11 @@ import org.springframework.context.ApplicationEvent;
  */
 @Setter
 @Getter
-public class LogAlarmUnRegisterEvent extends ApplicationEvent {
+public class EasyLogComputeOnlineEvent extends ApplicationEvent {
 
     private String clientId;
 
-    public LogAlarmUnRegisterEvent(Object source, String clientId) {
+    public EasyLogComputeOnlineEvent(Object source, String clientId) {
         super(source);
         this.clientId = clientId;
     }

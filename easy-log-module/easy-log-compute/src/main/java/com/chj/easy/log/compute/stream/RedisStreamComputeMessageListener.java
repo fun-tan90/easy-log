@@ -1,23 +1,31 @@
 package com.chj.easy.log.compute.stream;
 
+import cn.hutool.core.date.StopWatch;
 import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.common.threadpool.EasyLogThreadPool;
+import com.chj.easy.log.compute.LogAlarmRulesManager;
+import com.chj.easy.log.compute.LogRealTimeFilterRulesManager;
 import com.chj.easy.log.core.model.LogAlarmContent;
 import com.chj.easy.log.core.model.LogAlarmRule;
 import com.chj.easy.log.core.model.SlidingWindow;
 import com.chj.easy.log.core.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
+import net.dreamlu.iot.mqtt.codec.MqttQoS;
+import net.dreamlu.iot.mqtt.spring.client.MqttClientTemplate;
 import org.springframework.data.redis.connection.stream.MapRecord;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.stream.StreamListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
@@ -33,20 +41,22 @@ import java.util.stream.Collectors;
 public class RedisStreamComputeMessageListener implements StreamListener<String, MapRecord<String, String, byte[]>> {
 
     @Resource
-    StringRedisTemplate stringRedisTemplate;
+    CacheService cacheService;
 
     @Resource
-    CacheService cacheService;
+    MqttClientTemplate mqttClientTemplate;
 
     @Override
     public void onMessage(MapRecord<String, String, byte[]> entries) {
         if (entries != null) {
             String recordId = entries.getId().getValue();
-            Long timestamp = entries.getId().getTimestamp();
-            Long sequence = entries.getId().getSequence();
             Map<String, byte[]> logMap = entries.getValue();
-            CompletableFuture<Void> cfAll = CompletableFuture.allOf(logInputSpeed(logMap, recordId), logAlarm(logMap, recordId), logRealTimeFilter(logMap, timestamp, sequence));
+            StopWatch stopWatch = new StopWatch("日志实时计算统计");
+            stopWatch.start();
+            CompletableFuture<Void> cfAll = CompletableFuture.allOf(logInputSpeed(logMap, recordId), logAlarm(logMap, recordId), logRealTimeFilter(logMap));
             cfAll.join();
+            stopWatch.stop();
+            log.debug(stopWatch.prettyPrint(TimeUnit.MILLISECONDS));
         }
     }
 
@@ -67,22 +77,15 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
     private CompletableFuture<Void> logAlarm(Map<String, byte[]> logMap, String recordId) {
         return CompletableFuture.runAsync(() -> {
             String level = new String(logMap.get("level"));
-            // TODO
-            if ("error".equalsIgnoreCase(level)) {
-
+            if (!"error".equalsIgnoreCase(level)) {
+                return;
             }
             String appName = new String(logMap.get("appName"));
             String namespace = new String(logMap.get("namespace"));
             String loggerName = new String(logMap.get("loggerName"));
             String timeStamp = new String(logMap.get("timeStamp"));
 
-            List<Object> logAlarmRulesList = stringRedisTemplate.opsForHash().multiGet(EasyLogConstants.LOG_ALARM_RULES + appName + ":" + namespace, Arrays.asList("all", loggerName));
-            Map<String, LogAlarmRule> cacheLogAlarmRuleMap = logAlarmRulesList
-                    .stream()
-                    .filter(n -> !Objects.isNull(n))
-                    .map(logAlarmRule -> JSONUtil.toBean(logAlarmRule.toString(), LogAlarmRule.class))
-                    .filter(logAlarmRule -> "1".equals(logAlarmRule.getStatus()))
-                    .collect(Collectors.toMap(LogAlarmRule::getLoggerName, Function.identity()));
+            Map<String, LogAlarmRule> cacheLogAlarmRuleMap = LogAlarmRulesManager.getLogAlarmRule(appName, namespace, "all", loggerName);
             if (CollectionUtils.isEmpty(cacheLogAlarmRuleMap)) {
                 return;
             }
@@ -93,22 +96,21 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
                 Integer windowCount = slidingWindow.getWindowCount();
                 log.info("阈值大小:{},滑动窗口内计数大小:{}", threshold, windowCount);
                 if (windowCount == threshold + 1) {
-                    cacheService.addLogAlarmContent(
-                            LogAlarmContent
-                                    .builder()
-                                    .alarmPlatformType(logAlarmRule.getAlarmPlatformType())
-                                    .alarmPlatformId(logAlarmRule.getAlarmPlatformId())
-                                    .windowStart(slidingWindow.getWindowStart())
-                                    .windowEnd(slidingWindow.getWindowEnd())
-                                    .ruleId(logAlarmRule.getRuleId())
-                                    .appName(logAlarmRule.getAppName())
-                                    .namespace(logAlarmRule.getNamespace())
-                                    .loggerName(k)
-                                    .receiverList(logAlarmRule.getReceiverList())
-                                    .threshold(logAlarmRule.getThreshold())
-                                    .period(logAlarmRule.getPeriod())
-                                    .build()
-                    );
+                    LogAlarmContent logAlarmContent = LogAlarmContent
+                            .builder()
+                            .alarmPlatformType(logAlarmRule.getAlarmPlatformType())
+                            .alarmPlatformId(logAlarmRule.getAlarmPlatformId())
+                            .windowStart(slidingWindow.getWindowStart())
+                            .windowEnd(slidingWindow.getWindowEnd())
+                            .ruleId(logAlarmRule.getRuleId())
+                            .appName(logAlarmRule.getAppName())
+                            .namespace(logAlarmRule.getNamespace())
+                            .loggerName(k)
+                            .receiverList(logAlarmRule.getReceiverList())
+                            .threshold(logAlarmRule.getThreshold())
+                            .period(logAlarmRule.getPeriod())
+                            .build();
+                    mqttClientTemplate.publish(EasyLogConstants.LOG_ALARM_TOPIC, JSONUtil.toJsonStr(logAlarmContent).getBytes(StandardCharsets.UTF_8), MqttQoS.EXACTLY_ONCE);
                 }
             });
         }, EasyLogThreadPool.newEasyLogFixedPoolInstance());
@@ -119,49 +121,37 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
      *
      * @param logMap
      */
-    private CompletableFuture<Void> logRealTimeFilter(Map<String, byte[]> logMap, Long timestamp, Long sequence) {
+    private CompletableFuture<Void> logRealTimeFilter(Map<String, byte[]> logMap) {
         return CompletableFuture.runAsync(() -> {
-            Set<String> clientIds = cacheService.getRealTimeFilterSubscribingClients();
-            if (CollectionUtils.isEmpty(clientIds)) {
-                return;
-            }
-            Iterator<String> clientIdsIterator = clientIds.iterator();
-            while (clientIdsIterator.hasNext()) {
-                String clientId = clientIdsIterator.next();
-                Map<String, String> realTimeFilterRules = cacheService.getLogRealTimeFilterRule(clientId);
-                if (!realTimeFilterRules.isEmpty()) {
-                    for (String realTimeFilterRule : realTimeFilterRules.keySet()) {
-                        String[] split = realTimeFilterRule.split("#");
-                        String ruleKey = split[0];
-                        String ruleWay = split[1];
-                        String logVal = new String(logMap.get(ruleKey));
-                        String ruleVal = realTimeFilterRules.get(realTimeFilterRule);
-                        if ("eq".equals(ruleWay)) {
-                            if (!logVal.equals(ruleVal)) {
-                                clientIdsIterator.remove();
-                                break;
-                            }
-                        } else if ("should".equals(ruleWay)) {
-                            List<String> list = Arrays.asList(ruleVal.split("%"));
-                            Optional<String> any = list.stream().filter(logVal::contains).findAny();
-                            if (!any.isPresent()) {
-                                clientIdsIterator.remove();
-                                break;
-                            }
-                        } else if ("gle".equals(ruleWay)) {
-                            if (Long.parseLong(ruleVal) > Long.parseLong(logVal)) {
-                                clientIdsIterator.remove();
-                                break;
-                            }
+            List<String> clientIds = LogRealTimeFilterRulesManager.RULES_MAP.keySet().stream().filter(n -> {
+                Map<String, String> realTimeFilterRules = LogRealTimeFilterRulesManager.RULES_MAP.get(n);
+                for (String realTimeFilterRule : realTimeFilterRules.keySet()) {
+                    String[] split = realTimeFilterRule.split("#");
+                    String ruleKey = split[0];
+                    String ruleWay = split[1];
+                    String logVal = new String(logMap.get(ruleKey));
+                    String ruleVal = realTimeFilterRules.get(realTimeFilterRule);
+                    if ("eq".equals(ruleWay)) {
+                        if (!logVal.equals(ruleVal)) {
+                            return false;
+                        }
+                    } else if ("should".equals(ruleWay)) {
+                        List<String> list = Arrays.asList(ruleVal.split("%"));
+                        Optional<String> any = list.stream().filter(logVal::contains).findAny();
+                        if (!any.isPresent()) {
+                            return false;
+                        }
+                    } else if ("gle".equals(ruleWay)) {
+                        if (Long.parseLong(ruleVal) > Long.parseLong(logVal)) {
+                            return false;
                         }
                     }
-                } else {
-                    clientIdsIterator.remove();
                 }
-            }
+                return true;
+            }).collect(Collectors.toList());
             if (!CollectionUtils.isEmpty(clientIds)) {
                 for (String clientId : clientIds) {
-                    cacheService.addRealTimeFilteredLogs(clientId, logMap, timestamp + sequence);
+                    mqttClientTemplate.publish(EasyLogConstants.LOG_AFTER_FILTERED_TOPIC + clientId, JSONUtil.toJsonStr(logMap).getBytes(StandardCharsets.UTF_8), MqttQoS.AT_LEAST_ONCE);
                 }
             }
         }, EasyLogThreadPool.newEasyLogFixedPoolInstance());

@@ -5,17 +5,20 @@ import com.chj.easy.log.admin.message.MessageCenterServiceChoose;
 import com.chj.easy.log.admin.model.cmd.LogAlarmPlatformAddCmd;
 import com.chj.easy.log.admin.model.cmd.LogAlarmRuleAddCmd;
 import com.chj.easy.log.admin.service.LogAlarmService;
-import com.chj.easy.log.common.threadpool.EasyLogThreadPool;
+import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.model.LogAlarmContent;
 import com.chj.easy.log.core.model.LogAlarmPlatform;
 import com.chj.easy.log.core.model.LogAlarmRule;
 import com.chj.easy.log.core.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
+import net.dreamlu.iot.mqtt.codec.MqttQoS;
+import net.dreamlu.iot.mqtt.spring.server.MqttServerTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.concurrent.TimeUnit;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 /**
  * description TODO
@@ -33,6 +36,9 @@ public class LogAlarmServiceImpl implements LogAlarmService {
 
     @Resource
     MessageCenterServiceChoose messageCenterServiceChoose;
+
+    @Resource
+    MqttServerTemplate mqttServerTemplate;
 
     @Override
     public String logAlarmPlatform(LogAlarmPlatformAddCmd logAlarmPlatformAddCmd) {
@@ -60,19 +66,16 @@ public class LogAlarmServiceImpl implements LogAlarmService {
                 .threshold(logAlarmRuleAddCmd.getThreshold())
                 .status(logAlarmRuleAddCmd.getStatus())
                 .build();
+        mqttServerTemplate.publishAll(EasyLogConstants.LOG_ALARM_RULES_TOPIC + "put", JSONUtil.toJsonStr(logAlarmRule).getBytes(StandardCharsets.UTF_8), MqttQoS.EXACTLY_ONCE);
         return cacheService.addLogAlarmRule(logAlarmRule);
     }
 
     @Override
-    public void handlerLogAlarm() {
-        EasyLogThreadPool.newEasyLogScheduledExecutorInstance().scheduleWithFixedDelay(() -> {
-            try {
-                LogAlarmContent logAlarmContent = cacheService.popLogAlarmContent(5);
-                log.debug("告警信息:\n{}", JSONUtil.toJsonPrettyStr(logAlarmContent));
-                messageCenterServiceChoose.execute(logAlarmContent);
-            } catch (Exception e) {
-                log.error("handlerLogAlarm {}", e.getMessage());
-            }
-        }, 1, 1, TimeUnit.SECONDS);
+    public void handlerLogAlarm(LogAlarmContent logAlarmContent) {
+        if (Objects.isNull(logAlarmContent)) {
+            return;
+        }
+        log.debug("告警信息:\n{}", JSONUtil.toJsonPrettyStr(logAlarmContent));
+        messageCenterServiceChoose.execute(logAlarmContent);
     }
 }

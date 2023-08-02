@@ -1,7 +1,7 @@
 package com.chj.easy.log.admin.mqtt.listener;
 
 import com.chj.easy.log.common.constant.EasyLogConstants;
-import com.chj.easy.log.core.event.LogAlarmUnRegisterEvent;
+import com.chj.easy.log.core.event.LogRealTimeFilterUnRegisterEvent;
 import com.chj.easy.log.core.service.CacheService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,21 +21,16 @@ import org.tio.core.ChannelContext;
 @RequiredArgsConstructor
 public class MqttSessionListener implements IMqttSessionListener {
 
-    private final CacheService cacheService;
-
     private final ApplicationContext applicationContext;
 
     @Override
     public void onSubscribed(ChannelContext context, String clientId, String topicFilter, MqttQoS mqttQoS) {
-        if (topicFilter.startsWith(EasyLogConstants.LOG_AFTER_FILTERED_TOPIC)) {
-            cacheService.addRealTimeFilterSubscribingClient(clientId);
-        }
     }
 
     @Override
     public void onUnsubscribed(ChannelContext context, String clientId, String topicFilter) {
         if (topicFilter.startsWith(EasyLogConstants.LOG_AFTER_FILTERED_TOPIC)) {
-            applicationContext.publishEvent(new LogAlarmUnRegisterEvent(this, clientId));
+            applicationContext.publishEvent(new LogRealTimeFilterUnRegisterEvent(this, clientId));
         }
     }
 }

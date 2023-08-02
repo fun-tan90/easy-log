@@ -4,8 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.ApplicationEvent;
 
-import java.util.Map;
-
 /**
  * description
  * company 铁人科技
@@ -15,15 +13,12 @@ import java.util.Map;
  */
 @Setter
 @Getter
-public class LogAlarmRegisterEvent extends ApplicationEvent {
+public class LogRealTimeFilterUnRegisterEvent extends ApplicationEvent {
 
     private String clientId;
 
-    private Map<String, String> realTimeFilterRules;
-
-    public LogAlarmRegisterEvent(Object source, String clientId, Map<String, String> realTimeFilterRules) {
+    public LogRealTimeFilterUnRegisterEvent(Object source, String clientId) {
         super(source);
         this.clientId = clientId;
-        this.realTimeFilterRules = realTimeFilterRules;
     }
 }

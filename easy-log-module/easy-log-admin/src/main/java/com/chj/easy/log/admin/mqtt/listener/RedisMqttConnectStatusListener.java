@@ -2,7 +2,8 @@ package com.chj.easy.log.admin.mqtt.listener;
 
 import com.chj.easy.log.admin.mqtt.enums.RedisKeys;
 import com.chj.easy.log.common.constant.EasyLogConstants;
-import com.chj.easy.log.core.event.LogAlarmUnRegisterEvent;
+import com.chj.easy.log.core.event.EasyLogComputeOnlineEvent;
+import com.chj.easy.log.core.event.LogRealTimeFilterUnRegisterEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dreamlu.iot.mqtt.core.server.MqttServerCreator;
@@ -34,16 +35,21 @@ public class RedisMqttConnectStatusListener implements IMqttConnectStatusListene
     @Override
     public void online(ChannelContext context, String clientId, String username) {
         redisCache.sAdd(getRedisKey(), clientId);
+        if (clientId.startsWith(EasyLogConstants.MQTT_CLIENT_ID_COMPUTE_PREFIX)) {
+            // easy_log_compute上线，需同步缓存
+            applicationContext.publishEvent(new EasyLogComputeOnlineEvent(this, clientId));
+        }
     }
 
     @Override
     public void offline(ChannelContext context, String clientId, String username, String reason) {
         redisCache.sRem(getRedisKey(), clientId);
-
         log.info("{} is offline", clientId);
         if (clientId.startsWith(EasyLogConstants.MQTT_CLIENT_ID_FRONT_PREFIX)) {
-            applicationContext.publishEvent(new LogAlarmUnRegisterEvent(this, clientId));
+            applicationContext.publishEvent(new LogRealTimeFilterUnRegisterEvent(this, clientId));
         } else if (clientId.startsWith(EasyLogConstants.MQTT_CLIENT_ID_APP_PREFIX)) {
+
+        } else if (clientId.startsWith(EasyLogConstants.MQTT_CLIENT_ID_COMPUTE_PREFIX)) {
 
         }
     }

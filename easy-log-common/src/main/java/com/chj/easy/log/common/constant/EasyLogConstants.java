@@ -57,6 +57,10 @@ public interface EasyLogConstants {
 
     String LOG_ALARM_RULES = "LOG_ALARM_RULES:";
 
+    String LOG_ALARM_RULES_TOPIC = "log_alarm_rules/";
+
+    String LOG_REAL_TIME_FILTER_RULES_TOPIC = "log_real_time_filter_rules/";
+
     String S_W_LOG_ALARM = "S_W:LOG_ALARM:";
 
     String LOG_ALARM = "LOG_ALARM";
@@ -64,6 +68,8 @@ public interface EasyLogConstants {
     String LOG_ALARM_LOCK = "LOG_ALARM_LOCK:";
 
     String S_W_LOG_INPUT_SPEED = "S_W:LOG_INPUT_SPEED:";
+
+    String LOG_ALARM_TOPIC = "easy-log/log_alarm";
 
     String LOG_AFTER_FILTERED_TOPIC = "easy-log/after-filtered/";
 
@@ -76,6 +82,8 @@ public interface EasyLogConstants {
     String SLIDING_WINDOW_COUNT_LUA_PATH = "lua/slidingWindowCount.lua";
 
     String LOG_ALARM_PLATFORM = "LOG_ALARM_PLATFORM:";
+
+    String MQTT_CLIENT_ID_COMPUTE_PREFIX = "easy_log_compute:";
 
     String MQTT_CLIENT_ID_FRONT_PREFIX = "easy_log_front:";
 

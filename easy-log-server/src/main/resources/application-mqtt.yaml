@@ -8,6 +8,13 @@ mqtt:
     stat-enable: false
     web-port: 8083
 
+  client:
+    enabled: ${easy-log.compute.enable}
+    ip: 127.0.0.1
+    port: 1883
+    name: easy-log-compute
+    clientId: easy_log_compute:${random.long(1000,9999)}
+
 mica:
   redis:
     stream:
