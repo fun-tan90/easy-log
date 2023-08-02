@@ -15,7 +15,6 @@ import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * description RedisManager
@@ -27,8 +26,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j(topic = EasyLogConstants.EASY_LOG_TOPIC)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RedisManager {
-
-    public static AtomicInteger RETRY_TIMES = new AtomicInteger(0);
 
     private final static AtomicBoolean INIT_JEDIS_POOL_INITIALIZED = new AtomicBoolean(false);
 
@@ -51,6 +48,10 @@ public class RedisManager {
             if ("single".equals(redisMode)) {
                 String[] arrays = redisAddress.split(":");
                 JEDIS_POOL = new JedisPool(config, arrays[0], Integer.parseInt(arrays[1]), redisConnectionTimeout, redisPass, redisDb, "easy_log");
+            } else if ("sentinel".equals(redisMode)) {
+
+            } else if ("cluster".equals(redisMode)) {
+
             }
         }
     }
@@ -69,27 +70,19 @@ public class RedisManager {
                     return;
                 }
                 try (Jedis jedis = JEDIS_POOL.getResource()) {
-                    try {
-                        Pipeline pipelined = jedis.pipelined();
-                        logTransferredList.forEach(logTransferred -> {
-                            pipelined.xadd(EasyLogConstants.REDIS_STREAM_KEY, StreamEntryID.NEW_ENTRY, logTransferred.toMap(), redisStreamMaxLen, false);
-                        });
-                        pipelined.sync();
-                        RETRY_TIMES.set(0);
-                        logTransferredList.clear();
-                    } catch (JedisConnectionException e) {
-                        if (RETRY_TIMES.getAndIncrement() >= 3) {
-                            RETRY_TIMES.set(0);
-                            log.error("{}, {} logs are discarded", e.getMessage(), logTransferredList.size());
-                            logTransferredList.clear();
-                        }
-                    }
+                    Pipeline pipelined = jedis.pipelined();
+                    logTransferredList.forEach(logTransferred -> {
+                        pipelined.xadd(EasyLogConstants.REDIS_STREAM_KEY, StreamEntryID.NEW_ENTRY, logTransferred.toMap(), redisStreamMaxLen, true);
+                    });
+                    pipelined.sync();
                 } catch (JedisConnectionException e) {
-                    log.error(e.getMessage());
+                    log.error("{}, {} logs are discarded", e.getMessage(), logTransferredList.size());
                     try {
                         TimeUnit.SECONDS.sleep(5);
                     } catch (InterruptedException ignored) {
                     }
+                } finally {
+                    logTransferredList.clear();
                 }
             }, 5, 50, TimeUnit.MILLISECONDS);
         }
