@@ -47,8 +47,7 @@
         <redisPass>ICONMAN20220106R</redisPass>
         <redisConnectionTimeout>1000</redisConnectionTimeout>
         <redisStreamMaxLen>1000000</redisStreamMaxLen>
-        <mqttIp>127.0.0.1</mqttIp>
-        <mqttPort>1883</mqttPort>
+        <mqttAddress>127.0.0.1:1883</mqttAddress>
     </appender>
 
     <root level="INFO">

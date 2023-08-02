@@ -41,9 +41,7 @@
                       redisStreamMaxLen="1000000"
                       redisPoolMaxTotal="30"
                       redisPoolMaxIdle="30"
-                      mqttIp="127.0.0.1"
-                      mqttPort="1883"/>
-
+                      mqttAddress="127.0.0.1:1883"/>
     </Appenders>
     <Loggers>
         <root level="info">

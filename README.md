@@ -61,7 +61,7 @@
         <redisPass>ICONMAN20220106R</redisPass>
         <!--redis连接超时时间,默认1000-->
         <redisConnectionTimeout>1000</redisConnectionTimeout>
-        <!--redis stream最多存储消息数,默认1000000-->
+        <!--redis Stream最多存储消息数,默认1000000-->
         <redisStreamMaxLen>1000000</redisStreamMaxLen>
         <!--redis连接池最大空闲数，默认30-->
         <redisPoolMaxIdle>30</redisPoolMaxIdle>
