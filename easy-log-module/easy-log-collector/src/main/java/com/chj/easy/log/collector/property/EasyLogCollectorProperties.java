@@ -19,7 +19,7 @@ public class EasyLogCollectorProperties {
 
     public static final String PREFIX = "easy-log.collector";
 
-    private boolean enable = true;
+    private boolean enable = false;
 
     private boolean banner = true;
 

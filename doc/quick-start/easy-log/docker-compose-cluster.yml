@@ -28,14 +28,18 @@ services:
       - HEAP_SIZE=${heap_size}
       - easy-log.admin.enable=false
       - easy-log.compute.enable=true
+      - easy-log.compute.consumer-global-orders=5,6,7,8
+      - mqtt.client.ip=easy-log-admin01
+      - mqtt.client.port=1883
       - easy-log.collector.enable=false
-      - consumer-global-orders=5,6,7,8
     volumes:
       - easy-log-compute01:/app
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:1203/monitor/health" ]
       start_period: 3s
       retries: 3
+    depends_on:
+      - easy-log-admin01
 
   easy-log-collector01:
     image: ${image}
@@ -46,7 +50,7 @@ services:
       - easy-log.admin.enable=false
       - easy-log.compute.enable=false
       - easy-log.collector.enable=true
-      - consumer-global-orders=5,6,7,8
+      - easy-log.collector.consumer-global-orders=5,6,7,8
     volumes:
       - easy-log-collector01:/app
     healthcheck:

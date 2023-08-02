@@ -10,7 +10,7 @@ mqtt:
 
   client:
     enabled: ${easy-log.compute.enable}
-    ip: 127.0.0.1
+    ip: 172.16.8.132
     port: 1883
     name: easy-log-compute
     clientId: easy_log_compute:${random.long(1000,9999)}

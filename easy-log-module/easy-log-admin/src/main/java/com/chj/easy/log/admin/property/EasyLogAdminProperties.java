@@ -17,7 +17,7 @@ public class EasyLogAdminProperties {
 
     public static final String PREFIX = "easy-log.admin";
 
-    private boolean enable = true;
+    private boolean enable = false;
 
     private boolean banner = true;
 

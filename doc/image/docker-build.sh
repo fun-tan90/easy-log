@@ -2,7 +2,7 @@
 # 构建过程变量SERVER_PORT、PROJECT_NAME、MQTT_TCP_PORT、MQTT_WEBSOCKET_PORT
 # 启动时变量HEAP_SIZE、SPRING_PROFILES_ACTIVE
 # -t 后面为镜像名称和TAG
-tag="1.1.3"
+tag="1.1.5"
 imageName="registry.cn-hangzhou.aliyuncs.com/tan90/easy-log"
 
 docker build --build-arg PROJECT_NAME=easy-log-server --build-arg SERVER_PORT=1203 --build-arg MQTT_TCP_PORT=1883 --build-arg MQTT_WEBSOCKET_PORT=8083 . -t $imageName:$tag

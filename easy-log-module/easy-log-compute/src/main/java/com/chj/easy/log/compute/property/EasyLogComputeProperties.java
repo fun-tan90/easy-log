@@ -17,7 +17,7 @@ public class EasyLogComputeProperties {
 
     public static final String PREFIX = "easy-log.compute";
 
-    private boolean enable = true;
+    private boolean enable = false;
 
     private boolean banner = true;
 
