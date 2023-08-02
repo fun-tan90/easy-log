@@ -29,9 +29,9 @@ services:
       - easy-log.admin.enable=false
       - easy-log.compute.enable=true
       - easy-log.compute.consumer-global-orders=5,6,7,8
+      - easy-log.collector.enable=false
       - mqtt.client.ip=easy-log-admin01
       - mqtt.client.port=1883
-      - easy-log.collector.enable=false
     volumes:
       - easy-log-compute01:/app
     healthcheck:
