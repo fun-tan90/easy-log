@@ -52,6 +52,7 @@ public class MqttManager {
                     .port(Integer.parseInt(split[1]))
                     .username(EasyLogConstants.MQTT_CLIENT_USERNAME)
                     .password(EasyLogConstants.MQTT_CLIENT_PASSWORD)
+                    .keepAliveSecs(30)
                     .connectSync();
 
             client.subQos2(StrUtil.format(EasyLogConstants.MQTT_CMD_DOWN, namespace, appName), new IMqttClientMessageListener() {

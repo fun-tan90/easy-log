@@ -1,6 +1,5 @@
 package com.chj.easy.log.compute.stream;
 
-import cn.hutool.core.date.StopWatch;
 import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.common.threadpool.EasyLogThreadPool;
@@ -25,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
@@ -51,12 +49,8 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
         if (entries != null) {
             String recordId = entries.getId().getValue();
             Map<String, byte[]> logMap = entries.getValue();
-            StopWatch stopWatch = new StopWatch("日志实时计算统计");
-            stopWatch.start();
             CompletableFuture<Void> cfAll = CompletableFuture.allOf(logInputSpeed(logMap, recordId), logAlarm(logMap, recordId), logRealTimeFilter(logMap));
             cfAll.join();
-            stopWatch.stop();
-            log.debug(stopWatch.prettyPrint(TimeUnit.MILLISECONDS));
         }
     }
 

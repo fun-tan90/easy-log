@@ -14,6 +14,7 @@ mqtt:
     port: 1883
     name: easy-log-compute
     clientId: easy_log_compute:${random.long(1000,9999)}
+    keep-alive-secs: 30
 
 mica:
   redis:
