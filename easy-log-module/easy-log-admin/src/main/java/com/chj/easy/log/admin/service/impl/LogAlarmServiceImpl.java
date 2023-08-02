@@ -41,7 +41,7 @@ public class LogAlarmServiceImpl implements LogAlarmService {
     MqttServerTemplate mqttServerTemplate;
 
     @Override
-    public String logAlarmPlatform(LogAlarmPlatformAddCmd logAlarmPlatformAddCmd) {
+    public String addLogAlarmPlatform(LogAlarmPlatformAddCmd logAlarmPlatformAddCmd) {
         return cacheService.addAlarmPlatform(logAlarmPlatformAddCmd.getAlarmPlatformType(),
                 LogAlarmPlatform.builder()
                         .alarmPlatformName(logAlarmPlatformAddCmd.getAlarmPlatformName())
@@ -53,7 +53,7 @@ public class LogAlarmServiceImpl implements LogAlarmService {
     }
 
     @Override
-    public String logAlarmRule(LogAlarmRuleAddCmd logAlarmRuleAddCmd) {
+    public String addLogAlarmRule(LogAlarmRuleAddCmd logAlarmRuleAddCmd) {
         LogAlarmRule logAlarmRule = LogAlarmRule
                 .builder()
                 .alarmPlatformType(logAlarmRuleAddCmd.getAlarmPlatformType())

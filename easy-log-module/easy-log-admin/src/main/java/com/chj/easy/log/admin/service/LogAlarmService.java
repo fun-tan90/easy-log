@@ -14,9 +14,9 @@ import com.chj.easy.log.core.model.LogAlarmContent;
  */
 public interface LogAlarmService {
 
-    String logAlarmPlatform(LogAlarmPlatformAddCmd logAlarmPlatformAddCmd);
+    String addLogAlarmPlatform(LogAlarmPlatformAddCmd logAlarmPlatformAddCmd);
 
-    String logAlarmRule(LogAlarmRuleAddCmd logAlarmRuleAddCmd);
+    String addLogAlarmRule(LogAlarmRuleAddCmd logAlarmRuleAddCmd);
 
     void handlerLogAlarm(LogAlarmContent logAlarmContent);
 }

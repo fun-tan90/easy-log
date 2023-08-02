@@ -31,11 +31,11 @@ public class LogAlarmController {
 
     @PostMapping("platform")
     public Res<String> logAlarmPlatform(@RequestBody @Validated LogAlarmPlatformAddCmd logAlarmPlatformAddCmd) {
-        return Res.ok(logAlarmService.logAlarmPlatform(logAlarmPlatformAddCmd));
+        return Res.ok(logAlarmService.addLogAlarmPlatform(logAlarmPlatformAddCmd));
     }
 
     @PostMapping("rule")
     public Res<String> logAlarmRule(@RequestBody @Validated LogAlarmRuleAddCmd logAlarmRuleAddCmd) {
-        return Res.ok(logAlarmService.logAlarmRule(logAlarmRuleAddCmd));
+        return Res.ok(logAlarmService.addLogAlarmRule(logAlarmRuleAddCmd));
     }
 }
