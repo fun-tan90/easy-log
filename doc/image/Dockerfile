@@ -6,8 +6,10 @@ LABEL maintainer="tan90 897546244@qq.com"
 
 # 同步时间
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && \
-    apk update && apk add wget curl vim && \
-    ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo 'Asia/Shanghai' > /etc/timezone && \
+    apk update && \
+    apk add wget curl vim && \
+    ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    echo 'Asia/Shanghai' > /etc/timezone && \
     set -xe && apk --no-cache add ttf-dejavu fontconfig
 
 # build时变量
@@ -17,6 +19,7 @@ ARG MQTT_TCP_PORT
 ARG MQTT_WEBSOCKET_PORT
 
 # run时变量
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 ENV HEAP_SIZE 256m
 ENV SPRING_PROFILES_ACTIVE dev
 ENV APP_NAME $PROJECT_NAME
@@ -26,9 +29,6 @@ VOLUME /app
 
 # 暴露的端口
 EXPOSE $SERVER_PORT $MQTT_TCP_PORT $MQTT_WEBSOCKET_PORT
-
-# 系统编码
-ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
 # exec 进入容器后的目录
 WORKDIR /app
