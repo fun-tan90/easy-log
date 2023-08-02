@@ -36,7 +36,7 @@
         <appender-ref ref="FILE"/>
     </appender>
 
-    <appender name="REDIS_STREAM_TEST" class="com.chj.easy.log.logback.appender.redis.EasyLogRedisAppender">
+    <appender name="REDIS_STREAM" class="com.chj.easy.log.logback.appender.redis.EasyLogRedisAppender">
         <appName>easy-log-example-boot2-logback</appName>
         <namespace>prod</namespace>
         <maxPushSize>100</maxPushSize>
@@ -54,6 +54,6 @@
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="ASYNC_FILE"/>
-        <appender-ref ref="REDIS_STREAM_TEST"/>
+        <appender-ref ref="REDIS_STREAM"/>
     </root>
 </configuration>

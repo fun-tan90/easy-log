@@ -49,9 +49,7 @@ public final class EasyLogRedisAppender extends AbstractAppender {
 
     private final int redisStreamMaxLen;
 
-    private final String mqttIp;
-
-    private final int mqttPort;
+    private final String mqttAddress;
 
     private EasyLogRedisAppender(final String name,
                                  final Layout<? extends Serializable> layout,
@@ -63,8 +61,7 @@ public final class EasyLogRedisAppender extends AbstractAppender {
                                  final BlockingQueue<LogTransferred> blockingQueue,
                                  final int maxPushSize,
                                  final int redisStreamMaxLen,
-                                 final String mqttIp,
-                                 final int mqttPort
+                                 final String mqttAddress
     ) {
         super(name, filter, layout, ignoreExceptions, properties);
         this.appName = appName;
@@ -72,8 +69,7 @@ public final class EasyLogRedisAppender extends AbstractAppender {
         this.blockingQueue = blockingQueue;
         this.maxPushSize = maxPushSize;
         this.redisStreamMaxLen = redisStreamMaxLen;
-        this.mqttIp = mqttIp;
-        this.mqttPort = mqttPort;
+        this.mqttAddress = mqttAddress;
     }
 
     @Getter
@@ -111,17 +107,14 @@ public final class EasyLogRedisAppender extends AbstractAppender {
         @PluginAttribute(value = "redisStreamMaxLen", defaultInt = 1000000)
         private int redisStreamMaxLen;
 
-        @PluginAttribute(value = "redisPoolMaxTotal", defaultInt = 30)
+        @PluginAttribute(value = "redisPoolMaxTotal", defaultInt = 200)
         private int redisPoolMaxTotal;
 
         @PluginAttribute(value = "redisPoolMaxIdle", defaultInt = 30)
         private int redisPoolMaxIdle;
 
-        @PluginAttribute(value = "mqttIp", defaultString = "127.0.0.1")
-        private String mqttIp;
-
-        @PluginAttribute(value = "mqttPort", defaultInt = 1883)
-        private int mqttPort;
+        @PluginAttribute(value = "mqttAddress", defaultString = "127.0.0.1:1883")
+        private String mqttAddress;
 
         @Override
         public EasyLogRedisAppender build() {
@@ -138,8 +131,7 @@ public final class EasyLogRedisAppender extends AbstractAppender {
                     blockingQueue,
                     getMaxPushSize(),
                     getRedisStreamMaxLen(),
-                    getMqttIp(),
-                    getMqttPort()
+                    getMqttAddress()
             );
         }
     }
@@ -152,7 +144,7 @@ public final class EasyLogRedisAppender extends AbstractAppender {
     @Override
     public void start() {
         AppBasicInfo appBasicInfo = AppBasicInfo.builder().appName(appName).namespace(namespace).build();
-        MqttManager.initMessageChannel(appBasicInfo, mqttIp, mqttPort);
+        MqttManager.initMessageChannel(appBasicInfo, mqttAddress);
         RedisManager.schedulePushLog(blockingQueue, maxPushSize, redisStreamMaxLen);
         super.start();
     }

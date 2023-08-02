@@ -57,13 +57,11 @@ public class EasyLogRedisAppender extends AppenderBase<ILoggingEvent> {
 
     private long redisStreamMaxLen = 1000000;
 
-    private int redisPoolMaxTotal = 30;
+    private int redisPoolMaxTotal = 200;
 
     private int redisPoolMaxIdle = 30;
 
-    private String mqttIp = "127.0.0.1";
-
-    private int mqttPort = 1883;
+    private String mqttAddress = "127.0.0.1:1883";
 
     @Override
     public void start() {
@@ -73,7 +71,7 @@ public class EasyLogRedisAppender extends AppenderBase<ILoggingEvent> {
         RedisManager.initJedisPool(redisMode, redisAddress, redisPass, redisDb, redisPoolMaxIdle, redisPoolMaxTotal, redisConnectionTimeout);
         this.blockingQueue = new ArrayBlockingQueue<>(queueSize);
         AppBasicInfo appBasicInfo = AppBasicInfo.builder().appName(appName).namespace(namespace).build();
-        MqttManager.initMessageChannel(appBasicInfo, mqttIp, mqttPort);
+        MqttManager.initMessageChannel(appBasicInfo, mqttAddress);
         RedisManager.schedulePushLog(blockingQueue, maxPushSize, redisStreamMaxLen);
         super.start();
     }

@@ -41,14 +41,15 @@ public class MqttManager {
 
     private final static AtomicBoolean MQTT_CLIENT_INITIALIZED = new AtomicBoolean(false);
 
-    public static void initMessageChannel(AppBasicInfo appBasicInfo, String mqttIp, int mqttPort) {
+    public static void initMessageChannel(AppBasicInfo appBasicInfo, String mqttAddress) {
         if (MQTT_CLIENT_INITIALIZED.compareAndSet(false, true)) {
             String appName = appBasicInfo.getAppName();
             String namespace = appBasicInfo.getNamespace();
+            String[] split = mqttAddress.split(":");
             MqttClient client = MqttClient.create()
                     .clientId(EasyLogConstants.MQTT_CLIENT_ID_APP_PREFIX + namespace + ":" + appName + ":" + RandomUtil.randomNumbers(6))
-                    .ip(mqttIp)
-                    .port(mqttPort)
+                    .ip(split[0])
+                    .port(Integer.parseInt(split[1]))
                     .username(EasyLogConstants.MQTT_CLIENT_USERNAME)
                     .password(EasyLogConstants.MQTT_CLIENT_PASSWORD)
                     .connectSync();
