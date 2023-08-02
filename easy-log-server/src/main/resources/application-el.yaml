@@ -21,6 +21,6 @@ easy-log:
   collector:
     enable: true
     banner: true
-    queue-capacity: 10240
-    insert-batch-size: 200
+    queue-capacity: 100000
+    insert-batch-size: 500
     consumer-global-orders: 1,2,3,4

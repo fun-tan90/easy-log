@@ -3,12 +3,11 @@ server:
 
 spring:
   application:
-    name: easy-log-example-boot2
+    name: easy-log-example-boot2-logback
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
   profiles:
     active: dev
     group:
       dev:
-        - cache
         - log

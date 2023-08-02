@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: easy-log-example-boot2
+    name: easy-log-example-boot2-log4j2
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
   profiles:

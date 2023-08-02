@@ -21,21 +21,20 @@ import java.util.concurrent.TimeUnit;
 @RestController
 public class DemoController {
 
+    private static final ExecutorService NEW_FIXED_THREAD_POOL = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
     @GetMapping
     @TLogAspect({"id"})
     public String index(String id) {
-        ExecutorService newFixedThreadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 //        MDC.put("name","陈浩杰");
-        for (int i = 0; i < 100; i++) {
-            newFixedThreadPool.execute(() -> {
-                String threadName = Thread.currentThread().getName();
-                log.error("{} error is {} ", threadName, id);
-                log.warn("{} warn is {} ", threadName, id);
-                log.info("{} info is {} ", threadName, id);
-                log.debug("{} debug is {} ", threadName, id);
-                log.trace("{} trace is {} ", threadName, id);
-            });
-        }
+        NEW_FIXED_THREAD_POOL.execute(() -> {
+            String threadName = Thread.currentThread().getName();
+            log.error("{} error is {} ", threadName, id);
+            log.warn("{} warn is {} ", threadName, id);
+            log.info("{} info is {} ", threadName, id);
+            log.debug("{} debug is {} ", threadName, id);
+            log.trace("{} trace is {} ", threadName, id);
+        });
         return id;
     }
 
@@ -53,7 +52,7 @@ public class DemoController {
     }
 
     @GetMapping("scheduled")
-    public String logLevel(String id) {
+    public String scheduled(String id) {
         Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors())
                 .scheduleAtFixedRate(() -> {
                     String threadName = Thread.currentThread().getName();
