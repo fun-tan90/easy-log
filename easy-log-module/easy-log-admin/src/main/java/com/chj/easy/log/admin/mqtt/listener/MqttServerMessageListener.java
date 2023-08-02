@@ -1,5 +1,6 @@
 package com.chj.easy.log.admin.mqtt.listener;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dreamlu.iot.mqtt.codec.MqttPublishMessage;
 import net.dreamlu.iot.mqtt.codec.MqttQoS;
@@ -18,7 +19,6 @@ import java.nio.charset.StandardCharsets;
  * @date 2023/7/29 21:35
  */
 @Slf4j
-@Component
 public class MqttServerMessageListener implements IMqttMessageListener {
 
     @Override

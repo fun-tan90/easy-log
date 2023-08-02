@@ -3,14 +3,12 @@ package com.chj.easy.log.admin.mqtt.listener;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.event.LogAlarmUnRegisterEvent;
 import com.chj.easy.log.core.service.CacheService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dreamlu.iot.mqtt.codec.MqttQoS;
 import net.dreamlu.iot.mqtt.core.server.event.IMqttSessionListener;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
 import org.tio.core.ChannelContext;
-
-import javax.annotation.Resource;
 
 /**
  * description 监听订阅
@@ -20,14 +18,12 @@ import javax.annotation.Resource;
  * @date 2023/7/22 7:41
  */
 @Slf4j
-@Component
+@RequiredArgsConstructor
 public class MqttSessionListener implements IMqttSessionListener {
 
-    @Resource
-    CacheService cacheService;
+    private final CacheService cacheService;
 
-    @Resource
-    ApplicationContext applicationContext;
+    private final ApplicationContext applicationContext;
 
     @Override
     public void onSubscribed(ChannelContext context, String clientId, String topicFilter, MqttQoS mqttQoS) {

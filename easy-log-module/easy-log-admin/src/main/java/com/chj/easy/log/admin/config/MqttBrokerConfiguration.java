@@ -3,7 +3,10 @@ package com.chj.easy.log.admin.config;
 import com.chj.easy.log.admin.mqtt.cluster.*;
 import com.chj.easy.log.admin.mqtt.config.JacksonMessageSerializer;
 import com.chj.easy.log.admin.mqtt.enums.RedisKeys;
+import com.chj.easy.log.admin.mqtt.listener.MqttServerMessageListener;
+import com.chj.easy.log.admin.mqtt.listener.MqttSessionListener;
 import com.chj.easy.log.admin.mqtt.listener.RedisMqttConnectStatusListener;
+import com.chj.easy.log.core.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
 import net.dreamlu.iot.mqtt.core.server.MqttServer;
 import net.dreamlu.iot.mqtt.core.server.dispatcher.IMqttMessageDispatcher;
@@ -66,4 +69,13 @@ public class MqttBrokerConfiguration {
         return new RedisMqttServerManager(redisCache, mqttServer);
     }
 
+    @Bean
+    public MqttServerMessageListener mqttServerMessageListener() {
+        return new MqttServerMessageListener();
+    }
+
+    @Bean
+    public MqttSessionListener mqttSessionListener(CacheService cacheService, ApplicationContext applicationContext) {
+        return new MqttSessionListener(cacheService, applicationContext);
+    }
 }

@@ -6,7 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * description TODO
@@ -22,9 +24,10 @@ public class DemoController {
     @GetMapping
     @TLogAspect({"id"})
     public String index(String id) {
+        ExecutorService newFixedThreadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 //        MDC.put("name","陈浩杰");
-        for (int i = 0; i < 12; i++) {
-            Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()).execute(() -> {
+        for (int i = 0; i < 100; i++) {
+            newFixedThreadPool.execute(() -> {
                 String threadName = Thread.currentThread().getName();
                 log.error("{} error is {} ", threadName, id);
                 log.warn("{} warn is {} ", threadName, id);
@@ -49,13 +52,17 @@ public class DemoController {
         }
     }
 
-    @GetMapping("log-level")
-    public String logLevel() {
-        log.error("error");
-        log.warn("warn");
-        log.info("info");
-        log.debug("debug");
-        log.trace("trace");
+    @GetMapping("scheduled")
+    public String logLevel(String id) {
+        Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors())
+                .scheduleAtFixedRate(() -> {
+                    String threadName = Thread.currentThread().getName();
+                    log.error("{} error is {} ", threadName, id);
+                    log.warn("{} warn is {} ", threadName, id);
+                    log.info("{} info is {} ", threadName, id);
+                    log.debug("{} debug is {} ", threadName, id);
+                    log.trace("{} trace is {} ", threadName, id);
+                }, 1, 1, TimeUnit.MILLISECONDS);
         return "ok";
     }
 }

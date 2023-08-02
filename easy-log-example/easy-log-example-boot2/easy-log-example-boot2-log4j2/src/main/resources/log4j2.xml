@@ -29,7 +29,7 @@
         </RollingRandomAccessFile>
 
         <EasyLogRedis name="REDIS_STREAM_TEST"
-                      appName="easy-log-example-log4j2-boot2"
+                      appName="easy-log-example-boot2-log4j2"
                       namespace="prod"
                       maxPushSize="500"
                       queueSize="10240"
