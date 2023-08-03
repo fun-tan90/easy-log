@@ -3,6 +3,7 @@ package com.chj.easy.log.core.config;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.convention.aspect.LogAspect;
 import com.chj.easy.log.core.convention.exception.ServiceException;
+import com.chj.easy.log.core.indicator.MqttClientHealthIndicator;
 import com.chj.easy.log.core.property.EasyLogEsProperties;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -36,6 +37,11 @@ public class EasyLogCoreAutoConfiguration {
 
     @Resource
     EasyLogEsProperties easyLogEsProperties;
+
+    @Bean
+    public MqttClientHealthIndicator mqttClientHealthIndicator() {
+        return new MqttClientHealthIndicator();
+    }
 
     @Bean(destroyMethod = "close")
     public RestHighLevelClient restHighLevelClient() {

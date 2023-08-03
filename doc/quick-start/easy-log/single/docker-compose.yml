@@ -25,6 +25,7 @@ services:
       - easy-log.admin.enable=true
       - easy-log.compute.enable=true
       - easy-log.collector.enable=true
+      - easy-log.es.address=172.16.8.31:9200,172.16.8.31:9201,172.16.8.31:9202
       - mqtt.client.ip=easy-log-app-event
       - mqtt.client.port=1883
     volumes:
@@ -37,7 +38,6 @@ services:
       test: [ "CMD", "curl", "-f", "http://localhost:1124/monitor/health" ]
       start_period: 3s
       retries: 3
-
 
 volumes:
   easy-log-app-event:

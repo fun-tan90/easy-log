@@ -9,22 +9,19 @@
 # el_net：自定义网络名称                 
 docker network create --driver=bridge --gateway=172.18.0.1 --subnet=172.18.0.0/16 el_net
 ```
+#### 2、选择部署方式
+```shell
+# single  单机
 
-#### 2、修复.env环境变量
+# cluster 集群, 实例数可以横向扩展
+```
+#### 3、修复.env环境变量
 ```shell
 # 修改.env中image的版本信息以及堆内存大小
 ```
 
-#### 3、easy-log单机版
+#### 4、启动Easy-Log
 
 ```shell
-# 修改.env中image的版本信息以及堆内存大小
 docker-compose up -d
-```
-
-#### 4、easy-log集群版
-
-```shell
-# easy-log-admin、easy-log-compute和easy-log-collector的容器实例数量可自行调整
-docker-compose -f docker-compose-cluster.yml up -d
 ```
