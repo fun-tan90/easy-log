@@ -1,6 +1,7 @@
 package com.chj.easy.log.compute;
 
 import com.chj.easy.log.core.model.LogRealTimeFilterRule;
+import reactor.core.publisher.Flux;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,5 +23,16 @@ public class LogRealTimeFilterRulesManager {
 
     public static void removeLogRealTimeFilterRule(LogRealTimeFilterRule logRealTimeFilterRule) {
         RULES_MAP.remove(logRealTimeFilterRule.getClientId());
+    }
+
+    public static void main(String[] args) {
+        Flux<String> flux = Flux.just("1", "2");
+        flux.subscribe(n -> {
+            System.out.println("n = " + n);
+        }, err -> {
+            System.out.println("errorConsumer" + err.getMessage());
+        }, () -> {
+            System.out.println("completeConsumer");
+        });
     }
 }
