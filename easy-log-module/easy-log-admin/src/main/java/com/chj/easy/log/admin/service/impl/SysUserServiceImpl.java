@@ -1,10 +1,10 @@
 package com.chj.easy.log.admin.service.impl;
 
-import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.SaLoginModel;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaTokenConsts;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.crypto.SecureUtil;
 import com.chj.easy.log.admin.model.cmd.SysUserLoginCmd;
 import com.chj.easy.log.admin.model.vo.SysUserInfoVo;
 import com.chj.easy.log.admin.model.vo.SysUserMqttVo;
@@ -78,14 +78,15 @@ public class SysUserServiceImpl implements SysUserService {
     @Override
     public SysUserMqttVo userMqttInfo() {
         if (StpUtil.isLogin()) {
-            SaSession tokenSession = StpUtil.getTokenSession();
-
+            String tokenValue = StpUtil.getTokenValue();
+            String mqttClientId = EasyLogConstants.MQTT_CLIENT_ID_FRONT_PREFIX + tokenValue;
+            String md5 = SecureUtil.md5(mqttClientId);
             return SysUserMqttVo
                     .builder()
                     .mqttBrokerUrl(easyLogAdminProperties.getMqttBrokerUrl())
-                    .mqttClientId(tokenSession.getString("mqttClientId"))
-                    .mqttUserName(tokenSession.getString("mqttUserName"))
-                    .mqttPassword(tokenSession.getString("mqttPassword"))
+                    .mqttClientId(mqttClientId)
+                    .mqttUserName(md5.substring(0, 6))
+                    .mqttPassword(md5.substring(6))
                     .subTopics(Collections.singletonList(
                             Topic.builder()
                                     .topic(EasyLogConstants.LOG_INPUT_SPEED_TOPIC)

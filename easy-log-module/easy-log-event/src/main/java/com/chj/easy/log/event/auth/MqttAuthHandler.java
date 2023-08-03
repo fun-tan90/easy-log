@@ -1,5 +1,6 @@
 package com.chj.easy.log.event.auth;
 
+import cn.hutool.crypto.SecureUtil;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import lombok.extern.slf4j.Slf4j;
 import net.dreamlu.iot.mqtt.core.server.auth.IMqttServerAuthHandler;
@@ -26,15 +27,10 @@ public class MqttAuthHandler implements IMqttServerAuthHandler {
             return true;
         }
         if (clientId.startsWith(EasyLogConstants.MQTT_CLIENT_ID_FRONT_PREFIX)) {
-            String[] split = clientId.split(":");
-            if (split.length != 2) {
-                return false;
-            }
-//            SaSession tokenSession = StpUtil.getTokenSessionByToken(split[1]);
-//            String mqttUserName = tokenSession.get("mqttUserName", () -> "");
-//            String mqttPassword = tokenSession.get("mqttPassword", () -> "");
-//            return userName.equals(mqttUserName) && password.equals(mqttPassword);
-            return true;
+            String md5 = SecureUtil.md5(clientId);
+            String mqttUserName = md5.substring(0, 6);
+            String mqttPassword = md5.substring(6);
+            return userName.equals(mqttUserName) && password.equals(mqttPassword);
         }
         return false;
     }

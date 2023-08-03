@@ -22,6 +22,8 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static com.chj.easy.log.common.constant.EasyLogConstants.S_W_LOG_INPUT_SPEED;
+
 /**
  * description TODO
  * company 铁人科技
@@ -49,8 +51,7 @@ public class SysMonitorServiceImpl implements SysMonitorService {
                 Boolean lock = stringRedisTemplate.opsForValue().setIfAbsent(EasyLogConstants.LOG_INPUT_SPEED_LOCK, "", 4, TimeUnit.SECONDS);
                 if (Boolean.TRUE.equals(lock)) {
                     try {
-                        Map<String, Integer> windowCountMap = cacheService.slidingWindowCount("S_W:LOG_INPUT_SPEED:");
-                        log.debug("日志流入速率:\n{}", JSONUtil.toJsonPrettyStr(windowCountMap));
+                        Map<String, Integer> windowCountMap = cacheService.slidingWindowCount(EasyLogConstants.S_W_LOG_INPUT_SPEED);
                         mqttClientTemplate.publish(EasyLogConstants.LOG_INPUT_SPEED_TOPIC, JSONUtil.toJsonStr(windowCountMap).getBytes(StandardCharsets.UTF_8), MqttQoS.AT_MOST_ONCE);
                     } finally {
                         stringRedisTemplate.delete(EasyLogConstants.LOG_INPUT_SPEED_LOCK);

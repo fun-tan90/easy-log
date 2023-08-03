@@ -22,7 +22,7 @@ import java.nio.charset.StandardCharsets;
  */
 @Slf4j
 @Component
-public class MqttClientSubscribeListener {
+public class ComputeMqttSubscribeListener {
 
     @MqttClientSubscribe(value = EasyLogConstants.LOG_ALARM_RULES_TOPIC + "#", qos = MqttQoS.EXACTLY_ONCE)
     public void subLogAlarmRules(String topic, byte[] payload) {
