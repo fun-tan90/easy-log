@@ -69,7 +69,7 @@ public class LogAlarmRulesManager {
         return Arrays.stream(loggerName).map(rule::get).collect(Collectors.toMap(LogAlarmRule::getLoggerName, Function.identity()));
     }
 
-    public static void removeAlarmRule(LogAlarmRule logAlarmRule) {
+    public static void removeLogAlarmRule(LogAlarmRule logAlarmRule) {
         String appName = logAlarmRule.getAppName();
         String namespace = logAlarmRule.getNamespace();
         String loggerName = logAlarmRule.getLoggerName();

@@ -13,7 +13,6 @@ import net.dreamlu.iot.mqtt.core.server.serializer.IMessageSerializer;
 import net.dreamlu.iot.mqtt.core.server.store.IMqttMessageStore;
 import net.dreamlu.mica.redis.cache.MicaRedisCache;
 import net.dreamlu.mica.redis.stream.RStreamTemplate;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
@@ -55,19 +54,19 @@ public class MqttBrokerConfiguration {
     }
 
     @Bean
-    public IMqttMessageDispatcher mqttMessageDispatcher(RStreamTemplate streamTemplate,
+    public IMqttMessageDispatcher messageDispatcher(RStreamTemplate streamTemplate,
                                                         IMessageSerializer messageSerializer) {
         return new RedisMqttMessageDispatcher(streamTemplate, messageSerializer, RedisKeys.REDIS_CHANNEL_EXCHANGE.getKey());
     }
 
     @Bean
-    public RedisMqttServerManager mqttServerManage(MicaRedisCache redisCache,
-                                                   MqttServer mqttServer) {
+    public RedisMqttServerManager mqttServerManager(MicaRedisCache redisCache,
+                                                    MqttServer mqttServer) {
         return new RedisMqttServerManager(redisCache, mqttServer);
     }
 
     @Bean
-    public MqttServerMessageListener mqttServerMessageListener(ApplicationContext applicationContext) {
+    public MqttServerMessageListener serverMessageListener(ApplicationContext applicationContext) {
         return new MqttServerMessageListener(applicationContext);
     }
 

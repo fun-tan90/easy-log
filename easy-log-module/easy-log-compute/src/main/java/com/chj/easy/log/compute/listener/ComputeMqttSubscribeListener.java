@@ -31,7 +31,7 @@ public class ComputeMqttSubscribeListener {
         if (topic.endsWith("put")) {
             LogAlarmRulesManager.putLogAlarmRule(JSONUtil.toBean(msg, LogAlarmRule.class));
         } else if (topic.endsWith("remove")) {
-            LogAlarmRulesManager.removeAlarmRule(JSONUtil.toBean(msg, LogAlarmRule.class));
+            LogAlarmRulesManager.removeLogAlarmRule(JSONUtil.toBean(msg, LogAlarmRule.class));
         }
     }
 
