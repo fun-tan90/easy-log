@@ -28,8 +28,8 @@ public class MqttAuthHandler implements IMqttServerAuthHandler {
         }
         if (clientId.startsWith(EasyLogConstants.MQTT_CLIENT_ID_FRONT_PREFIX)) {
             String md5 = SecureUtil.md5(clientId);
-            String mqttUserName = md5.substring(0, 6);
-            String mqttPassword = md5.substring(6);
+            String mqttUserName = md5.substring(0, EasyLogConstants.MQTT_MD5_SUB_INDEX);
+            String mqttPassword = md5.substring(EasyLogConstants.MQTT_MD5_SUB_INDEX);
             return userName.equals(mqttUserName) && password.equals(mqttPassword);
         }
         return false;

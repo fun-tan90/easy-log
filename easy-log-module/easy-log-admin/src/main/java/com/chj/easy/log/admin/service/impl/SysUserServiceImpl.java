@@ -85,8 +85,8 @@ public class SysUserServiceImpl implements SysUserService {
                     .builder()
                     .mqttBrokerUrl(easyLogAdminProperties.getMqttBrokerUrl())
                     .mqttClientId(mqttClientId)
-                    .mqttUserName(md5.substring(0, 6))
-                    .mqttPassword(md5.substring(6))
+                    .mqttUserName(md5.substring(0, EasyLogConstants.MQTT_MD5_SUB_INDEX))
+                    .mqttPassword(md5.substring(EasyLogConstants.MQTT_MD5_SUB_INDEX))
                     .subTopics(Collections.singletonList(
                             Topic.builder()
                                     .topic(EasyLogConstants.LOG_INPUT_SPEED_TOPIC)
