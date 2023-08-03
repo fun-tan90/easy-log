@@ -1,0 +1,19 @@
+server:
+  port: 1203
+
+spring:
+  application:
+    name: easy-log-server
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+  thymeleaf:
+    cache: false
+    mode: HTML
+    prefix: classpath:/templates/
+  profiles:
+    active: dev
+    group:
+      dev:
+        - actuator
+        - cache
+        - mqtt

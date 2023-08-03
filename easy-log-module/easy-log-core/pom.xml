@@ -62,6 +62,10 @@
             <groupId>net.dreamlu</groupId>
             <artifactId>mica-redis</artifactId>
         </dependency>
+        <dependency>
+            <groupId>net.dreamlu</groupId>
+            <artifactId>mica-mqtt-client-spring-boot-starter</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

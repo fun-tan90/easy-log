@@ -9,14 +9,10 @@
         <version>1.1.2</version>
     </parent>
 
-    <artifactId>easy-log-module</artifactId>
+    <artifactId>easy-log-app</artifactId>
     <packaging>pom</packaging>
-
     <modules>
-        <module>easy-log-collector</module>
-        <module>easy-log-core</module>
-        <module>easy-log-admin</module>
-        <module>easy-log-compute</module>
-        <module>easy-log-event</module>
+        <module>easy-log-app-event</module>
+        <module>easy-log-app-server</module>
     </modules>
 </project>

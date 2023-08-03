@@ -13,9 +13,9 @@
         <module>easy-log-agent</module>
         <module>easy-log-appender</module>
         <module>easy-log-common</module>
-        <module>easy-log-server</module>
         <module>easy-log-example</module>
         <module>easy-log-module</module>
+        <module>easy-log-app</module>
     </modules>
 
     <properties>
@@ -83,6 +83,11 @@
             <dependency>
                 <groupId>com.chj</groupId>
                 <artifactId>easy-log-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.chj</groupId>
+                <artifactId>easy-log-event</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

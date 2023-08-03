@@ -8,7 +8,7 @@ import com.chj.easy.log.common.threadpool.EasyLogThreadPool;
 import com.chj.easy.log.core.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
 import net.dreamlu.iot.mqtt.codec.MqttQoS;
-import net.dreamlu.iot.mqtt.spring.server.MqttServerTemplate;
+import net.dreamlu.iot.mqtt.spring.client.MqttClientTemplate;
 import org.springframework.data.redis.connection.stream.Consumer;
 import org.springframework.data.redis.connection.stream.PendingMessage;
 import org.springframework.data.redis.connection.stream.PendingMessages;
@@ -40,7 +40,7 @@ public class SysMonitorServiceImpl implements SysMonitorService {
     CacheService cacheService;
 
     @Resource
-    MqttServerTemplate mqttServerTemplate;
+    MqttClientTemplate mqttClientTemplate;
 
     @Override
     public void statsLogInputSpeed() {
@@ -51,7 +51,7 @@ public class SysMonitorServiceImpl implements SysMonitorService {
                     try {
                         Map<String, Integer> windowCountMap = cacheService.slidingWindowCount("S_W:LOG_INPUT_SPEED:");
                         log.debug("日志流入速率:\n{}", JSONUtil.toJsonPrettyStr(windowCountMap));
-                        mqttServerTemplate.publishAll(EasyLogConstants.LOG_INPUT_SPEED_TOPIC, JSONUtil.toJsonStr(windowCountMap).getBytes(StandardCharsets.UTF_8), MqttQoS.AT_MOST_ONCE);
+                        mqttClientTemplate.publish(EasyLogConstants.LOG_INPUT_SPEED_TOPIC, JSONUtil.toJsonStr(windowCountMap).getBytes(StandardCharsets.UTF_8), MqttQoS.AT_MOST_ONCE);
                     } finally {
                         stringRedisTemplate.delete(EasyLogConstants.LOG_INPUT_SPEED_LOCK);
                     }

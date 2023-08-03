@@ -1,0 +1,15 @@
+mqtt:
+  client:
+    enabled: ${easy-log.compute.enable}
+    ip: 172.16.8.132
+    port: 1883
+    name: easy-log-compute
+    clientId: easy_log_compute:${random.long(1000,9999)}
+    keep-alive-secs: 30
+
+mica:
+  redis:
+    stream:
+      enable: true
+      poll-timeout: 1s
+      poll-batch-size: 100

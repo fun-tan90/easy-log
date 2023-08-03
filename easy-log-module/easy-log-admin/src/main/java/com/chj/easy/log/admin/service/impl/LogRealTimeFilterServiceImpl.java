@@ -9,8 +9,7 @@ import com.chj.easy.log.core.model.Topic;
 import com.chj.easy.log.core.service.EsService;
 import lombok.extern.slf4j.Slf4j;
 import net.dreamlu.iot.mqtt.codec.MqttQoS;
-import net.dreamlu.iot.mqtt.spring.server.MqttServerTemplate;
-import org.springframework.context.ApplicationContext;
+import net.dreamlu.iot.mqtt.spring.client.MqttClientTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -33,7 +32,7 @@ import java.util.Map;
 public class LogRealTimeFilterServiceImpl implements LogRealTimeFilterService {
 
     @Resource
-    MqttServerTemplate mqttServerTemplate;
+    MqttClientTemplate mqttClientTemplate;
 
     @Resource
     EsService esService;
@@ -73,7 +72,7 @@ public class LogRealTimeFilterServiceImpl implements LogRealTimeFilterService {
         }
         String mqttClientId = logRealTimeFilterCmd.getMqttClientId();
         LogRealTimeFilterRule logRealTimeFilterRule = LogRealTimeFilterRule.builder().clientId(mqttClientId).realTimeFilterRules(realTimeFilterRules).build();
-        mqttServerTemplate.publishAll(EasyLogConstants.LOG_REAL_TIME_FILTER_RULES_TOPIC + "put", JSONUtil.toJsonStr(logRealTimeFilterRule).getBytes(StandardCharsets.UTF_8), MqttQoS.EXACTLY_ONCE);
+        mqttClientTemplate.publish(EasyLogConstants.LOG_REAL_TIME_FILTER_RULES_TOPIC + "put", JSONUtil.toJsonStr(logRealTimeFilterRule).getBytes(StandardCharsets.UTF_8), MqttQoS.EXACTLY_ONCE);
         return Topic.builder()
                 .topic(EasyLogConstants.LOG_AFTER_FILTERED_TOPIC + mqttClientId)
                 .qos(1)

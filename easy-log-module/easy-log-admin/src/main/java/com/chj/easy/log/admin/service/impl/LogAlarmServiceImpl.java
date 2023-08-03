@@ -12,7 +12,7 @@ import com.chj.easy.log.core.model.LogAlarmRule;
 import com.chj.easy.log.core.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
 import net.dreamlu.iot.mqtt.codec.MqttQoS;
-import net.dreamlu.iot.mqtt.spring.server.MqttServerTemplate;
+import net.dreamlu.iot.mqtt.spring.client.MqttClientTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -38,7 +38,7 @@ public class LogAlarmServiceImpl implements LogAlarmService {
     MessageCenterServiceChoose messageCenterServiceChoose;
 
     @Resource
-    MqttServerTemplate mqttServerTemplate;
+    MqttClientTemplate mqttClientTemplate;
 
     @Override
     public String addLogAlarmPlatform(LogAlarmPlatformAddCmd logAlarmPlatformAddCmd) {
@@ -66,7 +66,7 @@ public class LogAlarmServiceImpl implements LogAlarmService {
                 .threshold(logAlarmRuleAddCmd.getThreshold())
                 .status(logAlarmRuleAddCmd.getStatus())
                 .build();
-        mqttServerTemplate.publishAll(EasyLogConstants.LOG_ALARM_RULES_TOPIC + "put", JSONUtil.toJsonStr(logAlarmRule).getBytes(StandardCharsets.UTF_8), MqttQoS.EXACTLY_ONCE);
+        mqttClientTemplate.publish(EasyLogConstants.LOG_ALARM_RULES_TOPIC + "put", JSONUtil.toJsonStr(logAlarmRule).getBytes(StandardCharsets.UTF_8), MqttQoS.EXACTLY_ONCE);
         return cacheService.addLogAlarmRule(logAlarmRule);
     }
 
