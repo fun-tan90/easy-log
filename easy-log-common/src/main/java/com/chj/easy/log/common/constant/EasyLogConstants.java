@@ -23,6 +23,8 @@ public interface EasyLogConstants {
 
     String COMPUTE_SCAN_BASE_PACKAGES = "com.chj.easy.log.compute";
 
+    String EVENT_SCAN_BASE_PACKAGES = "com.chj.easy.log.event";
+
     String ADMIN_SCAN_BASE_PACKAGES = "com.chj.easy.log.admin";
 
     String CORE_SCAN_BASE_PACKAGES = "com.chj.easy.log.core";

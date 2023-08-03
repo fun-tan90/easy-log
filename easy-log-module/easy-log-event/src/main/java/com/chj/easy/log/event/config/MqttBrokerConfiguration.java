@@ -1,5 +1,6 @@
 package com.chj.easy.log.event.config;
 
+import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.event.cluster.*;
 import com.chj.easy.log.event.enums.RedisKeys;
 import com.chj.easy.log.event.listener.MqttServerMessageListener;
@@ -15,6 +16,7 @@ import net.dreamlu.mica.redis.cache.MicaRedisCache;
 import net.dreamlu.mica.redis.stream.RStreamTemplate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 
 /**
  * mica mqtt broker 配置
@@ -22,6 +24,7 @@ import org.springframework.context.annotation.Bean;
  * @author L.cm
  */
 @Slf4j
+@ComponentScan(EasyLogConstants.EVENT_SCAN_BASE_PACKAGES)
 public class MqttBrokerConfiguration {
 
     @Bean
