@@ -11,6 +11,7 @@
 
     <artifactId>easy-log-app</artifactId>
     <packaging>pom</packaging>
+
     <modules>
         <module>easy-log-app-event</module>
         <module>easy-log-app-server</module>

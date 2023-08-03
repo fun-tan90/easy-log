@@ -19,7 +19,7 @@ public class MqttAuthHandler implements IMqttServerAuthHandler {
 
     @Override
     public boolean authenticate(ChannelContext context, String uniqueId, String clientId, String userName, String password) {
-        if (clientId.startsWith(EasyLogConstants.MQTT_CLIENT_ID_COMPUTE_PREFIX)) {
+        if (clientId.startsWith(EasyLogConstants.MQTT_CLIENT_ID_SERVER_PREFIX)) {
             return true;
         }
         if (clientId.startsWith(EasyLogConstants.MQTT_CLIENT_ID_APP_PREFIX) && EasyLogConstants.MQTT_CLIENT_USERNAME.equals(userName) && EasyLogConstants.MQTT_CLIENT_PASSWORD.equals(password)) {

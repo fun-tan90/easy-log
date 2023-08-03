@@ -35,7 +35,7 @@ public class RedisMqttConnectStatusListener implements IMqttConnectStatusListene
     @Override
     public void online(ChannelContext context, String clientId, String username) {
         redisCache.sAdd(getRedisKey(), clientId);
-        if (clientId.startsWith(EasyLogConstants.MQTT_CLIENT_ID_COMPUTE_PREFIX)) {
+        if (clientId.startsWith(EasyLogConstants.MQTT_CLIENT_ID_SERVER_PREFIX)) {
             // easy_log_compute上线，需同步缓存
             applicationContext.publishEvent(new EasyLogComputeOnlineEvent(this, clientId));
         }
@@ -49,7 +49,7 @@ public class RedisMqttConnectStatusListener implements IMqttConnectStatusListene
             applicationContext.publishEvent(new LogRealTimeFilterUnRegisterEvent(this, clientId));
         } else if (clientId.startsWith(EasyLogConstants.MQTT_CLIENT_ID_APP_PREFIX)) {
 
-        } else if (clientId.startsWith(EasyLogConstants.MQTT_CLIENT_ID_COMPUTE_PREFIX)) {
+        } else if (clientId.startsWith(EasyLogConstants.MQTT_CLIENT_ID_SERVER_PREFIX)) {
 
         }
     }
