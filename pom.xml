@@ -165,11 +165,6 @@
                 <artifactId>mapstruct</artifactId>
                 <version>${mapstruct.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>fastjson</artifactId>
-                <version>${fastjson.version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>cn.dev33</groupId>
@@ -251,12 +246,6 @@
                 <groupId>com.dtflys.forest</groupId>
                 <artifactId>forest-spring-boot-starter</artifactId>
                 <version>${forest.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.noear</groupId>
-                <artifactId>snack3</artifactId>
-                <version>${snack3.version}</version>
             </dependency>
 
             <dependency>

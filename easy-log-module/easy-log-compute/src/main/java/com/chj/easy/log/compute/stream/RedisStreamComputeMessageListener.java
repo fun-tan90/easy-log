@@ -19,10 +19,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -116,6 +113,8 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
      * @param logMap
      */
     private CompletableFuture<Void> logRealTimeFilter(Map<String, byte[]> logMap) {
+        Map<String, String> logStrMap = new HashMap<>(logMap.size());
+        logMap.keySet().forEach(key -> logStrMap.put(key, new String(logMap.get(key))));
         return CompletableFuture.runAsync(() -> {
             List<String> clientIds = LogRealTimeFilterRulesManager.RULES_MAP.keySet().stream().filter(n -> {
                 Map<String, String> realTimeFilterRules = LogRealTimeFilterRulesManager.RULES_MAP.get(n);
@@ -123,7 +122,7 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
                     String[] split = realTimeFilterRule.split("#");
                     String ruleKey = split[0];
                     String ruleWay = split[1];
-                    String logVal = new String(logMap.get(ruleKey));
+                    String logVal = logStrMap.get(ruleKey);
                     String ruleVal = realTimeFilterRules.get(realTimeFilterRule);
                     if ("eq".equals(ruleWay)) {
                         if (!logVal.equals(ruleVal)) {
@@ -145,7 +144,7 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
             }).collect(Collectors.toList());
             if (!CollectionUtils.isEmpty(clientIds)) {
                 for (String clientId : clientIds) {
-                    mqttClientTemplate.publish(EasyLogConstants.LOG_AFTER_FILTERED_TOPIC + clientId, JSONUtil.toJsonStr(logMap).getBytes(StandardCharsets.UTF_8), MqttQoS.AT_LEAST_ONCE);
+                    mqttClientTemplate.publish(EasyLogConstants.LOG_AFTER_FILTERED_TOPIC + clientId, JSONUtil.toJsonStr(logStrMap).getBytes(StandardCharsets.UTF_8), MqttQoS.AT_LEAST_ONCE);
                 }
             }
         }, EasyLogThreadPool.newEasyLogFixedPoolInstance());
