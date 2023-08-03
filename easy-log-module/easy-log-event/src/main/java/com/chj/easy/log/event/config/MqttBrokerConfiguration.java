@@ -55,7 +55,7 @@ public class MqttBrokerConfiguration {
 
     @Bean
     public IMqttMessageDispatcher messageDispatcher(RStreamTemplate streamTemplate,
-                                                        IMessageSerializer messageSerializer) {
+                                                    IMessageSerializer messageSerializer) {
         return new RedisMqttMessageDispatcher(streamTemplate, messageSerializer, RedisKeys.REDIS_CHANNEL_EXCHANGE.getKey());
     }
 
@@ -66,12 +66,12 @@ public class MqttBrokerConfiguration {
     }
 
     @Bean
-    public MqttServerMessageListener serverMessageListener(ApplicationContext applicationContext) {
-        return new MqttServerMessageListener(applicationContext);
+    public MqttServerMessageListener serverMessageListener() {
+        return new MqttServerMessageListener();
     }
 
     @Bean
-    public MqttSessionListener mqttSessionListener(ApplicationContext applicationContext) {
-        return new MqttSessionListener(applicationContext);
+    public MqttSessionListener mqttSessionListener() {
+        return new MqttSessionListener();
     }
 }
