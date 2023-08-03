@@ -46,8 +46,8 @@
                     <!--<dockerHost>http://121.36.96.79:7200</dockerHost>-->
                     <!--内网 lk-->
                     <dockerHost>http://172.16.8.31:7200</dockerHost>
-                    <imageName>registry.cn-hangzhou.aliyuncs.com/tan90/easy-log:${project.version}</imageName>
-                    <dockerDirectory>${project.basedir}/../../doc/image</dockerDirectory>
+                    <imageName>registry.cn-hangzhou.aliyuncs.com/tan90/easy-log-app-event:${project.version}</imageName>
+                    <dockerDirectory>${project.basedir}/../../doc/image/easy-log-app-event</dockerDirectory>
                     <buildArgs>
                         <PROJECT_NAME>easy-log-app-event</PROJECT_NAME>
                         <SERVER_PORT>1203</SERVER_PORT>
@@ -59,15 +59,15 @@
                         <imageTag>latest</imageTag>
                     </imageTags>
                 </configuration>
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>build-image</id>-->
-<!--                        <phase>package</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>build</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
+                <executions>
+                    <execution>
+                        <id>build-image</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
