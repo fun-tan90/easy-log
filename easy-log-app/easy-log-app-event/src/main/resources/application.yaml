@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: easy-log-server
+    name: easy-log-app-event
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
   thymeleaf:

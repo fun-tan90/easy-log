@@ -1,16 +1,13 @@
 version: '3.7'
 services:
-  easy-log:
-    image: ${image}
-    container_name: easy-log
+  easy-log-app-event:
+    image: ${imageAppEvent}
+    container_name: easy-log-app-event
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - HEAP_SIZE=${heap_size}
-      - easy-log.admin.enable=true
-      - easy-log.compute.enable=true
-      - easy-log.collector.enable=true
     volumes:
-      - easy-log:/app
+      - easy-log-app-event:/app
     ports:
       - "2203:1203"
       - "2204:1883"
@@ -19,9 +16,33 @@ services:
       test: [ "CMD", "curl", "-f", "http://localhost:1203/monitor/health" ]
       start_period: 3s
       retries: 3
+  easy-log-app-server:
+    image: ${imageAppServer}
+    container_name: easy-log-app-server
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - HEAP_SIZE=${heap_size}
+      - easy-log.admin.enable=true
+      - easy-log.compute.enable=true
+      - easy-log.collector.enable=true
+      - mqtt.client.ip=easy-log-app-event
+      - mqtt.client.port=1883
+    volumes:
+      - easy-log-app-server:/app
+    ports:
+      - "2124:1124"
+    depends_on:
+      - easy-log-app-event
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:1124/monitor/health" ]
+      start_period: 3s
+      retries: 3
+
 
 volumes:
-  easy-log:
+  easy-log-app-event:
+    driver: local
+  easy-log-app-server:
     driver: local
 
 networks:

@@ -49,7 +49,7 @@
                     <imageName>registry.cn-hangzhou.aliyuncs.com/tan90/easy-log:${project.version}</imageName>
                     <dockerDirectory>${project.basedir}/../../doc/image</dockerDirectory>
                     <buildArgs>
-                        <PROJECT_NAME>easy-log-server</PROJECT_NAME>
+                        <PROJECT_NAME>easy-log-app-event</PROJECT_NAME>
                         <SERVER_PORT>1203</SERVER_PORT>
                         <MQTT_TCP_PORT>1883</MQTT_TCP_PORT>
                         <MQTT_WEBSOCKET_PORT>8083</MQTT_WEBSOCKET_PORT>

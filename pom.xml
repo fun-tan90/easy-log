@@ -364,7 +364,7 @@
                             </goals>
                             <configuration>
                                 <target>
-                                    <delete dir="${project.basedir}/../../doc/image/jar/${project.name}"/>
+                                    <delete dir="${project.basedir}/../../doc/image/${project.name}/jar"/>
                                 </target>
                             </configuration>
                         </execution>
@@ -376,9 +376,9 @@
                             </goals>
                             <configuration>
                                 <target>
-                                    <mkdir dir="${project.basedir}/../../doc/image/jar/${project.name}"/>
+                                    <mkdir dir="${project.basedir}/../../doc/image/${project.name}/jar"/>
                                     <copy file="${project.build.directory}/${project.build.finalName}.jar"
-                                          tofile="${project.basedir}/../../doc/image/jar/${project.name}/${project.build.finalName}.jar"/>
+                                          tofile="${project.basedir}/../../doc/image/${project.name}/jar/${project.build.finalName}.jar"/>
                                 </target>
                             </configuration>
                         </execution>
