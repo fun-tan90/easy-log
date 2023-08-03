@@ -6,14 +6,11 @@ spring:
     name: easy-log-app-event
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
-  thymeleaf:
-    cache: false
-    mode: HTML
-    prefix: classpath:/templates/
   profiles:
     active: dev
     group:
       dev:
         - actuator
         - cache
+        - log
         - mqtt
