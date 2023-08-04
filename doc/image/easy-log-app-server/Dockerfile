@@ -32,7 +32,7 @@ EXPOSE $SERVER_PORT
 WORKDIR /app
 
 # 添加jar包
-COPY jar/$PROJECT_NAME*.jar /$PROJECT_NAME.jar
+ADD jar/$PROJECT_NAME*.jar /$PROJECT_NAME.jar
 
 # ENTRYPOINT 运行命令
 CMD java -jar /$APP_NAME.jar --spring.profiles.active=$SPRING_PROFILES_ACTIVE -Xms$HEAP_SIZE -Xmx$HEAP_SIZE -Xss1m -XX:MetaspaceSize=512m -XX:MaxMetaspaceSize=512m -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintHeapAtGC -Xloggc:./$APP_NAME.gc -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=./$APP_NAME.hprof -Duser.timezone=Asia/Shanghai

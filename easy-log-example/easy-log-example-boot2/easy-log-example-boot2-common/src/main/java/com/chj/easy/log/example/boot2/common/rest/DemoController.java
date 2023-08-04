@@ -1,7 +1,7 @@
 package com.chj.easy.log.example.boot2.common.rest;
 
 
-import com.yomahub.tlog.core.annotation.TLogAspect;
+import com.chj.easy.log.core.appender.annotation.EL;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,7 +24,8 @@ public class DemoController {
     private static final ExecutorService NEW_FIXED_THREAD_POOL = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     @GetMapping
-    @TLogAspect({"id"})
+//    @TLogAspect({"id"})
+    @EL(key = "userId", value = "#id")
     public String index(String id) {
 //        MDC.put("name","陈浩杰");
         NEW_FIXED_THREAD_POOL.execute(() -> {
