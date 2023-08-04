@@ -12,15 +12,21 @@ import com.chj.easy.log.core.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
 import net.dreamlu.iot.mqtt.codec.MqttQoS;
 import net.dreamlu.iot.mqtt.spring.client.MqttClientTemplate;
+import org.jetlinks.reactor.ql.ReactorQL;
 import org.springframework.data.redis.connection.stream.MapRecord;
 import org.springframework.data.redis.stream.StreamListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import reactor.core.publisher.Flux;
 
 import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 
@@ -125,31 +131,16 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
         Map<String, String> logStrMap = new HashMap<>(logMap.size());
         logMap.keySet().forEach(key -> logStrMap.put(key, new String(logMap.get(key))));
         return CompletableFuture.runAsync(() -> {
-            List<String> clientIds = LogRealTimeFilterRulesManager.RULES_MAP.keySet().stream().filter(n -> {
-                Map<String, String> realTimeFilterRules = LogRealTimeFilterRulesManager.RULES_MAP.get(n);
-                for (String realTimeFilterRule : realTimeFilterRules.keySet()) {
-                    String[] split = realTimeFilterRule.split("#");
-                    String ruleKey = split[0];
-                    String ruleWay = split[1];
-                    String logVal = logStrMap.get(ruleKey);
-                    String ruleVal = realTimeFilterRules.get(realTimeFilterRule);
-                    if ("eq".equals(ruleWay)) {
-                        if (!logVal.equals(ruleVal)) {
-                            return false;
-                        }
-                    } else if ("should".equals(ruleWay)) {
-                        List<String> list = Arrays.asList(ruleVal.split("%"));
-                        Optional<String> any = list.stream().filter(logVal::contains).findAny();
-                        if (!any.isPresent()) {
-                            return false;
-                        }
-                    } else if ("gle".equals(ruleWay)) {
-                        if (Long.parseLong(ruleVal) > Long.parseLong(logVal)) {
-                            return false;
-                        }
-                    }
+            List<String> clientIds = LogRealTimeFilterRulesManager.stream().filter(n -> {
+                ReactorQL reactorQl = LogRealTimeFilterRulesManager.getLogRealTimeFilterRule(n);
+                if (Objects.isNull(reactorQl)) {
+                    return true;
                 }
-                return true;
+                AtomicReference<Boolean> afterSqlFilter = new AtomicReference<>(false);
+                reactorQl.start(Flux.just(logStrMap))
+                        .subscribe(m -> afterSqlFilter.set(true),
+                                err -> log.error("{}: {}", reactorQl.metadata().getSql().toString(), err.getMessage()));
+                return afterSqlFilter.get();
             }).collect(Collectors.toList());
             if (!CollectionUtils.isEmpty(clientIds)) {
                 for (String clientId : clientIds) {

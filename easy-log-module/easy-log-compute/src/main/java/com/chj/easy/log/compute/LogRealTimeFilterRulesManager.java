@@ -1,10 +1,11 @@
 package com.chj.easy.log.compute;
 
 import com.chj.easy.log.core.model.LogRealTimeFilterRule;
-import reactor.core.publisher.Flux;
+import org.jetlinks.reactor.ql.ReactorQL;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 /**
  * description TODO
@@ -15,24 +16,24 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class LogRealTimeFilterRulesManager {
 
-    public static final Map<String, Map<String, String>> RULES_MAP = new ConcurrentHashMap<>();
+    private static final Map<String, ReactorQL> RULES_MAP = new ConcurrentHashMap<>();
+
+    public static Stream<String> stream() {
+        return LogRealTimeFilterRulesManager.RULES_MAP.keySet().stream();
+    }
+
+    public static ReactorQL getLogRealTimeFilterRule(String clientId) {
+        return RULES_MAP.get(clientId);
+    }
 
     public static void putLogRealTimeFilterRule(LogRealTimeFilterRule logRealTimeFilterRule) {
-        RULES_MAP.put(logRealTimeFilterRule.getClientId(), logRealTimeFilterRule.getRealTimeFilterRules());
+        String sql = logRealTimeFilterRule.getSql();
+        RULES_MAP.put(logRealTimeFilterRule.getClientId(), ReactorQL.builder()
+                .sql(sql)
+                .build());
     }
 
     public static void removeLogRealTimeFilterRule(LogRealTimeFilterRule logRealTimeFilterRule) {
         RULES_MAP.remove(logRealTimeFilterRule.getClientId());
-    }
-
-    public static void main(String[] args) {
-        Flux<String> flux = Flux.just("1", "2");
-        flux.subscribe(n -> {
-            System.out.println("n = " + n);
-        }, err -> {
-            System.out.println("errorConsumer" + err.getMessage());
-        }, () -> {
-            System.out.println("completeConsumer");
-        });
     }
 }

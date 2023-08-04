@@ -1,5 +1,6 @@
 package com.chj.easy.log.admin.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.admin.model.cmd.LogRealTimeFilterCmd;
 import com.chj.easy.log.admin.service.LogRealTimeFilterService;
@@ -16,9 +17,9 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * description TODO
@@ -39,39 +40,50 @@ public class LogRealTimeFilterServiceImpl implements LogRealTimeFilterService {
 
     @Override
     public Topic subscribe(LogRealTimeFilterCmd logRealTimeFilterCmd) {
-        long timestamp = System.currentTimeMillis();
-        Map<String, String> realTimeFilterRules = new HashMap<>();
-        realTimeFilterRules.put("timeStamp#gle", String.valueOf(timestamp));
-        String namespace = logRealTimeFilterCmd.getNamespace();
-        realTimeFilterRules.put("namespace#eq", namespace);
+        List<String> sqlItem = new ArrayList<>();
+        List<String> colList = logRealTimeFilterCmd.getColList();
+        String select = "select " + String.join(", ", colList) + " from test where ";
+        String whereCondition = logRealTimeFilterCmd.getWhereCondition();
+        if (!StringUtils.hasLength(whereCondition)) {
+            long timestamp = System.currentTimeMillis();
+            sqlItem.add(StrUtil.format("(timeStamp >= '{}')", timestamp));
+            sqlItem.add(StrUtil.format("(namespace = '{}')", logRealTimeFilterCmd.getNamespace()));
 
-        List<String> appNameList = logRealTimeFilterCmd.getAppNameList();
-        if (!CollectionUtils.isEmpty(appNameList)) {
-            realTimeFilterRules.put("appName#should", String.join("%", appNameList));
+            List<String> appNameList = logRealTimeFilterCmd.getAppNameList();
+            if (!CollectionUtils.isEmpty(appNameList)) {
+                sqlItem.add(StrUtil.format("(appName in ({}))", appNameList.stream().map(n -> StrUtil.format("'{}'", n)).collect(Collectors.joining(", "))));
+            }
+            List<String> levelList = logRealTimeFilterCmd.getLevelList();
+            if (!CollectionUtils.isEmpty(levelList)) {
+                sqlItem.add(StrUtil.format("(level in ({}))", levelList.stream().map(n -> StrUtil.format("'{}'", n)).collect(Collectors.joining(", "))));
+            }
+            String loggerName = logRealTimeFilterCmd.getLoggerName();
+            if (StringUtils.hasLength(loggerName)) {
+                sqlItem.add(StrUtil.format("(loggerName like '%{}%')", loggerName));
+            }
+            String lineNumber = logRealTimeFilterCmd.getLineNumber();
+            if (StringUtils.hasLength(lineNumber)) {
+                sqlItem.add(StrUtil.format("(lineNumber = '{}')", lineNumber));
+            }
+            List<String> ipList = logRealTimeFilterCmd.getIpList();
+            if (!CollectionUtils.isEmpty(ipList)) {
+                sqlItem.add(StrUtil.format("(currIp in ({}))", ipList.stream().map(n -> StrUtil.format("'{}'", n)).collect(Collectors.joining(", "))));
+            }
+            String content = logRealTimeFilterCmd.getContent();
+            if (StringUtils.hasLength(content)) {
+                List<String> ikSmartWord = esService.analyze(logRealTimeFilterCmd.getAnalyzer(), content);
+                String contentSql = ikSmartWord.stream().map(n -> StrUtil.format("content like '%{}%'", n)).collect(Collectors.joining("or "));
+                sqlItem.add(StrUtil.format("({})", contentSql));
+            }
+            whereCondition = String.join(" and ", sqlItem);
         }
-        List<String> levelList = logRealTimeFilterCmd.getLevelList();
-        if (!CollectionUtils.isEmpty(levelList)) {
-            realTimeFilterRules.put("level#should", String.join("%", levelList));
-        }
-        String loggerName = logRealTimeFilterCmd.getLoggerName();
-        if (StringUtils.hasLength(loggerName)) {
-            realTimeFilterRules.put("loggerName#eq", loggerName);
-        }
-        String lineNumber = logRealTimeFilterCmd.getLineNumber();
-        if (StringUtils.hasLength(lineNumber)) {
-            realTimeFilterRules.put("lineNumber#eq", lineNumber);
-        }
-        List<String> ipList = logRealTimeFilterCmd.getIpList();
-        if (!CollectionUtils.isEmpty(ipList)) {
-            realTimeFilterRules.put("currIp#should", String.join("%", ipList));
-        }
-        String content = logRealTimeFilterCmd.getContent();
-        if (StringUtils.hasLength(content)) {
-            List<String> ikSmartWord = esService.analyze(logRealTimeFilterCmd.getAnalyzer(), content);
-            realTimeFilterRules.put("content#should", String.join("%", ikSmartWord));
-        }
+        String sql = select + whereCondition;
+        log.info(sql);
         String mqttClientId = logRealTimeFilterCmd.getMqttClientId();
-        LogRealTimeFilterRule logRealTimeFilterRule = LogRealTimeFilterRule.builder().clientId(mqttClientId).realTimeFilterRules(realTimeFilterRules).build();
+        LogRealTimeFilterRule logRealTimeFilterRule = LogRealTimeFilterRule.builder()
+                .clientId(mqttClientId)
+                .sql(sql)
+                .build();
         mqttClientTemplate.publish(EasyLogConstants.LOG_REAL_TIME_FILTER_RULES_TOPIC + "put", JSONUtil.toJsonStr(logRealTimeFilterRule).getBytes(StandardCharsets.UTF_8), MqttQoS.EXACTLY_ONCE);
         return Topic.builder()
                 .topic(EasyLogConstants.LOG_AFTER_FILTERED_TOPIC + mqttClientId)

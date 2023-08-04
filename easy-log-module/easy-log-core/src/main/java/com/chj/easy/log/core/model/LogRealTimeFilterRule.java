@@ -3,9 +3,6 @@ package com.chj.easy.log.core.model;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.List;
-import java.util.Map;
-
 /**
  * description TODO
  * company 铁人科技
@@ -19,5 +16,5 @@ public class LogRealTimeFilterRule {
 
     private String clientId;
 
-    private Map<String, String> realTimeFilterRules;
+    private String sql;
 }

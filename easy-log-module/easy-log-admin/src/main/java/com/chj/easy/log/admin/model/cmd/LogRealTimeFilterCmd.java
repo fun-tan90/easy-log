@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -37,4 +38,8 @@ public class LogRealTimeFilterCmd {
     private String analyzer = "ik_max_word";
 
     private String content;
+
+    private List<String> colList = Collections.singletonList("*");
+
+    private String whereCondition;
 }
