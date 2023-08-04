@@ -2,8 +2,6 @@ package com.chj.easy.log.admin.service.impl;
 
 import cn.dev33.satoken.stp.SaLoginModel;
 import cn.dev33.satoken.stp.StpUtil;
-import cn.dev33.satoken.util.SaTokenConsts;
-import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.chj.easy.log.admin.model.cmd.SysUserLoginCmd;
 import com.chj.easy.log.admin.model.vo.SysUserInfoVo;
@@ -60,41 +58,32 @@ public class SysUserServiceImpl implements SysUserService {
                 .roles(StpUtil.getRoleList())
                 .permissions(StpUtil.getPermissionList())
                 .build();
-        StpUtil.getTokenSession().set("mqttClientId", EasyLogConstants.MQTT_CLIENT_ID_FRONT_PREFIX + tokenValue);
-        StpUtil.getTokenSession().set("mqttUserName", RandomUtil.randomString(6));
-        StpUtil.getTokenSession().set("mqttPassword", RandomUtil.randomString(8));
         StpUtil.getSession().set("sysUserInfo", sysUserInfoVo);
-        return StpUtil.getStpLogic().getConfigOrGlobal().getTokenPrefix() + SaTokenConsts.TOKEN_CONNECTOR_CHAT + tokenValue;
+        return tokenValue;
     }
 
     @Override
     public SysUserInfoVo userInfo() {
-        if (!StpUtil.isLogin()) {
-            throw new ClientException(IErrorCode.AUTH_1001005);
-        }
         return StpUtil.getSession().getModel("sysUserInfo", SysUserInfoVo.class);
     }
 
     @Override
     public SysUserMqttVo userMqttInfo() {
-        if (StpUtil.isLogin()) {
-            String tokenValue = StpUtil.getTokenValue();
-            String mqttClientId = EasyLogConstants.MQTT_CLIENT_ID_FRONT_PREFIX + tokenValue;
-            String md5 = SecureUtil.md5(mqttClientId);
-            return SysUserMqttVo
-                    .builder()
-                    .mqttBrokerUrl(easyLogAdminProperties.getMqttBrokerUrl())
-                    .mqttClientId(mqttClientId)
-                    .mqttUserName(md5.substring(0, EasyLogConstants.MQTT_MD5_SUB_INDEX))
-                    .mqttPassword(md5.substring(EasyLogConstants.MQTT_MD5_SUB_INDEX))
-                    .subTopics(Collections.singletonList(
-                            Topic.builder()
-                                    .topic(EasyLogConstants.LOG_INPUT_SPEED_TOPIC)
-                                    .qos(1)
-                                    .build())
-                    )
-                    .build();
-        }
-        throw new ClientException(IErrorCode.AUTH_1001005);
+        String tokenValue = StpUtil.getTokenValue();
+        String mqttClientId = EasyLogConstants.MQTT_CLIENT_ID_FRONT_PREFIX + tokenValue;
+        String md5 = SecureUtil.md5(mqttClientId);
+        return SysUserMqttVo
+                .builder()
+                .mqttBrokerUrl(easyLogAdminProperties.getMqttBrokerUrl())
+                .mqttClientId(mqttClientId)
+                .mqttUserName(md5.substring(0, EasyLogConstants.MQTT_MD5_SUB_INDEX))
+                .mqttPassword(md5.substring(EasyLogConstants.MQTT_MD5_SUB_INDEX))
+                .subTopics(Collections.singletonList(
+                        Topic.builder()
+                                .topic(EasyLogConstants.LOG_INPUT_SPEED_TOPIC)
+                                .qos(1)
+                                .build())
+                )
+                .build();
     }
 }
