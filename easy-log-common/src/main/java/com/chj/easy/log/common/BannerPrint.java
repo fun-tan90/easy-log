@@ -1,6 +1,5 @@
 package com.chj.easy.log.common;
 
-import com.chj.easy.log.common.constant.EasyLogConstants;
 import org.springframework.boot.ansi.AnsiColor;
 import org.springframework.boot.ansi.AnsiOutput;
 import org.springframework.boot.ansi.AnsiStyle;
@@ -105,7 +104,7 @@ public class BannerPrint {
     }
 
     public static void print(String banner, StringBuilder padding, String version) {
-        System.out.println(AnsiOutput.toString(banner, AnsiColor.GREEN, PROJECT_NAME, EasyLogConstants.EASY_LOG_VERSION, AnsiColor.DEFAULT,
+        System.out.println(AnsiOutput.toString(banner, AnsiColor.GREEN, PROJECT_NAME, AnsiColor.DEFAULT,
                 padding.toString(), AnsiStyle.FAINT, version, "\n", GITEE, "\n", GITHUB, "\n"));
     }
 }

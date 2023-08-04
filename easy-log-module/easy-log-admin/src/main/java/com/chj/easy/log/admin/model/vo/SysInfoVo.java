@@ -5,9 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-import java.util.List;
-
 /**
  * description TODO
  * company 铁人科技
@@ -23,7 +20,7 @@ public class SysInfoVo {
 
     private String version;
 
-    private String buildDate;
+    private String buildTime;
 
     private String startUpTime;
 

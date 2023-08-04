@@ -11,10 +11,6 @@ import cn.hutool.core.util.ClassLoaderUtil;
  */
 public interface EasyLogConstants {
 
-    String EASY_LOG_VERSION = "1.1.3";
-
-    String EASY_LOG_BUILD_DATE = "2023-07-31 09:42:00";
-
     String EASY_LOG_START_UP_TIME = DateUtil.now();
 
     Boolean T_LOG_CONTEXT_PRESENT = ClassLoaderUtil.isPresent("com.yomahub.tlog.context.TLogContext");
