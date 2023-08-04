@@ -1,11 +1,15 @@
 server:
   port: 1124
 
+
 spring:
   application:
     name: easy-log-app-server
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
+  reactor:
+    debug-agent:
+      enabled: false
   thymeleaf:
     cache: false
     mode: HTML
