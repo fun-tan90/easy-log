@@ -54,15 +54,6 @@ public class RedisStreamComputeMessageListener implements StreamListener<String,
             Map<String, byte[]> logMap = entries.getValue();
             CompletableFuture<Void> cfAll = CompletableFuture.allOf(logInputSpeed(logMap, recordId), logAlarm(logMap, recordId), logRealTimeFilter(logMap));
             cfAll.join();
-
-//            ReactorQL.builder()
-//                    .sql("select this from test where timeStamp >= {}") //按每秒分组,并计算流中数据平均值,如果平均值大于2则下游收到数据.
-//                    .build()
-//                    .start(Flux.just(entries))
-//                    .subscribe(n -> {
-//                                System.out.println(n);
-//                            }
-//                    );
         }
     }
 
