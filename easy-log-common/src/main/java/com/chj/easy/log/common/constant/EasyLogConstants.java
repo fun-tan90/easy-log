@@ -3,11 +3,13 @@ package com.chj.easy.log.common.constant;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ClassLoaderUtil;
 
+
 /**
- * 静态变量类
+ * description 静态变量类
+ * company 铁人科技
  *
- * @author Bryan.Zhang
- * @since 1.0.0
+ * @author 陈浩杰
+ * @date 2023/8/4 18:01
  */
 public interface EasyLogConstants {
 
