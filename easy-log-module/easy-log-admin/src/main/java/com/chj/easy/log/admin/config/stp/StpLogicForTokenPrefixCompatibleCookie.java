@@ -30,7 +30,7 @@ public class StpLogicForTokenPrefixCompatibleCookie extends StpLogic {
      * 重写实现：使 token-prefix 兼容 Cookie 模式
      */
     @Override
-    public String getTokenValueNotCut(){
+    public String getTokenValueNotCut() {
         // 获取相应对象
         SaStorage storage = SaHolder.getStorage();
         SaRequest request = SaHolder.getRequest();
@@ -39,26 +39,27 @@ public class StpLogicForTokenPrefixCompatibleCookie extends StpLogic {
         String tokenValue = null;
 
         // 1. 先尝试从 Storage 存储器里读取
-        if(storage.get(splicingKeyJustCreatedSave()) != null) {
+        if (storage.get(splicingKeyJustCreatedSave()) != null) {
             tokenValue = String.valueOf(storage.get(splicingKeyJustCreatedSave()));
         }
         // 2. 再尝试从 请求体 里面读取
-        if(tokenValue == null && config.getIsReadBody()){
+        if (tokenValue == null && config.getIsReadBody()) {
             tokenValue = request.getParam(keyTokenName);
         }
         // 3. 再尝试从 header 头里读取
-        if(tokenValue == null && config.getIsReadHeader()){
+        if (tokenValue == null && config.getIsReadHeader()) {
             tokenValue = request.getHeader(keyTokenName);
         }
         // 4. 最后尝试从 cookie 里读取
-        if(tokenValue == null && config.getIsReadCookie()){
+        if (tokenValue == null && config.getIsReadCookie()) {
             tokenValue = request.getCookieValue(keyTokenName);
-            String configTokenPrefix = config.getTokenPrefix();
-            if(SaFoxUtil.isNotEmpty(configTokenPrefix)) {
-                tokenValue = configTokenPrefix + SaTokenConsts.TOKEN_CONNECTOR_CHAT + tokenValue;
+            if (!SaFoxUtil.isEmpty(tokenValue)) {
+                String configTokenPrefix = config.getTokenPrefix();
+                if (SaFoxUtil.isNotEmpty(configTokenPrefix)) {
+                    tokenValue = configTokenPrefix + SaTokenConsts.TOKEN_CONNECTOR_CHAT + tokenValue;
+                }
             }
         }
-
         // 5. 至此，不管有没有读取到，都不再尝试了，直接返回
         return tokenValue;
     }
