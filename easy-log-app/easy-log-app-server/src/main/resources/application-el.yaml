@@ -1,6 +1,6 @@
 easy-log:
   es:
-    address: 172.16.8.31:9200,172.16.8.31:9201,172.16.8.31:9202
+    address: 127.0.0.1:9200,127.0.0.1:9201,127.0.0.1:9202
     index-lifecycle-policy:
       hot-max-age: 10m
       hot-max-primary-shard-size: 1gb

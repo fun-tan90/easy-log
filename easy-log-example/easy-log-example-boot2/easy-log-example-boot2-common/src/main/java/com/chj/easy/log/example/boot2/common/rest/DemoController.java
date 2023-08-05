@@ -3,6 +3,7 @@ package com.chj.easy.log.example.boot2.common.rest;
 
 import com.chj.easy.log.core.appender.annotation.EL;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,11 +24,16 @@ public class DemoController {
 
     private static final ExecutorService NEW_FIXED_THREAD_POOL = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-    @GetMapping
-//    @TLogAspect({"id"})
+    @GetMapping("el")
     @EL(key = "userId", value = "#id")
+    public String el(String id) {
+        log.info("测试 MDC @EL");
+        return id;
+    }
+
+    @GetMapping
     public String index(String id) {
-//        MDC.put("name","陈浩杰");
+        MDC.put("name", "陈浩杰");
         NEW_FIXED_THREAD_POOL.execute(() -> {
             String threadName = Thread.currentThread().getName();
             log.error("{} error is {} ", threadName, id);
