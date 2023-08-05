@@ -2,6 +2,7 @@ package com.chj.easy.log.example.boot2.common.rest;
 
 
 import com.chj.easy.log.core.appender.annotation.EL;
+import com.yomahub.tlog.core.thread.TLogInheritableTask;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,14 +35,18 @@ public class DemoController {
     @GetMapping
     public String index(String id) {
         MDC.put("name", "陈浩杰");
-        NEW_FIXED_THREAD_POOL.execute(() -> {
-            String threadName = Thread.currentThread().getName();
-            log.error("{} error is {} ", threadName, id);
-            log.warn("{} warn is {} ", threadName, id);
-            log.info("{} info is {} ", threadName, id);
-            log.debug("{} debug is {} ", threadName, id);
-            log.trace("{} trace is {} ", threadName, id);
-        });
+        TLogInheritableTask tLogInheritableTask = new TLogInheritableTask() {
+            @Override
+            public void runTask() {
+                String threadName = Thread.currentThread().getName();
+                log.error("{} error is {} ", threadName, id);
+                log.warn("{} warn is {} ", threadName, id);
+                log.info("{} info is {} ", threadName, id);
+                log.debug("{} debug is {} ", threadName, id);
+                log.trace("{} trace is {} ", threadName, id);
+            }
+        };
+        NEW_FIXED_THREAD_POOL.execute(tLogInheritableTask);
         return id;
     }
 
