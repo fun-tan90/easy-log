@@ -1,8 +1,8 @@
 version: '3.7'
 services:
-  easy-log-app-event:
+  easy-log-app-mqtt:
     image: ${imageAppEvent}
-    container_name: easy-log-app-event
+    container_name: easy-log-app-mqtt
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - HEAP_SIZE=${heap_size}

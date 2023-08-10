@@ -9,7 +9,8 @@
 ---
 
 >核心模块说明
-- easy-log-admin负责与前端数据交互，同时也是mqtt服务端，负责与应用程序数据交互和实时数据推送
+- easy-log-mqtt服务端，负责消息推送
+- easy-log-admin负责后台管理，认证、告警、实时过滤等基础信息管理
 - easy-log-collector负责从Redis Stream中订阅数据，批量插入ES集群中
 - easy-log-compute主要实现日志告警、实时日志过滤和日志收集速率计算等功能
 

@@ -6,14 +6,14 @@
     <parent>
         <groupId>com.chj</groupId>
         <artifactId>easy-log</artifactId>
-        <version>1.1.4</version>
+        <version>1.1.5</version>
     </parent>
 
     <artifactId>easy-log-app</artifactId>
     <packaging>pom</packaging>
 
     <modules>
-        <module>easy-log-app-event</module>
+        <module>easy-log-app-mqtt</module>
         <module>easy-log-app-server</module>
     </modules>
 </project>

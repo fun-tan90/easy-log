@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.chj</groupId>
         <artifactId>easy-log</artifactId>
-        <version>1.1.4</version>
+        <version>1.1.5</version>
     </parent>
 
     <artifactId>easy-log-module</artifactId>
@@ -17,6 +17,6 @@
         <module>easy-log-core</module>
         <module>easy-log-admin</module>
         <module>easy-log-compute</module>
-        <module>easy-log-event</module>
+        <module>easy-log-mqtt</module>
     </modules>
 </project>

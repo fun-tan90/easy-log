@@ -1,0 +1,16 @@
+server:
+  port: 1203
+
+spring:
+  application:
+    name: easy-log-app-mqtt
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+  profiles:
+    active: dev
+    group:
+      dev:
+        - actuator
+        - cache
+        - log
+        - mqtt
