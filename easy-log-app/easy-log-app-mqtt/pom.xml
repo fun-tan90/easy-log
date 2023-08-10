@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>easy-log-app-mqtt</artifactId>
+    <description>Easy-Log Mqtt服务端用于消息推送</description>
 
     <dependencies>
         <dependency>
