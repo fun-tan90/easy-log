@@ -4,7 +4,7 @@
 - elasticsearch作为日志存储、查询、分析聚合引擎，使用ES的Data Streams + ILM机制自动完成日志索引全生命周期管理
 
 ## 系统架构
-![Easy-Log系统架构.png](doc/img/img01.jpg)
+![Easy-Log系统架构.jpg](doc/img/Easy-Log系统架构.jpg)
 
 ---
 
