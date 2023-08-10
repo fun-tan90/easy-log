@@ -12,15 +12,21 @@ docker network create --driver=bridge --gateway=172.18.0.1 --subnet=172.18.0.0/1
 #### 2、选择部署方式
 ```shell
 # single  单机
-
-# cluster 集群, 实例数可以横向扩展
+# cluster 伪集群
 ```
-#### 3、修复.env环境变量
+
+#### 3、选择对应的文件夹
+```shell
+cd ./single
+#cd ./cluster
+```
+
+#### 4、修复.env环境变量
 ```shell
 # 修改.env中image的版本信息以及堆内存大小
 ```
 
-#### 4、启动Easy-Log
+#### 5、启动Easy-Log
 
 ```shell
 docker-compose up -d
