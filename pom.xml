@@ -16,6 +16,7 @@
         <module>easy-log-example</module>
         <module>easy-log-module</module>
         <module>easy-log-app</module>
+        <module>easy-log-meter</module>
     </modules>
 
     <properties>
@@ -69,6 +70,11 @@
             <dependency>
                 <groupId>com.chj</groupId>
                 <artifactId>easy-log-core-appender</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.chj</groupId>
+                <artifactId>easy-log-meter</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
