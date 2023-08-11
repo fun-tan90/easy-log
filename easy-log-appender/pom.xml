@@ -14,10 +14,10 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>easy-log-logback-appender</module>
+        <module>easy-log-core-appender</module>
         <module>easy-log-log4j2-appender</module>
         <module>easy-log-log4j-appender</module>
-        <module>easy-log-core-appender</module>
+        <module>easy-log-logback-appender</module>
     </modules>
 
 </project>
