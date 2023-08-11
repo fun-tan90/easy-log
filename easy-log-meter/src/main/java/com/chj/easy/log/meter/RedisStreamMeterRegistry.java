@@ -47,7 +47,7 @@ public class RedisStreamMeterRegistry extends StepMeterRegistry {
         this.appName = appName;
         this.namespace = namespace;
         this.config = config;
-        config().namingConvention(NamingConvention.dot);
+        config().namingConvention(NamingConvention.camelCase);
         start(threadFactory);
     }
 
