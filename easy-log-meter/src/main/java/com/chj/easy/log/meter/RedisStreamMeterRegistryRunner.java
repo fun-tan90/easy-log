@@ -1,8 +1,5 @@
 package com.chj.easy.log.meter;
 
-import com.chj.easy.log.common.utils.LocalhostUtil;
-import com.chj.easy.log.meter.RedisStreamMeterRegistry;
-import com.chj.easy.log.meter.RedisStreamRegistryConfig;
 import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics;
 import io.micrometer.core.instrument.binder.system.ProcessorMetrics;
 import org.springframework.boot.ApplicationArguments;
@@ -24,19 +21,18 @@ public class RedisStreamMeterRegistryRunner implements ApplicationRunner {
         RedisStreamMeterRegistry redisStreamMeterRegistry = new RedisStreamMeterRegistry(
                 "",
                 "",
-                LocalhostUtil.getHostIp(),
                 new RedisStreamRegistryConfig() {
-            @Override
-            public String get(String key) {
-                System.out.println(key);
-                return null;
-            }
+                    @Override
+                    public String get(String key) {
+                        System.out.println(key);
+                        return null;
+                    }
 
-            @Override
-            public Duration step() {
-                return Duration.ofSeconds(5);
-            }
-        });
+                    @Override
+                    public Duration step() {
+                        return Duration.ofSeconds(5);
+                    }
+                });
         new ProcessorMetrics().bindTo(redisStreamMeterRegistry);
         new JvmMemoryMetrics().bindTo(redisStreamMeterRegistry);
     }

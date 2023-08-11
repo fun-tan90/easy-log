@@ -1,6 +1,7 @@
 package com.chj.easy.log.common.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,9 +17,8 @@ import java.util.Map;
  * @date 2023/6/28 20:45
  */
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class MetricContext implements Serializable {
+@Builder
+public class MeterContext implements Serializable {
 
     private long timeStamp;
 
