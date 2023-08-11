@@ -13,4 +13,5 @@ import com.chj.easy.log.common.factory.EasyLogConfigFactory;
  */
 public class EasyLogManager {
     public final static EasyLogConfig GLOBAL_CONFIG = EasyLogConfigFactory.createConfig();
+
 }

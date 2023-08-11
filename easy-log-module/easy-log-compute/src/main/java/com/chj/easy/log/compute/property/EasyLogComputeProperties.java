@@ -20,6 +20,4 @@ public class EasyLogComputeProperties {
     private boolean enable = false;
 
     private boolean banner = true;
-
-    private int[] consumerGlobalOrders;
 }

@@ -1,11 +1,12 @@
 package com.chj.easy.log.core.model;
 
 import cn.hutool.core.annotation.Alias;
-import cn.hutool.json.JSONObject;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Map;
 
 /**
  * description TODO
@@ -51,7 +52,7 @@ public class LogDoc implements Doc {
 
     private String content;
 
-    private JSONObject mdc;
+    private Map<String, String> mdc;
 
     public static String indexName() {
         return "easy-log-ds";

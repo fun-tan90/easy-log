@@ -36,7 +36,7 @@ public class AdminInitListener implements ApplicationListener<ApplicationReadyEv
         if (initialized.compareAndSet(false, true)) {
             esService.initLifecyclePolicyAndTemplate();
 
-            sysMonitorService.statsLogInputSpeed();
+//            sysMonitorService.statsLogInputSpeed();
         }
     }
 }

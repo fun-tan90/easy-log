@@ -15,10 +15,4 @@ import java.util.Map;
  */
 public interface SysMonitorService {
     void statsLogInputSpeed();
-
-    RedisStreamXInfoVo streamXInfo(String streamKey);
-
-    Map<String, Map<String, List<String>>> streamXPending(String streamKey);
-
-    Long streamXAck(String streamKey, String groupName, List<String> recordIds);
 }

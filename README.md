@@ -43,7 +43,7 @@
 <!--logback 配置-->
 <configuration scan="false" debug="false">
     <!--其他Appender-->
-    <appender name="REDIS_STREAM" class="com.chj.easy.log.logback.appender.redis.EasyLogRedisAppender">
+    <appender name="REDIS_STREAM" class="com.chj.easy.log.logback.appender.EasyLogAppender">
         <!--应用名称，默认unknown-->
         <appName>easy-log-example-boot2-logback</appName>
         <!--命名空间，默认default-->

@@ -80,7 +80,7 @@ public class SysUserServiceImpl implements SysUserService {
                 .mqttPassword(md5.substring(EasyLogConstants.MQTT_MD5_SUB_INDEX))
                 .subTopics(Collections.singletonList(
                         Topic.builder()
-                                .topic(EasyLogConstants.LOG_INPUT_SPEED_TOPIC)
+                                .topic(EasyLogConstants.MQTT_LOG_INPUT_SPEED_TOPIC)
                                 .qos(1)
                                 .build())
                 )

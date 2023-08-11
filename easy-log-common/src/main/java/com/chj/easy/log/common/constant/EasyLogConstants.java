@@ -27,16 +27,6 @@ public interface EasyLogConstants {
 
     String CORE_SCAN_BASE_PACKAGES = "com.chj.easy.log.core";
 
-    String REDIS_STREAM_KEY = "easy-log";
-
-    String GROUP_COMPUTE_NAME = "easy-log-compute-group";
-
-    String GROUP_COLLECTOR_NAME = "easy-log-collector-group";
-
-    String CONSUMER_COMPUTE_NAME = "easy-log-compute-group-consumer";
-
-    String CONSUMER_COLLECTOR_NAME = "easy-log-collector-group-consumer";
-
     String ILM_PATH = "es/easy-log-ilm.json";
 
     String ILM_POLICY_NAME = "easy-log-policy";
@@ -59,8 +49,6 @@ public interface EasyLogConstants {
 
     String LOG_ALARM_RULES = "LOG_ALARM_RULES:";
 
-    String LOG_ALARM_RULES_TOPIC = "log_alarm_rules/";
-
     String LOG_REAL_TIME_FILTER_RULES_TOPIC = "log_real_time_filter_rules/";
 
     String S_W_LOG_ALARM = "S_W:LOG_ALARM:";
@@ -70,12 +58,6 @@ public interface EasyLogConstants {
     String LOG_ALARM_LOCK = "LOG_ALARM_LOCK:";
 
     String S_W_LOG_INPUT_SPEED = "S_W:LOG_INPUT_SPEED:";
-
-    String LOG_ALARM_TOPIC = "easy-log/log_alarm";
-
-    String LOG_AFTER_FILTERED_TOPIC = "easy-log/after-filtered/";
-
-    String LOG_INPUT_SPEED_TOPIC = "easy-log/stats-log-input-speed";
 
     String LOG_INPUT_SPEED_LOCK = "LOG_INPUT_SPEED_LOCK";
 
@@ -95,11 +77,26 @@ public interface EasyLogConstants {
 
     String MQTT_CLIENT_PASSWORD = "mica";
 
-    String MQTT_CMD_DOWN_PREFIX = "cmd/down";
+    /**
+     * 主题相关
+     */
+    String MQTT_CMD_DOWN_PREFIX = "el/cmd/down";
 
     String MQTT_CMD_DOWN = MQTT_CMD_DOWN_PREFIX + "/{}/{}";
 
-    String MQTT_CMD_UP_PREFIX = "cmd/up";
+    String MQTT_CMD_UP_PREFIX = "el/cmd/up";
 
     String MQTT_CMD_UP = MQTT_CMD_UP_PREFIX + "/{}/{}";
+
+    String MQTT_LOG_PREFIX = "el/log";
+
+    String MQTT_LOG = MQTT_LOG_PREFIX + "/{}/{}";
+
+    String MQTT_LOG_ALARM_TOPIC = "el/log_alarm";
+
+    String MQTT_LOG_AFTER_FILTERED_TOPIC = "el/after-filtered/";
+
+    String MQTT_LOG_INPUT_SPEED_TOPIC = "el/stats-log-input-speed";
+
+    String MQTT_LOG_ALARM_RULES_TOPIC = "el/log_alarm_rules/";
 }

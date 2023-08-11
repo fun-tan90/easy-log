@@ -42,7 +42,7 @@ public class EasyLogConfigFactory {
     /**
      * 配置文件地址
      */
-    public static String configPath = "metrics-catcher.properties";
+    public static String configPath = "easy-log.properties";
 
     /**
      * 根据 configPath 路径获取配置信息

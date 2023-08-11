@@ -1,13 +1,12 @@
-package com.chj.easy.log.log4j2.appender.redis;
+package com.chj.easy.log.log4j2.appender;
 
 
 import cn.hutool.core.exceptions.ExceptionUtil;
+import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.common.model.LogTransferred;
 import com.chj.easy.log.common.utils.LocalhostUtil;
 import com.chj.easy.log.core.appender.MqttManager;
-import com.chj.easy.log.core.appender.RedisManager;
-import com.chj.easy.log.core.appender.model.AppBasicInfo;
 import com.yomahub.tlog.context.TLogContext;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +15,6 @@ import org.apache.logging.log4j.core.*;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.Property;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
-import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginBuilderFactory;
 import org.apache.logging.log4j.core.impl.ThrowableProxy;
 import org.apache.logging.log4j.message.Message;
@@ -34,104 +32,39 @@ import java.util.concurrent.BlockingQueue;
  * @author 陈浩杰
  * @date 2023/7/12 18:16
  */
-@Plugin(name = EasyLogRedisAppender.PLUGIN_NAME, category = Core.CATEGORY_NAME, elementType = Appender.ELEMENT_TYPE, printObject = true)
-public final class EasyLogRedisAppender extends AbstractAppender {
+@Plugin(name = EasyLogAppender.PLUGIN_NAME, category = Core.CATEGORY_NAME, elementType = Appender.ELEMENT_TYPE, printObject = true)
+public final class EasyLogAppender extends AbstractAppender {
 
-    public static final String PLUGIN_NAME = "EasyLogRedis";
-
-    private final String appName;
-
-    private final String namespace;
+    public static final String PLUGIN_NAME = "EasyLog";
 
     private final BlockingQueue<LogTransferred> blockingQueue;
 
-    private final int maxPushSize;
-
-    private final int redisStreamMaxLen;
-
-    private final String mqttAddress;
-
-    private EasyLogRedisAppender(final String name,
-                                 final Layout<? extends Serializable> layout,
-                                 final Filter filter,
-                                 final boolean ignoreExceptions,
-                                 final Property[] properties,
-                                 final String appName,
-                                 final String namespace,
-                                 final BlockingQueue<LogTransferred> blockingQueue,
-                                 final int maxPushSize,
-                                 final int redisStreamMaxLen,
-                                 final String mqttAddress
+    private EasyLogAppender(final String name,
+                            final Layout<? extends Serializable> layout,
+                            final Filter filter,
+                            final boolean ignoreExceptions,
+                            final Property[] properties,
+                            final BlockingQueue<LogTransferred> blockingQueue
     ) {
         super(name, filter, layout, ignoreExceptions, properties);
-        this.appName = appName;
-        this.namespace = namespace;
         this.blockingQueue = blockingQueue;
-        this.maxPushSize = maxPushSize;
-        this.redisStreamMaxLen = redisStreamMaxLen;
-        this.mqttAddress = mqttAddress;
     }
 
     @Getter
     @Setter
     public static class Builder<B extends Builder<B>> extends AbstractAppender.Builder<B>
-            implements org.apache.logging.log4j.core.util.Builder<EasyLogRedisAppender> {
-
-        @PluginAttribute(value = "appName", defaultString = "unknown")
-        private String appName;
-
-        @PluginAttribute(value = "namespace", defaultString = "default")
-        private String namespace;
-
-        @PluginAttribute(value = "maxPushSize", defaultInt = 500)
-        private int maxPushSize;
-
-        @PluginAttribute(value = "queueSize", defaultInt = 10240)
-        private int queueSize;
-
-        @PluginAttribute(value = "redisMode", defaultString = "single")
-        private String redisMode;
-
-        @PluginAttribute(value = "redisAddress", defaultString = "127.0.0.1:6379")
-        private String redisAddress;
-
-        @PluginAttribute(value = "redisPass")
-        private String redisPass;
-
-        @PluginAttribute(value = "redisDb")
-        private int redisDb;
-
-        @PluginAttribute(value = "redisConnectionTimeout", defaultInt = 1000)
-        private int redisConnectionTimeout;
-
-        @PluginAttribute(value = "redisStreamMaxLen", defaultInt = 1000000)
-        private int redisStreamMaxLen;
-
-        @PluginAttribute(value = "redisPoolMaxTotal", defaultInt = 200)
-        private int redisPoolMaxTotal;
-
-        @PluginAttribute(value = "redisPoolMaxIdle", defaultInt = 30)
-        private int redisPoolMaxIdle;
-
-        @PluginAttribute(value = "mqttAddress", defaultString = "127.0.0.1:1883")
-        private String mqttAddress;
+            implements org.apache.logging.log4j.core.util.Builder<EasyLogAppender> {
 
         @Override
-        public EasyLogRedisAppender build() {
-            RedisManager.initJedisPool(redisMode, redisAddress, redisPass, redisDb, redisPoolMaxIdle, redisPoolMaxTotal, redisConnectionTimeout);
-            BlockingQueue<LogTransferred> blockingQueue = new ArrayBlockingQueue<>(queueSize);
-            return new EasyLogRedisAppender(
+        public EasyLogAppender build() {
+            BlockingQueue<LogTransferred> blockingQueue = new ArrayBlockingQueue<>(EasyLogManager.GLOBAL_CONFIG.getQueueSize());
+            return new EasyLogAppender(
                     getName(),
                     getLayout(),
                     getFilter(),
                     isIgnoreExceptions(),
                     getPropertyArray(),
-                    getAppName(),
-                    getNamespace(),
-                    blockingQueue,
-                    getMaxPushSize(),
-                    getRedisStreamMaxLen(),
-                    getMqttAddress()
+                    blockingQueue
             );
         }
     }
@@ -143,9 +76,8 @@ public final class EasyLogRedisAppender extends AbstractAppender {
 
     @Override
     public void start() {
-        AppBasicInfo appBasicInfo = AppBasicInfo.builder().appName(appName).namespace(namespace).build();
-        MqttManager.initMessageChannel(appBasicInfo, mqttAddress);
-        RedisManager.schedulePushLog(blockingQueue, maxPushSize, redisStreamMaxLen);
+        MqttManager.initMessageChannel();
+        MqttManager.schedulePushLog(blockingQueue);
         super.start();
     }
 
@@ -206,8 +138,8 @@ public final class EasyLogRedisAppender extends AbstractAppender {
 
         return LogTransferred.builder()
                 .timeStamp(timeStamp)
-                .appName(appName)
-                .namespace(namespace)
+                .appName(EasyLogManager.GLOBAL_CONFIG.getAppName())
+                .namespace(EasyLogManager.GLOBAL_CONFIG.getNamespace())
                 .level(level.name())
                 .loggerName(loggerName)
                 .threadName(threadName)

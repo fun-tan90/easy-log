@@ -4,6 +4,7 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.json.JSONUtil;
+import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.common.enums.CmdTypeEnum;
 import com.chj.easy.log.common.model.CmdDown;
@@ -12,7 +13,6 @@ import com.chj.easy.log.common.model.LogTransferred;
 import com.chj.easy.log.common.model.LoggerConfig;
 import com.chj.easy.log.common.threadpool.EasyLogThreadPool;
 import com.chj.easy.log.common.utils.LocalhostUtil;
-import com.chj.easy.log.core.appender.model.AppBasicInfo;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,12 +48,14 @@ public class MqttManager {
 
     private final static AtomicBoolean SCHEDULE_PUSH_LOG_INITIALIZED = new AtomicBoolean(false);
 
-    public static void initMessageChannel(AppBasicInfo appBasicInfo, String mqttAddress) {
+    private static MqttClient client;
+
+    public static void initMessageChannel() {
         if (MQTT_CLIENT_INITIALIZED.compareAndSet(false, true)) {
-            String appName = appBasicInfo.getAppName();
-            String namespace = appBasicInfo.getNamespace();
-            String[] split = mqttAddress.split(":");
-            MqttClient client = MqttClient.create()
+            String appName = EasyLogManager.GLOBAL_CONFIG.getAppName();
+            String namespace = EasyLogManager.GLOBAL_CONFIG.getNamespace();
+            String[] split = EasyLogManager.GLOBAL_CONFIG.getMqttAddress().split(":");
+            client = MqttClient.create()
                     .clientId(EasyLogConstants.MQTT_CLIENT_ID_APP_PREFIX + namespace + ":" + appName + ":" + RandomUtil.randomNumbers(6))
                     .ip(split[0])
                     .port(Integer.parseInt(split[1]))
@@ -75,15 +77,15 @@ public class MqttManager {
                     if (!StringUtils.hasLength(msg)) {
                         return;
                     }
-                    handlerCmd(appBasicInfo, topic, msg, client);
+                    handlerCmd(topic, msg);
                 }
             });
         }
     }
 
-    private static void handlerCmd(AppBasicInfo appBasicInfo, String topic, String msg, MqttClient client) {
-        String appName = appBasicInfo.getAppName();
-        String namespace = appBasicInfo.getNamespace();
+    private static void handlerCmd(String topic, String msg) {
+        String appName = EasyLogManager.GLOBAL_CONFIG.getAppName();
+        String namespace = EasyLogManager.GLOBAL_CONFIG.getNamespace();
         if (topic.startsWith(EasyLogConstants.MQTT_CMD_DOWN_PREFIX)) {
             LoggingSystem loggingSystem = SpringUtil.getBean(LoggingSystem.class);
             CmdDown cmdDown = JSONUtil.toBean(msg, CmdDown.class);
@@ -117,18 +119,24 @@ public class MqttManager {
         }
     }
 
-    public static void schedulePushLog(BlockingQueue<LogTransferred> blockingQueue, int maxPushSize) {
+    public static void schedulePushLog(BlockingQueue<LogTransferred> blockingQueue) {
         if (SCHEDULE_PUSH_LOG_INITIALIZED.compareAndSet(false, true)) {
             List<LogTransferred> logTransferredList = new ArrayList<>();
             EasyLogThreadPool.newEasyLogScheduledExecutorInstance().scheduleWithFixedDelay(() -> {
+                if (client == null || !client.isConnected()) {
+                    return;
+                }
                 if (logTransferredList.isEmpty()) {
-                    blockingQueue.drainTo(logTransferredList, Math.min(blockingQueue.size(), maxPushSize));
+                    blockingQueue.drainTo(logTransferredList, Math.min(blockingQueue.size(), EasyLogManager.GLOBAL_CONFIG.getMaxPushSize()));
                 }
                 if (logTransferredList.isEmpty()) {
                     return;
                 }
-                // TODO
-                logTransferredList.clear();
+                try {
+                    client.publish(StrUtil.format(EasyLogConstants.MQTT_LOG, EasyLogManager.GLOBAL_CONFIG.getNamespace(), EasyLogManager.GLOBAL_CONFIG.getAppName()), JSONUtil.toJsonStr(logTransferredList).getBytes(StandardCharsets.UTF_8), MqttQoS.AT_LEAST_ONCE);
+                } finally {
+                    logTransferredList.clear();
+                }
             }, 5, 50, TimeUnit.MILLISECONDS);
         }
     }

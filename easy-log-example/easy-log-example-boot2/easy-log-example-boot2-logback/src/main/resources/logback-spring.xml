@@ -37,23 +37,11 @@
         <neverBlock>true</neverBlock>
     </appender>
 
-    <appender name="REDIS_STREAM" class="com.chj.easy.log.logback.appender.redis.EasyLogRedisAppender">
-        <appName>easy-log-example-boot2-logback</appName>
-        <namespace>prod</namespace>
-        <maxPushSize>100</maxPushSize>
-        <queueSize>10240</queueSize>
-        <redisMode>single</redisMode>
-        <redisAddress>114.217.55.239:6379</redisAddress>
-        <redisDb>3</redisDb>
-        <redisPass>ICONMAN20220106R</redisPass>
-        <redisConnectionTimeout>1000</redisConnectionTimeout>
-        <redisStreamMaxLen>1000000</redisStreamMaxLen>
-        <mqttAddress>127.0.0.1:1883</mqttAddress>
-    </appender>
+    <appender name="EASY_LOG" class="com.chj.easy.log.logback.appender.EasyLogAppender"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="ASYNC-FILE"/>
-        <appender-ref ref="REDIS_STREAM"/>
+        <appender-ref ref="EASY_LOG"/>
     </root>
 </configuration>

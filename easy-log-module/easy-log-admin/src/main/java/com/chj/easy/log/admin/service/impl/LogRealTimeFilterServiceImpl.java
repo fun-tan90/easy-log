@@ -86,7 +86,7 @@ public class LogRealTimeFilterServiceImpl implements LogRealTimeFilterService {
                 .build();
         mqttClientTemplate.publish(EasyLogConstants.LOG_REAL_TIME_FILTER_RULES_TOPIC + "put", JSONUtil.toJsonStr(logRealTimeFilterRule).getBytes(StandardCharsets.UTF_8), MqttQoS.EXACTLY_ONCE);
         return Topic.builder()
-                .topic(EasyLogConstants.LOG_AFTER_FILTERED_TOPIC + mqttClientId)
+                .topic(EasyLogConstants.MQTT_LOG_AFTER_FILTERED_TOPIC + mqttClientId)
                 .qos(1)
                 .build();
     }

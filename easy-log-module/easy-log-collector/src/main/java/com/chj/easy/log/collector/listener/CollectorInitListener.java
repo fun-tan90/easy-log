@@ -2,13 +2,10 @@ package com.chj.easy.log.collector.listener;
 
 import cn.hutool.core.date.StopWatch;
 import com.chj.easy.log.collector.property.EasyLogCollectorProperties;
-import com.chj.easy.log.collector.stream.RedisStreamCollectorMessageListener;
-import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.common.threadpool.EasyLogThreadPool;
 import com.chj.easy.log.core.convention.exception.ServiceException;
 import com.chj.easy.log.core.model.Doc;
 import com.chj.easy.log.core.model.LogDoc;
-import com.chj.easy.log.core.service.CacheService;
 import com.chj.easy.log.core.service.EsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -37,9 +34,6 @@ public class CollectorInitListener implements ApplicationListener<ApplicationRea
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
     @Resource
-    private CacheService cacheService;
-
-    @Resource
     private BlockingQueue<LogDoc> logDocBlockingQueue;
 
     @Resource
@@ -48,19 +42,10 @@ public class CollectorInitListener implements ApplicationListener<ApplicationRea
     @Resource
     private EasyLogCollectorProperties easyLogCollectorProperties;
 
-    @Resource
-    private RedisStreamCollectorMessageListener redisStreamCollectorMessageListener;
-
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         if (initialized.compareAndSet(false, true)) {
             esService.initLifecyclePolicyAndTemplate();
-
-            String streamKey = EasyLogConstants.REDIS_STREAM_KEY;
-            String groupName = EasyLogConstants.GROUP_COLLECTOR_NAME;
-            String consumerNamePrefix = EasyLogConstants.CONSUMER_COLLECTOR_NAME + "-";
-            int[] consumerGlobalOrders = easyLogCollectorProperties.getConsumerGlobalOrders();
-            cacheService.initGroupAndConsumers(streamKey, groupName, consumerNamePrefix, consumerGlobalOrders, redisStreamCollectorMessageListener);
 
             batchInsertLogDocBySchedule();
         }

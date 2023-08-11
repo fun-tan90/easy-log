@@ -21,6 +21,8 @@ public class LogTransferred {
 
     private long timeStamp;
 
+    private int recordId;
+
     private String appName;
 
     private String namespace;
@@ -45,24 +47,5 @@ public class LogTransferred {
 
     private String content;
 
-    private Map<String,String> mdc;
-
-    public Map<String, String> toMap() {
-        Map<String, String> map = new HashMap<>();
-        map.put("timeStamp", String.valueOf(timeStamp));
-        map.put("appName", appName);
-        map.put("namespace", namespace);
-        map.put("level", level);
-        map.put("loggerName", loggerName);
-        map.put("threadName", threadName);
-        map.put("traceId", Optional.ofNullable(traceId).orElse("-"));
-        map.put("spanId", Optional.ofNullable(spanId).orElse("-"));
-        map.put("currIp", Optional.ofNullable(currIp).orElse("-"));
-        map.put("preIp", Optional.ofNullable(preIp).orElse("-"));
-        map.put("method", Optional.ofNullable(method).orElse("-"));
-        map.put("lineNumber", lineNumber);
-        map.put("content", content);
-        map.put("mdc", JSONUtil.toJsonStr(mdc));
-        return map;
-    }
+    private Map<String, String> mdc;
 }

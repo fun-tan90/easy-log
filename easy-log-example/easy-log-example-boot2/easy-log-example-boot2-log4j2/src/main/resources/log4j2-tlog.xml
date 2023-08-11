@@ -28,26 +28,13 @@
             </Policies>
         </RollingRandomAccessFile>
 
-        <EasyLogRedis name="REDIS_STREAM"
-                      appName="easy-log-example-boot2-log4j2"
-                      namespace="prod"
-                      maxPushSize="500"
-                      queueSize="10240"
-                      redisMode="single"
-                      redisAddress="114.217.55.239:6379"
-                      redisDb="3"
-                      redisPass="ICONMAN20220106R"
-                      redisConnectionTimeout="1000"
-                      redisStreamMaxLen="1000000"
-                      redisPoolMaxTotal="30"
-                      redisPoolMaxIdle="30"
-                      mqttAddress="127.0.0.1:1883"/>
+        <EasyLog name="EASY_LOG"/>
     </Appenders>
     <Loggers>
         <root level="info">
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="FILE"/>
-            <appender-ref ref="REDIS_STREAM"/>
+            <appender-ref ref="EASY_LOG"/>
         </root>
     </Loggers>
 </Configuration>

@@ -22,8 +22,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static com.chj.easy.log.common.constant.EasyLogConstants.S_W_LOG_INPUT_SPEED;
-
 /**
  * description TODO
  * company 铁人科技
@@ -52,7 +50,7 @@ public class SysMonitorServiceImpl implements SysMonitorService {
                 if (Boolean.TRUE.equals(lock)) {
                     try {
                         Map<String, Integer> windowCountMap = cacheService.slidingWindowCount(EasyLogConstants.S_W_LOG_INPUT_SPEED);
-                        mqttClientTemplate.publish(EasyLogConstants.LOG_INPUT_SPEED_TOPIC, JSONUtil.toJsonStr(windowCountMap).getBytes(StandardCharsets.UTF_8), MqttQoS.AT_MOST_ONCE);
+                        mqttClientTemplate.publish(EasyLogConstants.MQTT_LOG_INPUT_SPEED_TOPIC, JSONUtil.toJsonStr(windowCountMap).getBytes(StandardCharsets.UTF_8), MqttQoS.AT_MOST_ONCE);
                     } finally {
                         stringRedisTemplate.delete(EasyLogConstants.LOG_INPUT_SPEED_LOCK);
                     }
@@ -61,56 +59,5 @@ public class SysMonitorServiceImpl implements SysMonitorService {
                 log.error("statsLogInputSpeed {}", e.getMessage());
             }
         }, 1, 2, TimeUnit.SECONDS);
-    }
-
-    @Override
-    public RedisStreamXInfoVo streamXInfo(String streamKey) {
-        StreamInfo.XInfoGroups groups = stringRedisTemplate.opsForStream().groups(streamKey);
-        List<RedisStreamXInfoVo.XInfoGroup> xInfoGroups = groups.stream().map(group -> {
-            StreamInfo.XInfoConsumers consumers = stringRedisTemplate.opsForStream().consumers(EasyLogConstants.REDIS_STREAM_KEY, group.groupName());
-
-            List<RedisStreamXInfoVo.XInfoConsumer> xInfoConsumers = consumers.stream().map(xInfoConsumer -> RedisStreamXInfoVo.XInfoConsumer.builder()
-                    .consumerName(xInfoConsumer.consumerName())
-                    .pendingCount(xInfoConsumer.pendingCount())
-                    .idleTimeMs(xInfoConsumer.idleTimeMs()).build()).collect(Collectors.toList());
-
-            return RedisStreamXInfoVo.XInfoGroup.builder()
-                    .groupName(group.groupName())
-                    .consumers(xInfoConsumers).build();
-        }).collect(Collectors.toList());
-
-        return RedisStreamXInfoVo.builder()
-                .streamKey(streamKey)
-                .groups(xInfoGroups).build();
-    }
-
-    @Override
-    public Map<String, Map<String, List<String>>> streamXPending(String streamKey) {
-        Map<String, Map<String, List<String>>> map = new HashMap<>();
-        StreamInfo.XInfoGroups groups = stringRedisTemplate.opsForStream().groups(streamKey);
-        groups.forEach(group -> {
-            StreamInfo.XInfoConsumers consumers = stringRedisTemplate.opsForStream().consumers(EasyLogConstants.REDIS_STREAM_KEY, group.groupName());
-            Map<String, List<String>> item = new HashMap<>();
-            consumers.forEach(consumer -> {
-                PendingMessages pending = stringRedisTemplate.opsForStream().pending(streamKey, Consumer.from(group.groupName(), consumer.consumerName()));
-                Iterator<PendingMessage> iterator = pending.stream().iterator();
-                List<String> ids = new ArrayList<>();
-                while (iterator.hasNext()) {
-                    PendingMessage next = iterator.next();
-                    String value = next.getId().getValue();
-                    ids.add(value);
-                }
-                item.put(consumer.consumerName(), ids);
-            });
-            map.put(group.groupName(), item);
-        });
-        return map;
-    }
-
-    @Override
-    public Long streamXAck(String streamKey, String groupName, List<String> recordIds) {
-        String[] ids = new String[recordIds.size()];
-        recordIds.toArray(ids);
-        return stringRedisTemplate.opsForStream().acknowledge(streamKey, groupName, ids);
     }
 }
