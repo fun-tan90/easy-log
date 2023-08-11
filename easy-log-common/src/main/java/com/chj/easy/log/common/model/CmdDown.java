@@ -20,5 +20,8 @@ public class CmdDown {
 
     private String loggerName;
 
+    /**
+     * null时，代表重置
+     */
     private LogLevel logLevel;
 }

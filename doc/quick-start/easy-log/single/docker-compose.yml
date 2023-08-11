@@ -4,10 +4,9 @@ services:
     image: ${imageAppEvent}
     container_name: easy-log-app-mqtt
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
       - HEAP_SIZE=${heap_size}
     volumes:
-      - easy-log-app-event:/app
+      - easy-log-app-mqtt:/app
     ports:
       - "2203:1203"
       - "2204:1883"
@@ -21,27 +20,42 @@ services:
     image: ${imageAppServer}
     container_name: easy-log-app-server
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - HEAP_SIZE=${heap_size}
-      - easy-log.admin.enable=true
-      - easy-log.compute.enable=true
-      - easy-log.collector.enable=true
-      - easy-log.es.address=${esAddress}
-      - mqtt.client.ip=easy-log-app-event
-      - mqtt.client.port=1883
+      - HEAP_SIZE=256m
+      - ES_ADDRESS=172.16.8.31:9200,172.16.8.31:9201,172.16.8.31:9202
+      - ES_HOT_MAX_AGE=10m
+      - ES_HOT_MAX_PRIMARY_SHARD_SIZE=1gb
+      - ES_HOT_MAX_DOCS=10000000
+      - ES_DELETE_MIN_AGE=1d
+      - MQTT_HOST=easy-log-app-mqtt
+      - MQTT_PORT=1883
+      - REDIS_HOST=114.217.55.239
+      - REDIS_PORT=6379
+      - REDIS_DATABASE=3
+      - REDIS_PASSWORD=ICONMAN20220106R
+      - EL_ADMIN_ENABLE=true
+      - EL_ADMIN_USERNAME=admin
+      - EL_ADMIN_PASSWORD=123456
+      - EL_ADMIN_MQTT_ADDRESS=ws://121.36.96.79:9183/mqtt
+      - EL_COMPUTE_ENABLE=true
+      - EL_COMPUTE_CONSUMER_GLOBAL_ORDERS=1,2,3,4
+      - EL_COLLECTOR_ENABLE=true
+      - EL_COLLECTOR_CONSUMER_GLOBAL_ORDERS=1,2,3,4
+      - EL_COLLECTOR_QUEUE_CAPACITY=100000
+      - EL_COLLECTOR_INSERT_BATCH_SIZE=500
+
     volumes:
       - easy-log-app-server:/app
     ports:
       - "2124:1124"
     depends_on:
-      - easy-log-app-event
+      - easy-log-app-mqtt
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:1124/monitor/health" ]
       start_period: 3s
       retries: 3
 
 volumes:
-  easy-log-app-event:
+  easy-log-app-mqtt:
     driver: local
   easy-log-app-server:
     driver: local

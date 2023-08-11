@@ -29,5 +29,5 @@ public class EasyLogAdminProperties {
 
     private String password = "123456";
 
-    private String mqttBrokerUrl;
+    private String mqttAddress;
 }

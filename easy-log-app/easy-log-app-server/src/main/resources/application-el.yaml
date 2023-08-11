@@ -1,26 +1,26 @@
 easy-log:
   es:
-    address: 172.16.8.31:9200,172.16.8.31:9201,172.16.8.31:9202
+    address: ${ES_ADDRESS:172.16.8.31:9200,172.16.8.31:9201,172.16.8.31:9202}
     index-lifecycle-policy:
-      hot-max-age: 10m
-      hot-max-primary-shard-size: 1gb
-      hot-max-docs: 10000000
-      delete-min-age: 1d
+      hot-max-age: ${ES_HOT_MAX_AGE:10m}
+      hot-max-primary-shard-size: ${ES_HOT_MAX_PRIMARY_SHARD_SIZE:1gb}
+      hot-max-docs: ${ES_HOT_MAX_DOCS:10000000}
+      delete-min-age: ${ES_DELETE_MIN_AGE:1d}
   admin:
-    enable: true
+    enable: ${EL_ADMIN_ENABLE:true}
     banner: true
     auth: true
     validate-captcha: true
-    username: admin
-    password: 123456
-    mqtt-broker-url: ws://121.36.96.79:9183/mqtt
+    username: ${EL_ADMIN_USERNAME:admin}
+    password: ${EL_ADMIN_PASSWORD:123456}
+    mqtt-address: ${EL_ADMIN_MQTT_ADDRESS:ws://121.36.96.79:9183/mqtt}
   compute:
-    enable: true
+    enable: ${EL_COMPUTE_ENABLE:true}
     banner: true
-    consumer-global-orders: 1,2,3,4
+    consumer-global-orders: ${EL_COMPUTE_CONSUMER_GLOBAL_ORDERS:1,2,3,4}
   collector:
-    enable: true
+    enable: ${EL_COLLECTOR_ENABLE:true}
     banner: true
-    queue-capacity: 100000
-    insert-batch-size: 500
-    consumer-global-orders: 1,2,3,4
+    queue-capacity: ${EL_COLLECTOR_QUEUE_CAPACITY:100000}
+    insert-batch-size: ${EL_COLLECTOR_INSERT_BATCH_SIZE:500}
+    consumer-global-orders: ${EL_COLLECTOR_CONSUMER_GLOBAL_ORDERS:1,2,3,4}
