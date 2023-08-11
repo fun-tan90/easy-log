@@ -32,12 +32,13 @@ import org.springframework.util.StringUtils;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
+
 /**
- * 幂等注解 AOP 拦截器
+ * description TODO
+ * company 铁人科技
  *
- * @author chen.ma
- * @github <a href="https://github.com/opengoofy" />
- * @公众号 马丁玩编程，关注回复：资料，领取后端技术专家成长手册
+ * @author 陈浩杰
+ * @date 2023/8/11 9:55
  */
 @Aspect
 public final class EasyLogAspect {
