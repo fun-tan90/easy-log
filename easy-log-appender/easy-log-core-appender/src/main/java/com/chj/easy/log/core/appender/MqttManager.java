@@ -8,7 +8,9 @@ import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.common.enums.CmdTypeEnum;
 import com.chj.easy.log.common.model.CmdDown;
 import com.chj.easy.log.common.model.CmdUp;
+import com.chj.easy.log.common.model.LogTransferred;
 import com.chj.easy.log.common.model.LoggerConfig;
+import com.chj.easy.log.common.threadpool.EasyLogThreadPool;
 import com.chj.easy.log.common.utils.LocalhostUtil;
 import com.chj.easy.log.core.appender.model.AppBasicInfo;
 import lombok.AccessLevel;
@@ -23,8 +25,11 @@ import org.springframework.util.StringUtils;
 import org.tio.core.ChannelContext;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -40,6 +45,8 @@ import java.util.stream.Collectors;
 public class MqttManager {
 
     private final static AtomicBoolean MQTT_CLIENT_INITIALIZED = new AtomicBoolean(false);
+
+    private final static AtomicBoolean SCHEDULE_PUSH_LOG_INITIALIZED = new AtomicBoolean(false);
 
     public static void initMessageChannel(AppBasicInfo appBasicInfo, String mqttAddress) {
         if (MQTT_CLIENT_INITIALIZED.compareAndSet(false, true)) {
@@ -107,6 +114,22 @@ public class MqttManager {
                 }
                 loggingSystem.setLogLevel(loggerName, logLevel);
             }
+        }
+    }
+
+    public static void schedulePushLog(BlockingQueue<LogTransferred> blockingQueue, int maxPushSize) {
+        if (SCHEDULE_PUSH_LOG_INITIALIZED.compareAndSet(false, true)) {
+            List<LogTransferred> logTransferredList = new ArrayList<>();
+            EasyLogThreadPool.newEasyLogScheduledExecutorInstance().scheduleWithFixedDelay(() -> {
+                if (logTransferredList.isEmpty()) {
+                    blockingQueue.drainTo(logTransferredList, Math.min(blockingQueue.size(), maxPushSize));
+                }
+                if (logTransferredList.isEmpty()) {
+                    return;
+                }
+                // TODO
+                logTransferredList.clear();
+            }, 5, 50, TimeUnit.MILLISECONDS);
         }
     }
 }
