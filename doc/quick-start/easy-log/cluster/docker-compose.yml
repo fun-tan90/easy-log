@@ -4,7 +4,6 @@ services:
     image: ${imageAppEvent}
     container_name: easy-log-app-mqtt
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
       - HEAP_SIZE=256m
     volumes:
       - easy-log-app-mqtt:/app
