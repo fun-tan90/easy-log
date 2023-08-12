@@ -47,7 +47,7 @@ public class EasyLogConfigFactory {
     /**
      * 根据 configPath 路径获取配置信息
      *
-     * @return 一个MetricCatcherConfig对象
+     * @return 一个EasyLogConfig对象
      */
     public static EasyLogConfig createConfig() {
         return createConfig(configPath);
@@ -57,7 +57,7 @@ public class EasyLogConfigFactory {
      * 根据指定路径路径获取配置信息
      *
      * @param path 配置文件路径
-     * @return 一个 MetricCatcherConfig 对象
+     * @return 一个 EasyLogConfig 对象
      */
     public static EasyLogConfig createConfig(String path) {
         Map<String, String> map = readPropToMap(path);
