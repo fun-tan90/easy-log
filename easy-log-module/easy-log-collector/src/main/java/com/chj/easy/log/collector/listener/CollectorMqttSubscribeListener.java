@@ -31,14 +31,15 @@ public class CollectorMqttSubscribeListener {
     @Resource
     private BlockingQueue<LogDoc> logDocBlockingQueue;
 
-    @MqttClientSubscribe(value = "$share/collector/" + EasyLogConstants.MQTT_LOG_PREFIX, qos = MqttQoS.AT_LEAST_ONCE)
+    @MqttClientSubscribe(value = "$share/collector/" + EasyLogConstants.MQTT_LOG_PREFIX + "/#", qos = MqttQoS.AT_LEAST_ONCE)
     public void log(String topic, byte[] payload) {
         String msg = new String(payload, StandardCharsets.UTF_8);
+        log.info("topic {} message {}", topic, msg);
         List<LogTransferred> logTransferreds = JSONUtil.toList(msg, LogTransferred.class);
         for (LogTransferred logTransferred : logTransferreds) {
             LogDoc logDoc = LogDoc.builder()
                     .id("")
-                    .timestamp(DateUtil.format(new Date(logTransferred.getTimeStamp()), DatePattern.NORM_DATETIME_MS_PATTERN))
+                    .timestamp(DateUtil.format(new Date(logTransferred.getTimestamp()), DatePattern.NORM_DATETIME_PATTERN))
                     .appName(logTransferred.getAppName())
                     .namespace(logTransferred.getNamespace())
                     .level(logTransferred.getLevel())

@@ -1,12 +1,9 @@
 package com.chj.easy.log.common.model;
 
-import cn.hutool.json.JSONUtil;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * description TODO
@@ -19,9 +16,7 @@ import java.util.Optional;
 @Builder
 public class LogTransferred {
 
-    private long timeStamp;
-
-    private int recordId;
+    private long timestamp;
 
     private String appName;
 

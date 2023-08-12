@@ -133,7 +133,8 @@ public class MqttManager {
                     return;
                 }
                 try {
-                    client.publish(StrUtil.format(EasyLogConstants.MQTT_LOG, EasyLogManager.GLOBAL_CONFIG.getNamespace(), EasyLogManager.GLOBAL_CONFIG.getAppName()), JSONUtil.toJsonStr(logTransferredList).getBytes(StandardCharsets.UTF_8), MqttQoS.AT_LEAST_ONCE);
+                    boolean publish = client.publish(StrUtil.format(EasyLogConstants.MQTT_LOG, EasyLogManager.GLOBAL_CONFIG.getNamespace(), EasyLogManager.GLOBAL_CONFIG.getAppName()), JSONUtil.toJsonStr(logTransferredList).getBytes(StandardCharsets.UTF_8), MqttQoS.AT_LEAST_ONCE);
+                    System.out.println("publish " + publish);
                 } finally {
                     logTransferredList.clear();
                 }

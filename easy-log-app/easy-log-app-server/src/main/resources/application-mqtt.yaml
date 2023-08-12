@@ -1,7 +1,7 @@
 mqtt:
   client:
     enabled: true
-    ip: ${MQTT_HOST:127.0.0.1}
+    ip: ${MQTT_HOST:121.36.96.79}
     port: ${MQTT_PORT:1883}
     name: easy_log_server
     clientId: easy_log_server:${random.long(1000,9999)}
