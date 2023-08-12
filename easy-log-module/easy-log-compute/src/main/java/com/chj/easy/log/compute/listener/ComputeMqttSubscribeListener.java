@@ -1,15 +1,16 @@
 package com.chj.easy.log.compute.listener;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.date.DatePattern;
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.common.model.LogTransferred;
 import com.chj.easy.log.common.threadpool.EasyLogThreadPool;
 import com.chj.easy.log.compute.LogAlarmRulesManager;
 import com.chj.easy.log.compute.LogRealTimeFilterRulesManager;
-import com.chj.easy.log.core.model.*;
+import com.chj.easy.log.core.model.LogAlarmContent;
+import com.chj.easy.log.core.model.LogAlarmRule;
+import com.chj.easy.log.core.model.LogRealTimeFilterRule;
+import com.chj.easy.log.core.model.SlidingWindow;
 import com.chj.easy.log.core.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
 import net.dreamlu.iot.mqtt.codec.MqttQoS;
@@ -22,7 +23,6 @@ import reactor.core.publisher.Flux;
 
 import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -51,26 +51,9 @@ public class ComputeMqttSubscribeListener {
     public void log(String topic, byte[] payload) {
         String msg = new String(payload, StandardCharsets.UTF_8);
         log.info("topic {} message {}", topic, msg);
-        List<LogTransferred> logTransferreds = JSONUtil.toList(msg, LogTransferred.class);
-        for (LogTransferred logTransferred : logTransferreds) {
-            LogDoc logDoc = LogDoc.builder()
-                    .id("")
-                    .timestamp(DateUtil.format(new Date(logTransferred.getTimestamp()), DatePattern.NORM_DATETIME_PATTERN))
-                    .appName(logTransferred.getAppName())
-                    .namespace(logTransferred.getNamespace())
-                    .level(logTransferred.getLevel())
-                    .loggerName(logTransferred.getLoggerName())
-                    .threadName(logTransferred.getThreadName())
-                    .traceId(logTransferred.getTraceId())
-                    .spanId(logTransferred.getSpanId())
-                    .currIp(logTransferred.getCurrIp())
-                    .preIp(logTransferred.getPreIp())
-                    .method(logTransferred.getMethod())
-                    .lineNumber(logTransferred.getLineNumber())
-                    .content(logTransferred.getContent())
-                    .mdc(logTransferred.getMdc())
-                    .build();
-            CompletableFuture<Void> cfAll = CompletableFuture.allOf(logInputSpeed(logDoc, "recordId"), logAlarm(logDoc, "recordId"), logRealTimeFilter(logDoc));
+        List<LogTransferred> logTransferredList = JSONUtil.toList(msg, LogTransferred.class);
+        for (LogTransferred logTransferred : logTransferredList) {
+            CompletableFuture<Void> cfAll = CompletableFuture.allOf(logInputSpeed(logTransferred, "recordId"), logAlarm(logTransferred, "recordId"), logRealTimeFilter(logTransferred));
             cfAll.join();
         }
     }
@@ -78,27 +61,28 @@ public class ComputeMqttSubscribeListener {
     /**
      * 日志收集速率
      */
-    private CompletableFuture<Void> logInputSpeed(LogDoc logDoc, String recordId) {
-        String level = logDoc.getLevel();
-        String timeStamp = logDoc.getTimestamp();
-        return CompletableFuture.runAsync(() -> cacheService.slidingWindow(EasyLogConstants.S_W_LOG_INPUT_SPEED + level, recordId, Long.parseLong(timeStamp), 5), EasyLogThreadPool.newEasyLogFixedPoolInstance());
+    private CompletableFuture<Void> logInputSpeed(LogTransferred logTransferred, String recordId) {
+        String level = logTransferred.getLevel();
+        long timestamp = logTransferred.getTimestamp();
+        return CompletableFuture.runAsync(() -> cacheService.slidingWindow(EasyLogConstants.S_W_LOG_INPUT_SPEED + level, recordId, timestamp, 5), EasyLogThreadPool.newEasyLogFixedPoolInstance());
     }
 
     /**
      * 日志告警
      *
-     * @param logDoc
+     * @param logTransferred
+     * @param recordId
      */
-    private CompletableFuture<Void> logAlarm(LogDoc logDoc, String recordId) {
+    private CompletableFuture<Void> logAlarm(LogTransferred logTransferred, String recordId) {
         return CompletableFuture.runAsync(() -> {
-            String level = logDoc.getLevel();
+            String level = logTransferred.getLevel();
             if (!"error".equalsIgnoreCase(level)) {
                 return;
             }
-            String appName = logDoc.getAppName();
-            String namespace = logDoc.getNamespace();
-            String loggerName = logDoc.getLoggerName();
-            String timeStamp = logDoc.getTimestamp();
+            String appName = logTransferred.getAppName();
+            String namespace = logTransferred.getNamespace();
+            String loggerName = logTransferred.getLoggerName();
+            long timestamp = logTransferred.getTimestamp();
 
             Map<String, LogAlarmRule> cacheLogAlarmRuleMap = LogAlarmRulesManager.getLogAlarmRule(appName, namespace, "all", loggerName);
             if (CollectionUtils.isEmpty(cacheLogAlarmRuleMap)) {
@@ -107,7 +91,7 @@ public class ComputeMqttSubscribeListener {
             cacheLogAlarmRuleMap.forEach((k, logAlarmRule) -> {
                 Integer period = logAlarmRule.getPeriod();
                 Integer threshold = logAlarmRule.getThreshold();
-                SlidingWindow slidingWindow = cacheService.slidingWindow(EasyLogConstants.S_W_LOG_ALARM + appName + ":" + namespace + ":" + k, recordId, Long.parseLong(timeStamp), period);
+                SlidingWindow slidingWindow = cacheService.slidingWindow(EasyLogConstants.S_W_LOG_ALARM + appName + ":" + namespace + ":" + k, recordId, timestamp, period);
                 Integer windowCount = slidingWindow.getWindowCount();
                 log.info("阈值大小:{},滑动窗口内计数大小:{}", threshold, windowCount);
                 if (windowCount == threshold + 1) {
@@ -134,10 +118,10 @@ public class ComputeMqttSubscribeListener {
     /**
      * 实时日志过滤
      *
-     * @param logDoc
+     * @param logTransferred
      */
-    private CompletableFuture<Void> logRealTimeFilter(LogDoc logDoc) {
-        Map<String, Object> logStrMap = BeanUtil.beanToMap(logDoc);
+    private CompletableFuture<Void> logRealTimeFilter(LogTransferred logTransferred) {
+        Map<String, Object> logStrMap = BeanUtil.beanToMap(logTransferred);
         return CompletableFuture.runAsync(() -> {
             List<String> clientIds = LogRealTimeFilterRulesManager.stream().filter(n -> {
                 ReactorQL reactorQl = LogRealTimeFilterRulesManager.getLogRealTimeFilterRule(n);

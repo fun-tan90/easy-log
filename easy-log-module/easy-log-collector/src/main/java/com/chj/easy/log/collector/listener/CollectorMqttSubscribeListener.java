@@ -39,7 +39,7 @@ public class CollectorMqttSubscribeListener {
         for (LogTransferred logTransferred : logTransferreds) {
             LogDoc logDoc = LogDoc.builder()
                     .id("")
-                    .timestamp(DateUtil.format(new Date(logTransferred.getTimestamp()), DatePattern.NORM_DATETIME_PATTERN))
+                    .timestamp(DateUtil.format(new Date(logTransferred.getTimestamp()), DatePattern.NORM_DATETIME_MS_PATTERN))
                     .appName(logTransferred.getAppName())
                     .namespace(logTransferred.getNamespace())
                     .level(logTransferred.getLevel())
