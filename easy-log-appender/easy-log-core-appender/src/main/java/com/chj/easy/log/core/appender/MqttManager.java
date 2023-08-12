@@ -56,7 +56,7 @@ public class MqttManager {
             String namespace = EasyLogManager.GLOBAL_CONFIG.getNamespace();
             String[] split = EasyLogManager.GLOBAL_CONFIG.getMqttAddress().split(":");
             client = MqttClient.create()
-                    .clientId(EasyLogConstants.MQTT_CLIENT_ID_CLIENT_PREFIX + namespace + ":" + appName + ":" + RandomUtil.randomNumbers(6))
+                    .clientId(EasyLogConstants.MQTT_CLIENT_ID_CLIENT_PREFIX + namespace + ":" + appName + ":" + RandomUtil.randomNumbers(4))
                     .ip(split[0])
                     .port(Integer.parseInt(split[1]))
                     .username(EasyLogManager.GLOBAL_CONFIG.getUserName())

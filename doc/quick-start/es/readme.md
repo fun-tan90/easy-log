@@ -48,4 +48,3 @@ docker-compose restart es01 es02 es03
 - 4、使用kibana的Dev Tools工具验证ik分词器是否安装成功
   ![img.png](img/img00.png)
 #### 4、恭喜安装成功
-- DSL常用语法

@@ -1,24 +1,23 @@
 version: '3.7'
 services:
-  easy-log-app-mqtt:
-    image: ${imageAppEvent}
-    container_name: easy-log-app-mqtt
-    environment:
-      - HEAP_SIZE=256m
-    volumes:
-      - easy-log-app-mqtt:/app
-    ports:
-      - "2203:1203"
-      - "2204:1883"
-      - "2205:8083"
+  emqx:
+    image: emqx:5.1.0
+    container_name: emqx
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:1203/monitor/health" ]
-      start_period: 3s
-      retries: 3
+      test: [ "CMD", "/opt/emqx/bin/emqx_ctl", "status" ]
+      interval: 5s
+      timeout: 25s
+      retries: 5
+    ports:
+      - "1883:1883"
+      - "8083:8083"
+      - "8084:8084"
+      - "8883:8883"
+      - "18083:18083"
 
-  easy-log-app-server:
+  easy-log-server:
     image: ${imageAppServer}
-    container_name: easy-log-app-server
+    container_name: easy-log-server
     environment:
       - HEAP_SIZE=256m
       - ES_ADDRESS=172.16.8.31:9200,172.16.8.31:9201,172.16.8.31:9202
@@ -26,7 +25,7 @@ services:
       - ES_HOT_MAX_PRIMARY_SHARD_SIZE=1gb
       - ES_HOT_MAX_DOCS=10000000
       - ES_DELETE_MIN_AGE=1d
-      - MQTT_HOST=easy-log-app-mqtt
+      - MQTT_HOST=emqx
       - MQTT_PORT=1883
       - REDIS_HOST=114.217.55.239
       - REDIS_PORT=6379
@@ -44,20 +43,18 @@ services:
       - EL_COLLECTOR_INSERT_BATCH_SIZE=500
 
     volumes:
-      - easy-log-app-server:/app
+      - easy-log-server:/app
     ports:
       - "2124:1124"
     depends_on:
-      - easy-log-app-mqtt
+      - emqx
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:1124/monitor/health" ]
       start_period: 3s
       retries: 3
 
 volumes:
-  easy-log-app-mqtt:
-    driver: local
-  easy-log-app-server:
+  easy-log-server:
     driver: local
 
 networks:
