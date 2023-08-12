@@ -30,7 +30,7 @@ import java.util.concurrent.BlockingQueue;
 @Slf4j
 @Component
 @MqttClientSubscribe(value = "$share/collector/" + EasyLogConstants.MQTT_LOG_PREFIX + "/#", qos = MqttQoS.AT_LEAST_ONCE)
-public class MqttLogMessageListener implements IMqttClientMessageListener {
+public class CollectorLogMessageListener implements IMqttClientMessageListener {
 
 	@Resource
 	private BlockingQueue<LogDoc> logDocBlockingQueue;

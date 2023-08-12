@@ -9,16 +9,18 @@ import com.chj.easy.log.compute.LogAlarmRulesManager;
 import com.chj.easy.log.compute.LogRealTimeFilterRulesManager;
 import com.chj.easy.log.core.model.LogAlarmContent;
 import com.chj.easy.log.core.model.LogAlarmRule;
-import com.chj.easy.log.core.model.LogRealTimeFilterRule;
 import com.chj.easy.log.core.model.SlidingWindow;
 import com.chj.easy.log.core.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
+import net.dreamlu.iot.mqtt.codec.MqttPublishMessage;
 import net.dreamlu.iot.mqtt.codec.MqttQoS;
+import net.dreamlu.iot.mqtt.core.client.IMqttClientMessageListener;
 import net.dreamlu.iot.mqtt.spring.client.MqttClientSubscribe;
 import net.dreamlu.iot.mqtt.spring.client.MqttClientTemplate;
 import org.jetlinks.reactor.ql.ReactorQL;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.tio.core.ChannelContext;
 import reactor.core.publisher.Flux;
 
 import javax.annotation.Resource;
@@ -35,11 +37,12 @@ import java.util.stream.Collectors;
  * company 铁人科技
  *
  * @author 陈浩杰
- * @date 2023/8/2 14:54
+ * @date 2023/8/12 14:24
  */
 @Slf4j
 @Component
-public class ComputeMqttSubscribeListener {
+@MqttClientSubscribe(value = "$share/compute/" + EasyLogConstants.MQTT_LOG_PREFIX + "/#", qos = MqttQoS.AT_LEAST_ONCE)
+public class ComputeLogMessageListener implements IMqttClientMessageListener {
 
     @Resource
     MqttClientTemplate mqttClientTemplate;
@@ -47,10 +50,9 @@ public class ComputeMqttSubscribeListener {
     @Resource
     CacheService cacheService;
 
-    @MqttClientSubscribe(value = "$share/compute/" + EasyLogConstants.MQTT_LOG_PREFIX + "/#", qos = MqttQoS.AT_LEAST_ONCE)
-    public void log(String topic, byte[] payload) {
+    @Override
+    public void onMessage(ChannelContext context, String topic, MqttPublishMessage message, byte[] payload) {
         String msg = new String(payload, StandardCharsets.UTF_8);
-        log.info("topic {} message {}", topic, msg);
         List<LogTransferred> logTransferredList = JSONUtil.toList(msg, LogTransferred.class);
         for (LogTransferred logTransferred : logTransferredList) {
             CompletableFuture<Void> cfAll = CompletableFuture.allOf(logInputSpeed(logTransferred, "recordId"), logAlarm(logTransferred, "recordId"), logRealTimeFilter(logTransferred));
@@ -141,27 +143,5 @@ public class ComputeMqttSubscribeListener {
             }
         }, EasyLogThreadPool.newEasyLogFixedPoolInstance());
     }
-
-    @MqttClientSubscribe(value = EasyLogConstants.MQTT_LOG_ALARM_RULES_TOPIC + "#", qos = MqttQoS.EXACTLY_ONCE)
-    public void subLogAlarmRules(String topic, byte[] payload) {
-        String msg = new String(payload, StandardCharsets.UTF_8);
-        log.info("topic:{} payload:{}", topic, msg);
-        if (topic.endsWith("put")) {
-            LogAlarmRulesManager.putLogAlarmRule(JSONUtil.toBean(msg, LogAlarmRule.class));
-        } else if (topic.endsWith("remove")) {
-            LogAlarmRulesManager.removeLogAlarmRule(JSONUtil.toBean(msg, LogAlarmRule.class));
-        }
-    }
-
-    @MqttClientSubscribe(value = EasyLogConstants.LOG_REAL_TIME_FILTER_RULES_TOPIC + "#", qos = MqttQoS.EXACTLY_ONCE)
-    public void subLogRealTimeFilterRule(String topic, byte[] payload) {
-        String msg = new String(payload, StandardCharsets.UTF_8);
-        log.info("topic:{} payload:{}", topic, msg);
-        if (topic.endsWith("put")) {
-            LogRealTimeFilterRulesManager.putLogRealTimeFilterRule(JSONUtil.toBean(msg, LogRealTimeFilterRule.class));
-        } else if (topic.endsWith("remove")) {
-            LogRealTimeFilterRulesManager.removeLogRealTimeFilterRule(JSONUtil.toBean(msg, LogRealTimeFilterRule.class));
-        }
-    }
-
 }
+
