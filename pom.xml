@@ -42,6 +42,7 @@
         <mica-mqtt.version>2.2.2</mica-mqtt.version>
         <snack3.version>3.2.72</snack3.version>
         <byte-buddy.version>1.14.5</byte-buddy.version>
+        <reactor-ql.version>1.0.16</reactor-ql.version>
     </properties>
 
     <dependencies>
@@ -238,11 +239,6 @@
                 <artifactId>mica-mqtt-client-spring-boot-starter</artifactId>
                 <version>${mica-mqtt.version}</version>
             </dependency>
-            <dependency>
-                <groupId>net.dreamlu</groupId>
-                <artifactId>mica-mqtt-server-spring-boot-starter</artifactId>
-                <version>${mica-mqtt.version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>com.dtflys.forest</groupId>
@@ -259,6 +255,12 @@
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy-agent</artifactId>
                 <version>${byte-buddy.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jetlinks</groupId>
+                <artifactId>reactor-ql</artifactId>
+                <version>${reactor-ql.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
