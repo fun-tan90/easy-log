@@ -2,25 +2,19 @@ package com.chj.easy.log.core.appender;
 
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.common.content.EasyLogConfig;
-import com.chj.easy.log.common.enums.CmdTypeEnum;
-import com.chj.easy.log.common.model.CmdDown;
-import com.chj.easy.log.common.model.CmdUp;
 import com.chj.easy.log.common.model.LogTransferred;
-import com.chj.easy.log.common.model.LoggerConfig;
 import com.chj.easy.log.common.threadpool.EasyLogThreadPool;
-import com.chj.easy.log.common.utils.LocalhostUtil;
+import com.chj.easy.log.core.appender.handler.MqttMessageArrivedHandler;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-import org.springframework.boot.logging.*;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -28,11 +22,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 /**
  * description RedisManager
@@ -58,7 +50,7 @@ public class MqttManager {
             String namespace = EasyLogManager.GLOBAL_CONFIG.getNamespace();
             String clientId = EasyLogConstants.MQTT_CLIENT_ID_CLIENT_PREFIX + namespace + ":" + appName + ":" + RandomUtil.randomNumbers(4);
             String mqttAddress = EasyLogManager.GLOBAL_CONFIG.getMqttAddress();
-            MqttAsyncClient client = new MqttAsyncClient(mqttAddress, clientId, new MemoryPersistence());
+            MqttAsyncClient mqttAsyncClient = new MqttAsyncClient(mqttAddress, clientId, new MemoryPersistence());
             MqttConnectOptions connOpts = new MqttConnectOptions();
             connOpts.setUserName(EasyLogManager.GLOBAL_CONFIG.getUserName());
             connOpts.setPassword(EasyLogManager.GLOBAL_CONFIG.getPassword().toCharArray());
@@ -67,7 +59,7 @@ public class MqttManager {
             // 设置keepalive
             connOpts.setKeepAliveInterval(30);
             // 设置回调
-            client.setCallback(new MqttCallbackExtended() {
+            mqttAsyncClient.setCallback(new MqttCallbackExtended() {
                 @Override
                 public void connectionLost(Throwable cause) {
                     cause.printStackTrace();
@@ -82,7 +74,7 @@ public class MqttManager {
                     if (!StringUtils.hasLength(msg)) {
                         return;
                     }
-                    handlerCmd(topic, msg);
+                    MqttMessageArrivedHandler.handlerCmd(topic, msg, mqttClient);
                 }
 
                 @Override
@@ -97,60 +89,21 @@ public class MqttManager {
                         // 订阅
                         String[] topicFilters = topics.stream().map(EasyLogConfig.Topic::getTopicPattern).toArray(String[]::new);
                         int[] qos = Arrays.stream(topics.stream().map(EasyLogConfig.Topic::getQos).toArray(Integer[]::new)).mapToInt(Integer::valueOf).toArray();
-                        client.subscribe(topicFilters, qos);
+                        mqttAsyncClient.subscribe(topicFilters, qos);
                     }
                 }
             });
-            client.connect(connOpts, null, new IMqttActionListener() {
+            mqttAsyncClient.connect(connOpts, null, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
-                    mqttClient = client;
+                    mqttClient = mqttAsyncClient;
                 }
+
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     exception.printStackTrace();
                 }
             });
-        }
-    }
-
-    private static void handlerCmd(String topic, String msg) {
-        String appName = EasyLogManager.GLOBAL_CONFIG.getAppName();
-        String namespace = EasyLogManager.GLOBAL_CONFIG.getNamespace();
-        if (topic.startsWith(EasyLogConstants.MQTT_CMD_DOWN_PREFIX)) {
-            LoggingSystem loggingSystem = SpringUtil.getBean(LoggingSystem.class);
-            CmdDown cmdDown = JSONUtil.toBean(msg, CmdDown.class);
-            CmdTypeEnum cmdType = cmdDown.getCmdType();
-            if (CmdTypeEnum.GET_LOGGER_CONFIGURATIONS.equals(cmdType)) {
-                List<LoggerConfiguration> loggerConfigurations = loggingSystem.getLoggerConfigurations();
-                List<LoggerConfig> loggerConfigs = loggerConfigurations.stream().map(n -> LoggerConfig.builder()
-                        .loggerName(n.getName())
-                        .configuredLevel(Optional.ofNullable(n.getConfiguredLevel()).map(Enum::name).orElse("null"))
-                        .effectiveLevel(Optional.ofNullable(n.getEffectiveLevel()).map(Enum::name).orElse("null"))
-                        .build()).collect(Collectors.toList());
-                CmdUp cmdUp = CmdUp.builder()
-                        .cmdType(cmdType)
-                        .appName(appName)
-                        .namespace(namespace)
-                        .currIp(LocalhostUtil.getHostIp())
-                        .loggerConfigs(loggerConfigs)
-                        .build();
-                try {
-                    mqttClient.publish(StrUtil.format(EasyLogConstants.MQTT_CMD_UP, namespace, appName), JSONUtil.toJsonStr(cmdUp).getBytes(StandardCharsets.UTF_8), 1, false);
-                } catch (MqttException e) {
-                    e.printStackTrace();
-                }
-            } else if (CmdTypeEnum.SET_LOGGER_LEVEL_CONFIG.equals(cmdType)) {
-                String loggerName = cmdDown.getLoggerName();
-                LogLevel logLevel = cmdDown.getLogLevel();
-                LoggerGroups loggerGroups = SpringUtil.getBean(LoggerGroups.class);
-                LoggerGroup group = loggerGroups.get(loggerName);
-                if (group != null && group.hasMembers()) {
-                    group.configureLogLevel(logLevel, loggingSystem::setLogLevel);
-                    return;
-                }
-                loggingSystem.setLogLevel(loggerName, logLevel);
-            }
         }
     }
 
