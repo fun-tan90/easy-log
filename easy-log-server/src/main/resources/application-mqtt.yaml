@@ -1,0 +1,9 @@
+mqtt:
+  client:
+    enabled: true
+    ip: ${MQTT_HOST:121.36.96.79}
+    port: ${MQTT_PORT:1883}
+    clientId: easy_log_server:${random.long(1000,9999)}
+    keep-alive-secs: 30
+    user-name: admin
+    password: 123456

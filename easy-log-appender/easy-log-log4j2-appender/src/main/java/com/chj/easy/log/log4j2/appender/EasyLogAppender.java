@@ -137,7 +137,8 @@ public final class EasyLogAppender extends AbstractAppender {
         }
 
         return LogTransferred.builder()
-                .timeStamp(timeStamp)
+                .timestamp(timeStamp)
+                .seq(EasyLogManager.SEQ.incrementAndGet())
                 .appName(EasyLogManager.GLOBAL_CONFIG.getAppName())
                 .namespace(EasyLogManager.GLOBAL_CONFIG.getNamespace())
                 .level(level.name())

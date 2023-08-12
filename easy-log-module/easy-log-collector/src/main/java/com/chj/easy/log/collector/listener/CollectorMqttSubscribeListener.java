@@ -38,10 +38,10 @@ public class CollectorMqttSubscribeListener {
         List<LogTransferred> logTransferreds = JSONUtil.toList(msg, LogTransferred.class);
         for (LogTransferred logTransferred : logTransferreds) {
             LogDoc logDoc = LogDoc.builder()
-                    .id("")
                     .timestamp(DateUtil.format(new Date(logTransferred.getTimestamp()), DatePattern.NORM_DATETIME_MS_PATTERN))
                     .appName(logTransferred.getAppName())
                     .namespace(logTransferred.getNamespace())
+                    .seq(logTransferred.getSeq())
                     .level(logTransferred.getLevel())
                     .loggerName(logTransferred.getLoggerName())
                     .threadName(logTransferred.getThreadName())

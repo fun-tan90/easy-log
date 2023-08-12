@@ -18,6 +18,8 @@ public class LogTransferred {
 
     private long timestamp;
 
+    private long seq;
+
     private String appName;
 
     private String namespace;

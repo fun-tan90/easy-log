@@ -24,6 +24,10 @@ public class EasyLogConfig implements Serializable {
 
     private String mqttAddress = "127.0.0.1:1883";
 
+    private String userName;
+
+    private String password;
+
     private int queueSize = 10240;
 
     private int maxPushSize = 500;

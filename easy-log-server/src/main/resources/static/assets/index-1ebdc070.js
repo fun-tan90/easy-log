@@ -1,0 +1,1 @@
+import{_ as e}from "./index.js";import{_ as r,$ as o}from "./vue-50936e44.js";import"./antd-685f22a1.js";const t={};function c(n, _){return r(),o("div",null," 日志查询 ")}const i=e(t,[["render",c]]);export{i as default};

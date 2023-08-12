@@ -43,31 +43,6 @@ public class CacheServiceImpl implements CacheService {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
-    @Resource
-    private StreamMessageListenerContainer<String, MapRecord<String, String, byte[]>> streamMessageListenerContainer;
-
-    @Override
-    public void initGroupAndConsumers(String streamKey, String groupName, String consumerNamePrefix, int[] consumerGlobalOrders, StreamListener<String, MapRecord<String, String, byte[]>> streamListener) {
-        Boolean hasKey = stringRedisTemplate.hasKey(streamKey);
-        if (Boolean.FALSE.equals(hasKey)) {
-            stringRedisTemplate.opsForStream().createGroup(streamKey, groupName);
-        }
-        StreamInfo.XInfoGroups groups = stringRedisTemplate.opsForStream().groups(streamKey);
-        Optional<StreamInfo.XInfoGroup> xInfoGroupOpt = groups.stream().filter(n -> n.groupName().equals(groupName)).findAny();
-        if (!xInfoGroupOpt.isPresent()) {
-            stringRedisTemplate.opsForStream().createGroup(streamKey, groupName);
-        }
-        for (int consumerGlobalOrder : consumerGlobalOrders) {
-            String consumerName = consumerNamePrefix + consumerGlobalOrder;
-            streamMessageListenerContainer
-                    .receiveAutoAck(
-                            Consumer.from(groupName, consumerName),
-                            StreamOffset.create(streamKey, ReadOffset.lastConsumed()),
-                            streamListener
-                    );
-        }
-    }
-
     @Override
     public SlidingWindow slidingWindow(String key, String unique, long timestamp, int period) {
         DefaultRedisScript<String> actual = Singleton.get(EasyLogConstants.SLIDING_WINDOW_LUA_PATH, () -> {

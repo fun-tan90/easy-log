@@ -56,11 +56,11 @@ public class MqttManager {
             String namespace = EasyLogManager.GLOBAL_CONFIG.getNamespace();
             String[] split = EasyLogManager.GLOBAL_CONFIG.getMqttAddress().split(":");
             client = MqttClient.create()
-                    .clientId(EasyLogConstants.MQTT_CLIENT_ID_APP_PREFIX + namespace + ":" + appName + ":" + RandomUtil.randomNumbers(6))
+                    .clientId(EasyLogConstants.MQTT_CLIENT_ID_CLIENT_PREFIX + namespace + ":" + appName + ":" + RandomUtil.randomNumbers(6))
                     .ip(split[0])
                     .port(Integer.parseInt(split[1]))
-                    .username(EasyLogConstants.MQTT_CLIENT_USERNAME)
-                    .password(EasyLogConstants.MQTT_CLIENT_PASSWORD)
+                    .username(EasyLogManager.GLOBAL_CONFIG.getUserName())
+                    .password(EasyLogManager.GLOBAL_CONFIG.getPassword())
                     .keepAliveSecs(30)
                     .connectSync();
 
@@ -133,8 +133,7 @@ public class MqttManager {
                     return;
                 }
                 try {
-                    boolean publish = client.publish(StrUtil.format(EasyLogConstants.MQTT_LOG, EasyLogManager.GLOBAL_CONFIG.getNamespace(), EasyLogManager.GLOBAL_CONFIG.getAppName()), JSONUtil.toJsonStr(logTransferredList).getBytes(StandardCharsets.UTF_8), MqttQoS.AT_LEAST_ONCE);
-                    System.out.println("publish " + publish);
+                    client.publish(StrUtil.format(EasyLogConstants.MQTT_LOG, EasyLogManager.GLOBAL_CONFIG.getNamespace(), EasyLogManager.GLOBAL_CONFIG.getAppName()), JSONUtil.toJsonStr(logTransferredList).getBytes(StandardCharsets.UTF_8), MqttQoS.AT_LEAST_ONCE);
                 } finally {
                     logTransferredList.clear();
                 }

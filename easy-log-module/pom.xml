@@ -17,6 +17,5 @@
         <module>easy-log-core</module>
         <module>easy-log-admin</module>
         <module>easy-log-compute</module>
-        <module>easy-log-mqtt</module>
     </modules>
 </project>

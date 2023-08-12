@@ -22,14 +22,14 @@
         }
       ],
       "properties": {
-        "id": {
-          "type": "keyword"
-        },
         "namespace": {
           "type": "keyword"
         },
         "appName": {
           "type": "keyword"
+        },
+        "seq": {
+          "type": "long"
         },
         "content": {
           "type": "text",

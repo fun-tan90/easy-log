@@ -1,5 +1,0 @@
-logging:
-  config: classpath:logback-spring.xml
-  level:
-    root: info
-    com.chj.easy.log.event: debug

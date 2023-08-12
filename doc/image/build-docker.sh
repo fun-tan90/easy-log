@@ -4,5 +4,4 @@ export tag=$version
 
 # 打包跳过docker构建image
 mvn clean install -DskipTests=true -DskipDocker=true -f ../../pom.xml
-cd easy-log-app-mqtt/ && sh docker-build.sh && cd -
-cd easy-log-app-server/ && sh docker-build.sh && cd -
+cd easy-log-server/ && sh docker-build.sh

@@ -21,17 +21,6 @@ import java.util.Set;
 public interface CacheService {
 
     /**
-     * 初始化redis stream 的组和组内消费者
-     *
-     * @param streamKey
-     * @param groupName
-     * @param consumerNamePrefix
-     * @param consumerGlobalOrders
-     * @param streamListener
-     */
-    void initGroupAndConsumers(String streamKey, String groupName, String consumerNamePrefix, int[] consumerGlobalOrders, StreamListener<String, MapRecord<String, String, byte[]>> streamListener);
-
-    /**
      * 滑动窗口算法
      *
      * @param key

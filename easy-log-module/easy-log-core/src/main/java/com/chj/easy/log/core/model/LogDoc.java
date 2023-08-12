@@ -32,6 +32,8 @@ public class LogDoc implements Doc {
 
     private String namespace;
 
+    private long seq;
+
     private String traceId;
 
     private String spanId;

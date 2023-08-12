@@ -102,6 +102,7 @@ public class EasyLogAppender extends AppenderBase<ILoggingEvent> {
         }
         return LogTransferred.builder()
                 .timestamp(timeStamp)
+                .seq(EasyLogManager.SEQ.incrementAndGet())
                 .appName(EasyLogManager.GLOBAL_CONFIG.getAppName())
                 .namespace(EasyLogManager.GLOBAL_CONFIG.getNamespace())
                 .level(level.levelStr)
