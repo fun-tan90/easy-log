@@ -1,9 +1,13 @@
 package com.chj.easy.log.common.content;
 
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * description TODO
@@ -22,13 +26,24 @@ public class EasyLogConfig implements Serializable {
 
     private String namespace = "dev";
 
-    private String mqttAddress = "127.0.0.1:1883";
+    private String mqttAddress = "tcp://127.0.0.1:1883";
 
     private String userName;
 
     private String password;
 
+    private List<Topic> topics = Collections.singletonList(Topic.builder().topicPattern("el/cmd/down/#").qos(2).build());
+
     private int queueSize = 10240;
 
     private int maxPushSize = 500;
+
+    @Data
+    @Builder
+    public static class Topic {
+
+        private String topicPattern;
+
+        private int qos;
+    }
 }

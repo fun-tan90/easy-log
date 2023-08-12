@@ -21,8 +21,9 @@
             <artifactId>hutool-extra</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.dreamlu</groupId>
-            <artifactId>mica-mqtt-client</artifactId>
+            <groupId>org.eclipse.paho</groupId>
+            <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+            <version>1.2.2</version>
         </dependency>
         <dependency>
             <groupId>org.aspectj</groupId>

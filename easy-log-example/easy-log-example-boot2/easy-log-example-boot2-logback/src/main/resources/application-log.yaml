@@ -3,4 +3,4 @@ logging:
   level:
     root: info
     easy-log: debug
-    net.dreamlu.iot.mqtt.core: error
+#    net.dreamlu.iot.mqtt.core: error

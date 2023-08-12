@@ -37,8 +37,8 @@
         <easy-captcha.version>1.6.2</easy-captcha.version>
         <mybatis-flex.version>1.4.3</mybatis-flex.version>
         <tlog.version>1.5.1</tlog.version>
+        <mqtt.version>1.2.2</mqtt.version>
         <forest.version>1.5.26</forest.version>
-        <mica.version>2.7.12</mica.version>
         <mica-mqtt.version>2.2.2</mica-mqtt.version>
         <snack3.version>3.2.72</snack3.version>
         <byte-buddy.version>1.14.5</byte-buddy.version>
@@ -230,10 +230,11 @@
             </dependency>
 
             <dependency>
-                <groupId>net.dreamlu</groupId>
-                <artifactId>mica-mqtt-client</artifactId>
-                <version>${mica-mqtt.version}</version>
+                <groupId>org.eclipse.paho</groupId>
+                <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+                <version>${mqtt.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>net.dreamlu</groupId>
                 <artifactId>mica-mqtt-client-spring-boot-starter</artifactId>

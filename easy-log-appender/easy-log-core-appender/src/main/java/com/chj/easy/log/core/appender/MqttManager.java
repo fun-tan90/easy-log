@@ -6,6 +6,7 @@ import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
+import com.chj.easy.log.common.content.EasyLogConfig;
 import com.chj.easy.log.common.enums.CmdTypeEnum;
 import com.chj.easy.log.common.model.CmdDown;
 import com.chj.easy.log.common.model.CmdUp;
@@ -15,17 +16,17 @@ import com.chj.easy.log.common.threadpool.EasyLogThreadPool;
 import com.chj.easy.log.common.utils.LocalhostUtil;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import net.dreamlu.iot.mqtt.codec.MqttPublishMessage;
-import net.dreamlu.iot.mqtt.codec.MqttQoS;
-import net.dreamlu.iot.mqtt.core.client.IMqttClientMessageListener;
-import net.dreamlu.iot.mqtt.core.client.MqttClient;
+import org.eclipse.paho.client.mqttv3.*;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.boot.logging.*;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-import org.tio.core.ChannelContext;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
@@ -48,36 +49,66 @@ public class MqttManager {
 
     private final static AtomicBoolean SCHEDULE_PUSH_LOG_INITIALIZED = new AtomicBoolean(false);
 
-    private static MqttClient client;
+    private static MqttAsyncClient mqttClient;
 
+    @SneakyThrows
     public static void initMessageChannel() {
         if (MQTT_CLIENT_INITIALIZED.compareAndSet(false, true)) {
             String appName = EasyLogManager.GLOBAL_CONFIG.getAppName();
             String namespace = EasyLogManager.GLOBAL_CONFIG.getNamespace();
-            String[] split = EasyLogManager.GLOBAL_CONFIG.getMqttAddress().split(":");
-            client = MqttClient.create()
-                    .clientId(EasyLogConstants.MQTT_CLIENT_ID_CLIENT_PREFIX + namespace + ":" + appName + ":" + RandomUtil.randomNumbers(4))
-                    .ip(split[0])
-                    .port(Integer.parseInt(split[1]))
-                    .username(EasyLogManager.GLOBAL_CONFIG.getUserName())
-                    .password(EasyLogManager.GLOBAL_CONFIG.getPassword())
-                    .keepAliveSecs(30)
-                    .connectSync();
-
-            client.subQos2(StrUtil.format(EasyLogConstants.MQTT_CMD_DOWN, namespace, appName), new IMqttClientMessageListener() {
+            String clientId = EasyLogConstants.MQTT_CLIENT_ID_CLIENT_PREFIX + namespace + ":" + appName + ":" + RandomUtil.randomNumbers(4);
+            String mqttAddress = EasyLogManager.GLOBAL_CONFIG.getMqttAddress();
+            MqttAsyncClient client = new MqttAsyncClient(mqttAddress, clientId, new MemoryPersistence());
+            MqttConnectOptions connOpts = new MqttConnectOptions();
+            connOpts.setUserName(EasyLogManager.GLOBAL_CONFIG.getUserName());
+            connOpts.setPassword(EasyLogManager.GLOBAL_CONFIG.getPassword().toCharArray());
+            // 关闭自动重连
+            connOpts.setAutomaticReconnect(true);
+            // 设置keepalive
+            connOpts.setKeepAliveInterval(30);
+            // 设置回调
+            client.setCallback(new MqttCallbackExtended() {
                 @Override
-                public void onSubscribed(ChannelContext context, String topicFilter, MqttQoS mqttQoS) {
-                    log.debug("topicFilter:{} MqttQoS:{} 订阅成功！！！", topicFilter, mqttQoS);
+                public void connectionLost(Throwable cause) {
+                    cause.printStackTrace();
+                    System.out.println("连接断开，自动重连【" + cause.getMessage() + "】");
                 }
 
                 @Override
-                public void onMessage(ChannelContext context, String topic, MqttPublishMessage message, byte[] payload) {
-                    String msg = new String(payload, StandardCharsets.UTF_8);
-                    log.debug("mqtt onMessage {}\n{}", topic, msg);
+                public void messageArrived(String topic, org.eclipse.paho.client.mqttv3.MqttMessage message) throws Exception {
+                    int qos = message.getQos();
+                    String msg = new String(message.getPayload());
+                    System.out.println("接收消息主题: " + topic + ",接收消息Qos:" + qos + ",接收消息: " + msg);
                     if (!StringUtils.hasLength(msg)) {
                         return;
                     }
                     handlerCmd(topic, msg);
+                }
+
+                @Override
+                public void deliveryComplete(IMqttDeliveryToken token) {
+                }
+
+                @SneakyThrows
+                @Override
+                public void connectComplete(boolean reconnect, String serverUri) {
+                    List<EasyLogConfig.Topic> topics = EasyLogManager.GLOBAL_CONFIG.getTopics();
+                    if (!CollectionUtils.isEmpty(topics)) {
+                        // 订阅
+                        String[] topicFilters = topics.stream().map(EasyLogConfig.Topic::getTopicPattern).toArray(String[]::new);
+                        int[] qos = Arrays.stream(topics.stream().map(EasyLogConfig.Topic::getQos).toArray(Integer[]::new)).mapToInt(Integer::valueOf).toArray();
+                        client.subscribe(topicFilters, qos);
+                    }
+                }
+            });
+            client.connect(connOpts, null, new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    mqttClient = client;
+                }
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    exception.printStackTrace();
                 }
             });
         }
@@ -104,7 +135,11 @@ public class MqttManager {
                         .currIp(LocalhostUtil.getHostIp())
                         .loggerConfigs(loggerConfigs)
                         .build();
-                client.publish(StrUtil.format(EasyLogConstants.MQTT_CMD_UP, namespace, appName), JSONUtil.toJsonStr(cmdUp).getBytes(StandardCharsets.UTF_8), MqttQoS.EXACTLY_ONCE);
+                try {
+                    mqttClient.publish(StrUtil.format(EasyLogConstants.MQTT_CMD_UP, namespace, appName), JSONUtil.toJsonStr(cmdUp).getBytes(StandardCharsets.UTF_8), 1, false);
+                } catch (MqttException e) {
+                    e.printStackTrace();
+                }
             } else if (CmdTypeEnum.SET_LOGGER_LEVEL_CONFIG.equals(cmdType)) {
                 String loggerName = cmdDown.getLoggerName();
                 LogLevel logLevel = cmdDown.getLogLevel();
@@ -123,7 +158,7 @@ public class MqttManager {
         if (SCHEDULE_PUSH_LOG_INITIALIZED.compareAndSet(false, true)) {
             List<LogTransferred> logTransferredList = new ArrayList<>();
             EasyLogThreadPool.newEasyLogScheduledExecutorInstance().scheduleWithFixedDelay(() -> {
-                if (client == null || !client.isConnected()) {
+                if (mqttClient == null || !mqttClient.isConnected()) {
                     return;
                 }
                 if (logTransferredList.isEmpty()) {
@@ -133,7 +168,9 @@ public class MqttManager {
                     return;
                 }
                 try {
-                    client.publish(StrUtil.format(EasyLogConstants.MQTT_LOG, EasyLogManager.GLOBAL_CONFIG.getNamespace(), EasyLogManager.GLOBAL_CONFIG.getAppName()), JSONUtil.toJsonStr(logTransferredList).getBytes(StandardCharsets.UTF_8), MqttQoS.AT_LEAST_ONCE);
+                    mqttClient.publish(StrUtil.format(EasyLogConstants.MQTT_LOG, EasyLogManager.GLOBAL_CONFIG.getNamespace(), EasyLogManager.GLOBAL_CONFIG.getAppName()), JSONUtil.toJsonStr(logTransferredList).getBytes(StandardCharsets.UTF_8), 1, false);
+                } catch (MqttException e) {
+                    e.printStackTrace();
                 } finally {
                     logTransferredList.clear();
                 }
