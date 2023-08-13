@@ -63,7 +63,7 @@ public class MqttManager {
                 @Override
                 public void connectionLost(Throwable cause) {
                     cause.printStackTrace();
-                    System.out.println("连接断开，自动重连【" + cause.getMessage() + "】");
+                    System.err.println("连接断开，自动重连【" + cause.getMessage() + "】");
                 }
 
                 @Override
@@ -101,6 +101,7 @@ public class MqttManager {
 
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    System.err.println(exception.getMessage());
                     exception.printStackTrace();
                 }
             });

@@ -37,17 +37,15 @@ public final class EasyLogAppender extends AbstractAppender {
 
     public static final String PLUGIN_NAME = "EasyLog";
 
-    private final BlockingQueue<LogTransferred> blockingQueue;
+    private final static BlockingQueue<LogTransferred> BLOCKING_QUEUE = new ArrayBlockingQueue<>(EasyLogManager.GLOBAL_CONFIG.getQueueSize());
 
     private EasyLogAppender(final String name,
                             final Layout<? extends Serializable> layout,
                             final Filter filter,
                             final boolean ignoreExceptions,
-                            final Property[] properties,
-                            final BlockingQueue<LogTransferred> blockingQueue
+                            final Property[] properties
     ) {
         super(name, filter, layout, ignoreExceptions, properties);
-        this.blockingQueue = blockingQueue;
     }
 
     @Getter
@@ -57,14 +55,12 @@ public final class EasyLogAppender extends AbstractAppender {
 
         @Override
         public EasyLogAppender build() {
-            BlockingQueue<LogTransferred> blockingQueue = new ArrayBlockingQueue<>(EasyLogManager.GLOBAL_CONFIG.getQueueSize());
             return new EasyLogAppender(
                     getName(),
                     getLayout(),
                     getFilter(),
                     isIgnoreExceptions(),
-                    getPropertyArray(),
-                    blockingQueue
+                    getPropertyArray()
             );
         }
     }
@@ -77,7 +73,7 @@ public final class EasyLogAppender extends AbstractAppender {
     @Override
     public void start() {
         MqttManager.initMessageChannel();
-        MqttManager.schedulePushLog(blockingQueue);
+        MqttManager.schedulePushLog(BLOCKING_QUEUE);
         super.start();
     }
 
@@ -87,7 +83,7 @@ public final class EasyLogAppender extends AbstractAppender {
             return;
         }
         LogTransferred logTransferred = transferLog(logEvent);
-        if (!blockingQueue.offer(logTransferred)) {
+        if (!BLOCKING_QUEUE.offer(logTransferred)) {
             System.err.println("Easy-Log BlockingQueue add failed");
         }
     }
