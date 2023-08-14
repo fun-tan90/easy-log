@@ -1,14 +1,14 @@
-package com.chj.easy.log.core.appender;
+package com.chj.easy.log.common;
 
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
-import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.common.content.EasyLogConfig;
+import com.chj.easy.log.common.handler.MqttMessageArrivedHandler;
 import com.chj.easy.log.common.model.LogTransferred;
+import com.chj.easy.log.common.model.MeterContext;
 import com.chj.easy.log.common.threadpool.EasyLogThreadPool;
-import com.chj.easy.log.core.appender.handler.MqttMessageArrivedHandler;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author 陈浩杰
  * @date 2023/7/20 17:12
  */
-@Slf4j(topic = EasyLogConstants.EASY_LOG_TOPIC)
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MqttManager {
 
@@ -130,5 +130,9 @@ public class MqttManager {
                 }
             }, 5, 50, TimeUnit.MILLISECONDS);
         }
+    }
+
+    public static void pushMeter(MeterContext meterContext) {
+        log.info(JSONUtil.toJsonPrettyStr(meterContext));
     }
 }

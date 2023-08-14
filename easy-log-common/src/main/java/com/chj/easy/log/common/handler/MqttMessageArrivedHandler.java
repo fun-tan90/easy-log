@@ -1,4 +1,4 @@
-package com.chj.easy.log.core.appender.handler;
+package com.chj.easy.log.common.handler;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;

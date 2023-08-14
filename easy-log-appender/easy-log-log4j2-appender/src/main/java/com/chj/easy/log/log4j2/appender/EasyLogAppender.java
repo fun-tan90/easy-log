@@ -3,10 +3,10 @@ package com.chj.easy.log.log4j2.appender;
 
 import cn.hutool.core.exceptions.ExceptionUtil;
 import com.chj.easy.log.common.EasyLogManager;
+import com.chj.easy.log.common.MqttManager;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.common.model.LogTransferred;
 import com.chj.easy.log.common.utils.LocalhostUtil;
-import com.chj.easy.log.core.appender.MqttManager;
 import com.yomahub.tlog.context.TLogContext;
 import lombok.Getter;
 import lombok.Setter;

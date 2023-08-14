@@ -1,7 +1,7 @@
 package com.chj.easy.log.meter;
 
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
+import com.chj.easy.log.common.MqttManager;
 import com.chj.easy.log.common.model.MeterContext;
 import com.chj.easy.log.common.utils.LocalhostUtil;
 import io.micrometer.core.instrument.Clock;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * @date 2023/8/11 16:28
  */
 @Slf4j
-public class RedisStreamMeterRegistry extends StepMeterRegistry {
+public class MqttMeterRegistry extends StepMeterRegistry {
 
     private final String appName;
 
@@ -36,19 +36,20 @@ public class RedisStreamMeterRegistry extends StepMeterRegistry {
 
     private final static String CURR_IP = LocalhostUtil.getHostIp();
 
-    private final RedisStreamRegistryConfig config;
+    private final MqttRegistryConfig config;
 
-    public RedisStreamMeterRegistry(String appName, String namespace, RedisStreamRegistryConfig config) {
+    public MqttMeterRegistry(String appName, String namespace, MqttRegistryConfig config) {
         this(appName, namespace, config, Clock.SYSTEM, new NamedThreadFactory("redis-stream-publisher"));
     }
 
-    private RedisStreamMeterRegistry(String appName, String namespace, RedisStreamRegistryConfig config, Clock clock, ThreadFactory threadFactory) {
+    private MqttMeterRegistry(String appName, String namespace, MqttRegistryConfig config, Clock clock, ThreadFactory threadFactory) {
         super(config, clock);
         this.appName = appName;
         this.namespace = namespace;
         this.config = config;
         config().namingConvention(NamingConvention.camelCase);
         start(threadFactory);
+        MqttManager.initMessageChannel();
     }
 
     @Override
@@ -82,7 +83,7 @@ public class RedisStreamMeterRegistry extends StepMeterRegistry {
                     .namespace(namespace)
                     .currIp(CURR_IP)
                     .meters(meters).build();
-            log.info(JSONUtil.toJsonPrettyStr(meterContext));
+            MqttManager.pushMeter(meterContext);
         }
     }
 

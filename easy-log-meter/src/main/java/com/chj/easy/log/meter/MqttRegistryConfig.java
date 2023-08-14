@@ -9,9 +9,9 @@ import io.micrometer.core.instrument.step.StepRegistryConfig;
  * @author 陈浩杰
  * @date 2023/8/11 16:29
  */
-public interface RedisStreamRegistryConfig extends StepRegistryConfig {
+public interface MqttRegistryConfig extends StepRegistryConfig {
 
-    RedisStreamRegistryConfig DEFAULT = k -> null;
+    MqttRegistryConfig DEFAULT = k -> null;
 
     @Override
     default String prefix() {

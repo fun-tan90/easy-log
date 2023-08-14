@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.chj.easy.log.meter.RedisStreamMeterRegistryRunner
+  com.chj.easy.log.meter.MqttMeterRegistryRunner
