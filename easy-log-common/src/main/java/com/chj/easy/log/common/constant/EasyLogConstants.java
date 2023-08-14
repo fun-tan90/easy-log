@@ -47,8 +47,6 @@ public interface EasyLogConstants {
 
     String LOG_ALARM_RULES = "LOG_ALARM_RULES:";
 
-    String LOG_REAL_TIME_FILTER_RULES_TOPIC = "log_real_time_filter_rules/";
-
     String S_W_LOG_ALARM = "S_W:LOG_ALARM:";
 
     String LOG_ALARM = "LOG_ALARM";
@@ -75,6 +73,8 @@ public interface EasyLogConstants {
     /**
      * 主题相关
      */
+    String LOG_REAL_TIME_FILTER_RULES_TOPIC = "el/log_real_time_filter_rules/";
+
     String MQTT_CMD_DOWN_PREFIX = "el/cmd/down";
 
     String MQTT_CMD_DOWN_TOPIC = MQTT_CMD_DOWN_PREFIX + "/{}/{}";
