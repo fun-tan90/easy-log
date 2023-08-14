@@ -25,9 +25,9 @@ public class EasyLogAdminProperties {
 
     private boolean validateCaptcha = true;
 
+    private String mqttWsAddress;
+
     private String username = "admin";
 
     private String password = "123456";
-
-    private String mqttAddress;
 }

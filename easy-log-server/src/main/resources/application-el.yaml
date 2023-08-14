@@ -11,9 +11,9 @@ easy-log:
     banner: true
     auth: true
     validate-captcha: true
+    mqtt-ws-address: ${EL_ADMIN_MQTT_WS_ADDRESS:ws://121.36.96.79:9183/mqtt}
     username: ${EL_ADMIN_USERNAME:admin}
     password: ${EL_ADMIN_PASSWORD:123456}
-    mqtt-address: ${EL_ADMIN_MQTT_ADDRESS:ws://121.36.96.79:9183/mqtt}
   compute:
     enable: ${EL_COMPUTE_ENABLE:true}
     banner: true

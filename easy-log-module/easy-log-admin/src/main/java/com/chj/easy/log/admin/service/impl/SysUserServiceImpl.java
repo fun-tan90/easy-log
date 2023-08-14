@@ -74,7 +74,7 @@ public class SysUserServiceImpl implements SysUserService {
         String md5 = SecureUtil.md5(mqttClientId);
         return SysUserMqttVo
                 .builder()
-                .mqttAddress(easyLogAdminProperties.getMqttAddress())
+                .mqttWsAddress(easyLogAdminProperties.getMqttWsAddress())
                 .mqttClientId(mqttClientId)
                 .mqttUserName(md5.substring(0, EasyLogConstants.MQTT_MD5_SUB_INDEX))
                 .mqttPassword(md5.substring(EasyLogConstants.MQTT_MD5_SUB_INDEX))
