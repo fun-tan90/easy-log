@@ -27,7 +27,7 @@ import org.springframework.context.annotation.ComponentScan;
 @Slf4j
 @ConditionalOnProperty(value = "easy-log.admin.enable", havingValue = "true")
 @ComponentScan(EasyLogConstants.ADMIN_SCAN_BASE_PACKAGES)
-@EnableConfigurationProperties(EasyLogAdminProperties.class)
+@EnableConfigurationProperties({EasyLogAdminProperties.class})
 public class EasyLogAdminAutoConfiguration {
 
     // 注册 Sa-Token 全局过滤器

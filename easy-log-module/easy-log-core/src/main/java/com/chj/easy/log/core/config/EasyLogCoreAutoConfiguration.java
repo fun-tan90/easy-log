@@ -5,6 +5,7 @@ import com.chj.easy.log.core.convention.aspect.LogAspect;
 import com.chj.easy.log.core.convention.exception.ServiceException;
 import com.chj.easy.log.core.indicator.MqttClientHealthIndicator;
 import com.chj.easy.log.core.property.EasyLogEsProperties;
+import com.chj.easy.log.core.property.IndexLifecyclePolicy;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -32,7 +33,7 @@ import java.util.Optional;
  * @date 2023/7/13 14:38
  */
 @ComponentScan(EasyLogConstants.CORE_SCAN_BASE_PACKAGES)
-@EnableConfigurationProperties({EasyLogEsProperties.class})
+@EnableConfigurationProperties({EasyLogEsProperties.class, IndexLifecyclePolicy.class})
 public class EasyLogCoreAutoConfiguration {
 
     @Resource

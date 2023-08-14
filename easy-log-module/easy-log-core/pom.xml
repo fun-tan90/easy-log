@@ -65,5 +65,4 @@
             <artifactId>mica-mqtt-client-spring-boot-starter</artifactId>
         </dependency>
     </dependencies>
-
 </project>
