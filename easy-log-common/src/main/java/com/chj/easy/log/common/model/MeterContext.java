@@ -42,5 +42,9 @@ public class MeterContext implements Serializable {
         private Map<String, String> tags;
 
         private Double measurement;
+
+        private String baseUnit;
+
+        private String description;
     }
 }

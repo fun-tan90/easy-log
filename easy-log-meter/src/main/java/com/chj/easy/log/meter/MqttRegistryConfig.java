@@ -15,7 +15,7 @@ public interface MqttRegistryConfig extends StepRegistryConfig {
 
     @Override
     default String prefix() {
-        return "redis-stream";
+        return "mqtt";
     }
 
 }

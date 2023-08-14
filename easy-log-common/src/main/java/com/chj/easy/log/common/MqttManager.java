@@ -133,6 +133,6 @@ public class MqttManager {
     }
 
     public static void pushMeter(MeterContext meterContext) {
-        log.info(JSONUtil.toJsonPrettyStr(meterContext));
+        log.info(JSONUtil.toJsonStr(meterContext));
     }
 }

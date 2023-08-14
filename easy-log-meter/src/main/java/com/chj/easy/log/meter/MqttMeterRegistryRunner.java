@@ -1,12 +1,15 @@
 package com.chj.easy.log.meter;
 
 import com.chj.easy.log.common.EasyLogManager;
+import io.micrometer.core.instrument.Tag;
+import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics;
 import io.micrometer.core.instrument.binder.system.ProcessorMetrics;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
 import java.time.Duration;
+import java.util.Collections;
 
 /**
  * description TODO
@@ -25,7 +28,6 @@ public class MqttMeterRegistryRunner implements ApplicationRunner {
                 new MqttRegistryConfig() {
                     @Override
                     public String get(String key) {
-                        System.out.println(key);
                         return null;
                     }
 
@@ -34,9 +36,8 @@ public class MqttMeterRegistryRunner implements ApplicationRunner {
                         return Duration.ofSeconds(5);
                     }
                 });
-        new ProcessorMetrics()
-                .bindTo(mqttMeterRegistry);
-        new JvmMemoryMetrics()
-                .bindTo(mqttMeterRegistry);
+        new ProcessorMetrics(Collections.singletonList(Tag.of("metricType", "ProcessorMetrics"))).bindTo(mqttMeterRegistry);
+        new JvmGcMetrics(Collections.singletonList(Tag.of("metricType", "JvmGcMetrics"))).bindTo(mqttMeterRegistry);
+        new JvmMemoryMetrics(Collections.singletonList(Tag.of("metricType", "JvmMemoryMetrics"))).bindTo(mqttMeterRegistry);
     }
 }

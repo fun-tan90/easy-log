@@ -8,7 +8,6 @@ import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.Measurement;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Tag;
-import io.micrometer.core.instrument.config.NamingConvention;
 import io.micrometer.core.instrument.step.StepMeterRegistry;
 import io.micrometer.core.instrument.util.NamedThreadFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +46,6 @@ public class MqttMeterRegistry extends StepMeterRegistry {
         this.appName = appName;
         this.namespace = namespace;
         this.config = config;
-        config().namingConvention(NamingConvention.camelCase);
         start(threadFactory);
         MqttManager.initMessageChannel();
     }
@@ -73,9 +71,10 @@ public class MqttMeterRegistry extends StepMeterRegistry {
                         name,
                         type.name().toLowerCase(),
                         tagMap,
-                        next.getValue()
+                        next.getValue(),
+                        id.getBaseUnit(),
+                        id.getDescription()
                 );
-
             }).collect(Collectors.toList());
             MeterContext meterContext = MeterContext.builder()
                     .timeStamp(System.currentTimeMillis())
