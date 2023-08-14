@@ -7,7 +7,7 @@ services:
     environment:
     - "EMQX_NODE_NAME=emqx@node1.emqx.io"
     - "EMQX_CLUSTER__DISCOVERY_STRATEGY=static"
-    - "EMQX_CLUSTER__STATIC__SEEDS=[emqx@node1.emqx.io,emqx@node2.emqx.io]"
+    - "EMQX_CLUSTER__STATIC__SEEDS=[emqx@node1.emqx.io,emqx@node2.emqx.io,emqx@node3.emqx.io]"
     healthcheck:
       test: ["CMD", "/opt/emqx/bin/emqx_ctl", "status"]
       interval: 5s
@@ -24,7 +24,7 @@ services:
       - "8883:8883"
       - "18083:18083"
     volumes:
-      - ./emqx1_data:/opt/emqx/data
+      - ./emqx_data_01:/opt/emqx/data
 
   emqx2:
     image: emqx:5.1.0
@@ -32,7 +32,7 @@ services:
     environment:
     - "EMQX_NODE_NAME=emqx@node2.emqx.io"
     - "EMQX_CLUSTER__DISCOVERY_STRATEGY=static"
-    - "EMQX_CLUSTER__STATIC__SEEDS=[emqx@node1.emqx.io,emqx@node2.emqx.io]"
+    - "EMQX_CLUSTER__STATIC__SEEDS=[emqx@node1.emqx.io,emqx@node2.emqx.io,emqx@node3.emqx.io]"
     healthcheck:
       test: ["CMD", "/opt/emqx/bin/emqx_ctl", "status"]
       interval: 5s
@@ -43,7 +43,26 @@ services:
         aliases:
         - node2.emqx.io
     volumes:
-      - ./emqx2_data:/opt/emqx/data
+      - ./emqx_data_02:/opt/emqx/data
+
+  emqx3:
+    image: emqx:5.1.0
+    container_name: emqx3
+    environment:
+      - "EMQX_NODE_NAME=emqx@node3.emqx.io"
+      - "EMQX_CLUSTER__DISCOVERY_STRATEGY=static"
+      - "EMQX_CLUSTER__STATIC__SEEDS=[emqx@node1.emqx.io,emqx@node2.emqx.io,emqx@node3.emqx.io]"
+    healthcheck:
+      test: ["CMD", "/opt/emqx/bin/emqx_ctl", "status"]
+      interval: 5s
+      timeout: 25s
+      retries: 5
+    networks:
+      default:
+        aliases:
+          - node3.emqx.io
+    volumes:
+      - ./emqx_data_03:/opt/emqx/data
 
 networks:
   default:
