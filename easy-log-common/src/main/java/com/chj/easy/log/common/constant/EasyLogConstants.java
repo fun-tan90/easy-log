@@ -21,8 +21,6 @@ public interface EasyLogConstants {
 
     String COMPUTE_SCAN_BASE_PACKAGES = "com.chj.easy.log.compute";
 
-    String EVENT_SCAN_BASE_PACKAGES = "com.chj.easy.log.event";
-
     String ADMIN_SCAN_BASE_PACKAGES = "com.chj.easy.log.admin";
 
     String CORE_SCAN_BASE_PACKAGES = "com.chj.easy.log.core";
@@ -67,6 +65,9 @@ public interface EasyLogConstants {
 
     String LOG_ALARM_PLATFORM = "LOG_ALARM_PLATFORM:";
 
+    /**
+     * mqtt客户端
+     */
     String MQTT_CLIENT_ID_FRONT_PREFIX = "easy_log_front:";
 
     String MQTT_CLIENT_ID_CLIENT_PREFIX = "easy_log_client:";
@@ -76,15 +77,15 @@ public interface EasyLogConstants {
      */
     String MQTT_CMD_DOWN_PREFIX = "el/cmd/down";
 
-    String MQTT_CMD_DOWN = MQTT_CMD_DOWN_PREFIX + "/{}/{}";
+    String MQTT_CMD_DOWN_TOPIC = MQTT_CMD_DOWN_PREFIX + "/{}/{}";
 
     String MQTT_CMD_UP_PREFIX = "el/cmd/up";
 
-    String MQTT_CMD_UP = MQTT_CMD_UP_PREFIX + "/{}/{}";
+    String MQTT_CMD_UP_TOPIC = MQTT_CMD_UP_PREFIX + "/{}/{}";
 
     String MQTT_LOG_PREFIX = "el/log";
 
-    String MQTT_LOG = MQTT_LOG_PREFIX + "/{}/{}";
+    String MQTT_LOG_TOPIC = MQTT_LOG_PREFIX + "/{}/{}";
 
     String MQTT_LOG_ALARM_TOPIC = "el/log_alarm";
 

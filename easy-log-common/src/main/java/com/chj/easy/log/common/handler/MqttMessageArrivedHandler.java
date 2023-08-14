@@ -50,7 +50,7 @@ public class MqttMessageArrivedHandler {
                         .loggerConfigs(loggerConfigs)
                         .build();
                 try {
-                    client.publish(StrUtil.format(EasyLogConstants.MQTT_CMD_UP, namespace, appName), JSONUtil.toJsonStr(cmdUp).getBytes(StandardCharsets.UTF_8), 1, false);
+                    client.publish(StrUtil.format(EasyLogConstants.MQTT_CMD_UP_TOPIC, namespace, appName), JSONUtil.toJsonStr(cmdUp).getBytes(StandardCharsets.UTF_8), 1, false);
                 } catch (MqttException e) {
                     e.printStackTrace();
                 }

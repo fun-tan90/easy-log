@@ -122,7 +122,7 @@ public class MqttManager {
                     return;
                 }
                 try {
-                    mqttClient.publish(StrUtil.format(EasyLogConstants.MQTT_LOG, EasyLogManager.GLOBAL_CONFIG.getNamespace(), EasyLogManager.GLOBAL_CONFIG.getAppName()), JSONUtil.toJsonStr(logTransferredList).getBytes(StandardCharsets.UTF_8), 1, false);
+                    mqttClient.publish(StrUtil.format(EasyLogConstants.MQTT_LOG_TOPIC, EasyLogManager.GLOBAL_CONFIG.getNamespace(), EasyLogManager.GLOBAL_CONFIG.getAppName()), JSONUtil.toJsonStr(logTransferredList).getBytes(StandardCharsets.UTF_8), 1, false);
                 } catch (MqttException e) {
                     e.printStackTrace();
                 } finally {
