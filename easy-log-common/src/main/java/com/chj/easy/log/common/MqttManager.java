@@ -52,8 +52,8 @@ public class MqttManager {
             String mqttAddress = EasyLogManager.GLOBAL_CONFIG.getMqttAddress();
             MqttAsyncClient mqttAsyncClient = new MqttAsyncClient(mqttAddress, clientId, new MemoryPersistence());
             MqttConnectOptions connOpts = new MqttConnectOptions();
-            connOpts.setUserName(EasyLogManager.GLOBAL_CONFIG.getUserName());
-            connOpts.setPassword(EasyLogManager.GLOBAL_CONFIG.getPassword().toCharArray());
+            connOpts.setUserName(EasyLogManager.GLOBAL_CONFIG.getMqttUserName());
+            connOpts.setPassword(EasyLogManager.GLOBAL_CONFIG.getMqttPassword().toCharArray());
             // 关闭自动重连
             connOpts.setAutomaticReconnect(true);
             // 设置keepalive

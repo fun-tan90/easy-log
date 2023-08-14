@@ -20,17 +20,17 @@ import java.util.List;
 @Getter
 public class EasyLogConfig implements Serializable {
 
-    private static final long serialVersionUID = -6541180061782004705L;
+    private static final long serialVersionUID = -6541180161782004725L;
 
     private String appName = "default";
 
-    private String namespace = "dev";
+    private String namespace = "default";
 
     private String mqttAddress = "tcp://127.0.0.1:1883";
 
-    private String userName;
+    private String mqttUserName;
 
-    private String password;
+    private String mqttPassword;
 
     private List<Topic> topics = Collections.singletonList(Topic.builder().topicPattern("el/cmd/down/#").qos(2).build());
 
