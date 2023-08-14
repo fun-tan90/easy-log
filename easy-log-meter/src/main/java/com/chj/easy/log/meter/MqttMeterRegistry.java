@@ -39,7 +39,7 @@ public class MqttMeterRegistry extends StepMeterRegistry {
     private final MqttRegistryConfig config;
 
     public MqttMeterRegistry(String appName, String namespace, MqttRegistryConfig config) {
-        this(appName, namespace, config, Clock.SYSTEM, new NamedThreadFactory("redis-stream-publisher"));
+        this(appName, namespace, config, Clock.SYSTEM, new NamedThreadFactory("mqtt-publisher"));
     }
 
     private MqttMeterRegistry(String appName, String namespace, MqttRegistryConfig config, Clock clock, ThreadFactory threadFactory) {
