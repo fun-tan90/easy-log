@@ -17,6 +17,7 @@
         <module>easy-log-example-boot2-common</module>
         <module>easy-log-example-boot2-log4j2</module>
         <module>easy-log-example-boot2-logback</module>
+        <module>easy-log-example-boot2-log4j</module>
     </modules>
 
 </project>

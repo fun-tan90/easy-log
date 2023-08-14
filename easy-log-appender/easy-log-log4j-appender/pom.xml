@@ -11,6 +11,27 @@
 
     <artifactId>easy-log-log4j-appender</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.chj</groupId>
+            <artifactId>easy-log-core-appender</artifactId>
+        </dependency>
 
+        <dependency>
+            <groupId>com.yomahub</groupId>
+            <artifactId>tlog-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 </project>
