@@ -35,3 +35,5 @@ logs
 jar
 agents
 .NEUTRINO_PROXY_CLIENT_ID
+emqx1_data
+emqx2_data
