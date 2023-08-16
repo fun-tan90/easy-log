@@ -4,8 +4,6 @@ import com.chj.easy.log.core.model.LogAlarmContent;
 import com.chj.easy.log.core.model.LogAlarmPlatform;
 import com.chj.easy.log.core.model.LogAlarmRule;
 import com.chj.easy.log.core.model.SlidingWindow;
-import org.springframework.data.redis.connection.stream.MapRecord;
-import org.springframework.data.redis.stream.StreamListener;
 
 import java.util.List;
 import java.util.Map;
@@ -119,9 +117,8 @@ public interface CacheService {
      * 添加日志告警规则
      *
      * @param logAlarmRule
-     * @return
      */
-    String addLogAlarmRule(LogAlarmRule logAlarmRule);
+    void addLogAlarmRule(LogAlarmRule logAlarmRule);
 
     /**
      * 添加日志告警平台信息

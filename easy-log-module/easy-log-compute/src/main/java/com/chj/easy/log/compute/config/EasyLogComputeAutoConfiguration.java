@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 public class EasyLogComputeAutoConfiguration {
 
     @Bean
-    public LoadingCache<String, Map<String, Map<String, LogAlarmRule>>> logAlarmRulesCache(LogAlarmRulesCacheLoader cacheLoader) {
+    public LoadingCache<String, LogAlarmRule> logAlarmRulesCache(LogAlarmRulesCacheLoader cacheLoader) {
         return Caffeine.newBuilder()
                 .scheduler(Scheduler.forScheduledExecutorService(Executors.newScheduledThreadPool(1)))
                 .maximumSize(10_000)

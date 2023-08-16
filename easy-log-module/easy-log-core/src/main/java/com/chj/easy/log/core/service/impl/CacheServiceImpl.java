@@ -13,12 +13,9 @@ import com.chj.easy.log.core.model.SlidingWindow;
 import com.chj.easy.log.core.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.data.redis.connection.stream.*;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
-import org.springframework.data.redis.stream.StreamListener;
-import org.springframework.data.redis.stream.StreamMessageListenerContainer;
 import org.springframework.scripting.support.ResourceScriptSource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -157,15 +154,13 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
-    public String addLogAlarmRule(LogAlarmRule logAlarmRule) {
+    public void addLogAlarmRule(LogAlarmRule logAlarmRule) {
         String appName = logAlarmRule.getAppName();
         String namespace = logAlarmRule.getNamespace();
-        String ruleKey = EasyLogConstants.LOG_ALARM_RULES + appName + ":" + namespace;
         String loggerName = logAlarmRule.getLoggerName();
-        String ruleId = SecureUtil.md5(ruleKey + ":" + loggerName);
+        String ruleId = SecureUtil.md5(appName + ":" + namespace + ":" + loggerName);
         logAlarmRule.setRuleId(ruleId);
-        stringRedisTemplate.opsForHash().put(ruleKey, loggerName, JSONUtil.toJsonStr(logAlarmRule));
-        return ruleId;
+        stringRedisTemplate.opsForValue().set(EasyLogConstants.LOG_ALARM_RULES + ruleId, JSONUtil.toJsonStr(logAlarmRule));
     }
 
     @Override

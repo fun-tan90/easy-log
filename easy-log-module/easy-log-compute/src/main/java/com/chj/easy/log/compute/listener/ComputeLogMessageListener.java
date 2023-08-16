@@ -90,10 +90,11 @@ public class ComputeLogMessageListener implements IMqttClientMessageListener {
             if (CollectionUtils.isEmpty(cacheLogAlarmRuleMap)) {
                 return;
             }
-            cacheLogAlarmRuleMap.forEach((k, logAlarmRule) -> {
+            for (LogAlarmRule logAlarmRule : cacheLogAlarmRuleMap.values()) {
                 Integer period = logAlarmRule.getPeriod();
                 Integer threshold = logAlarmRule.getThreshold();
-                SlidingWindow slidingWindow = cacheService.slidingWindow(EasyLogConstants.S_W_LOG_ALARM + appName + ":" + namespace + ":" + k, recordId, timestamp, period);
+                String alarmRuleLoggerName = logAlarmRule.getLoggerName();
+                SlidingWindow slidingWindow = cacheService.slidingWindow(EasyLogConstants.S_W_LOG_ALARM + appName + ":" + namespace + ":" + alarmRuleLoggerName, recordId, timestamp, period);
                 Integer windowCount = slidingWindow.getWindowCount();
                 log.info("阈值大小:{},滑动窗口内计数大小:{}", threshold, windowCount);
                 if (windowCount == threshold + 1) {
@@ -106,14 +107,14 @@ public class ComputeLogMessageListener implements IMqttClientMessageListener {
                             .ruleId(logAlarmRule.getRuleId())
                             .appName(logAlarmRule.getAppName())
                             .namespace(logAlarmRule.getNamespace())
-                            .loggerName(k)
+                            .loggerName(alarmRuleLoggerName)
                             .receiverList(logAlarmRule.getReceiverList())
                             .threshold(logAlarmRule.getThreshold())
                             .period(logAlarmRule.getPeriod())
                             .build();
                     mqttClientTemplate.publish(EasyLogConstants.MQTT_LOG_ALARM_TOPIC, JSONUtil.toJsonStr(logAlarmContent).getBytes(StandardCharsets.UTF_8), MqttQoS.EXACTLY_ONCE);
                 }
-            });
+            }
         }, EasyLogThreadPool.newEasyLogFixedPoolInstance());
     }
 

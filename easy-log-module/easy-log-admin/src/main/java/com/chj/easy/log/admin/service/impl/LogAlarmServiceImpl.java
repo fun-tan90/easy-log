@@ -66,8 +66,9 @@ public class LogAlarmServiceImpl implements LogAlarmService {
                 .threshold(logAlarmRuleAddCmd.getThreshold())
                 .status(logAlarmRuleAddCmd.getStatus())
                 .build();
+        cacheService.addLogAlarmRule(logAlarmRule);
         mqttClientTemplate.publish(EasyLogConstants.MQTT_LOG_ALARM_RULES_TOPIC + "put", JSONUtil.toJsonStr(logAlarmRule).getBytes(StandardCharsets.UTF_8), MqttQoS.EXACTLY_ONCE);
-        return cacheService.addLogAlarmRule(logAlarmRule);
+        return logAlarmRule.getRuleId();
     }
 
     @Override

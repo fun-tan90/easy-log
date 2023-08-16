@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class LogRealTimeFilterRulesCacheLoader implements CacheLoader<String, ReactorQL> {
+
     @Override
     public @Nullable ReactorQL load(@NonNull String key) throws Exception {
         log.debug("CaffeineCacheLoader load key={}", key);

@@ -5,8 +5,6 @@ import com.chj.easy.log.core.model.LogRealTimeFilterRule;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.jetlinks.reactor.ql.ReactorQL;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 /**
@@ -33,7 +31,7 @@ public class LogRealTimeFilterRulesManager {
         LOG_REAL_TIME_FILTER_RULES_CACHE.put(logRealTimeFilterRule.getClientId(), ReactorQL.builder().sql(sql).build());
     }
 
-    public static void removeLogRealTimeFilterRule(LogRealTimeFilterRule logRealTimeFilterRule) {
-        LOG_REAL_TIME_FILTER_RULES_CACHE.invalidate(logRealTimeFilterRule.getClientId());
+    public static void removeLogRealTimeFilterRule(String clientId) {
+        LOG_REAL_TIME_FILTER_RULES_CACHE.invalidate(clientId);
     }
 }

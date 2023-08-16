@@ -33,7 +33,7 @@ public class ComputeLogRealTimeFilterRulesMessageListener implements IMqttClient
         if (topic.endsWith("put")) {
             LogRealTimeFilterRulesManager.putLogRealTimeFilterRule(JSONUtil.toBean(msg, LogRealTimeFilterRule.class));
         } else if (topic.endsWith("remove")) {
-            LogRealTimeFilterRulesManager.removeLogRealTimeFilterRule(JSONUtil.toBean(msg, LogRealTimeFilterRule.class));
+            LogRealTimeFilterRulesManager.removeLogRealTimeFilterRule(msg);
         }
     }
 }
