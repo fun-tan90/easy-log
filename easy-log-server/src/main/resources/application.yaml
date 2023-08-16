@@ -1,7 +1,6 @@
 server:
   port: 1124
 
-
 spring:
   application:
     name: easy-log-server
