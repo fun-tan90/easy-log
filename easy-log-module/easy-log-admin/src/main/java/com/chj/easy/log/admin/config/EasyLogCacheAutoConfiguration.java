@@ -27,8 +27,7 @@ public class EasyLogCacheAutoConfiguration {
                 // 自上一次写入或者读取缓存开始，在经过指定时间之后过期。
                 .expireAfterAccess(5, TimeUnit.SECONDS)
                 // 自缓存生成后，经过指定时间或者一次替换值之后过期。
-                .expireAfterWrite(15, TimeUnit.SECONDS)
-                .refreshAfterWrite(10, TimeUnit.MINUTES)
+                // .expireAfterWrite(15, TimeUnit.SECONDS)
                 .recordStats()  // 记录统计信息
                 .removalListener(removalListener)
                 .build(cacheLoader);

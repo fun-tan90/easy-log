@@ -28,9 +28,7 @@ public class LogRealTimeFilterRulesManager {
 
     public static void putLogRealTimeFilterRule(LogRealTimeFilterRule logRealTimeFilterRule) {
         String sql = logRealTimeFilterRule.getSql();
-        RULES_MAP.put(logRealTimeFilterRule.getClientId(), ReactorQL.builder()
-                .sql(sql)
-                .build());
+        RULES_MAP.put(logRealTimeFilterRule.getClientId(), ReactorQL.builder().sql(sql).build());
     }
 
     public static void removeLogRealTimeFilterRule(LogRealTimeFilterRule logRealTimeFilterRule) {

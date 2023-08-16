@@ -18,8 +18,7 @@ import org.springframework.stereotype.Component;
 public class CaffeineCacheLoader implements CacheLoader<String, String> {
     @Override
     public @Nullable String load(@NonNull String key) throws Exception {
-        String value = "CaffeineCacheLoader:" + key;
-        log.debug("CaffeineCacheLoader load value={}", value);
-        return value;
+        log.debug("CaffeineCacheLoader load key={}", key);
+        return "default_" + key;
     }
 }

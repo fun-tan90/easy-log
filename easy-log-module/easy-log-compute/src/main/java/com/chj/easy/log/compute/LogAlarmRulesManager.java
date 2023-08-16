@@ -30,19 +30,19 @@ public class LogAlarmRulesManager {
         String appName = logAlarmRule.getAppName();
         String namespace = logAlarmRule.getNamespace();
         String loggerName = logAlarmRule.getLoggerName();
-        Map<String, Map<String, LogAlarmRule>> map1 = RULES_MAP.get(appName);
-        if (CollectionUtils.isEmpty(map1)) {
-            map1 = new HashMap<>();
-            Map<String, LogAlarmRule> rule = new HashMap<>();
-            rule.put(loggerName, logAlarmRule);
-            map1.put(namespace, rule);
-            RULES_MAP.put(appName, map1);
+        Map<String, Map<String, LogAlarmRule>> namespaceRule = RULES_MAP.get(appName);
+        if (CollectionUtils.isEmpty(namespaceRule)) {
+            namespaceRule = new HashMap<>();
+            Map<String, LogAlarmRule> loggerNameRule = new HashMap<>();
+            loggerNameRule.put(loggerName, logAlarmRule);
+            namespaceRule.put(namespace, loggerNameRule);
+            RULES_MAP.put(appName, namespaceRule);
         } else {
-            Map<String, LogAlarmRule> rule = map1.get(namespace);
+            Map<String, LogAlarmRule> rule = namespaceRule.get(namespace);
             if (CollectionUtils.isEmpty(rule)) {
                 rule = new HashMap<>();
                 rule.put(loggerName, logAlarmRule);
-                map1.put(namespace, rule);
+                namespaceRule.put(namespace, rule);
             } else {
                 rule.put(loggerName, logAlarmRule);
             }
