@@ -1,6 +1,8 @@
 package com.chj.easy.log.compute;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.chj.easy.log.core.model.LogRealTimeFilterRule;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.jetlinks.reactor.ql.ReactorQL;
 
 import java.util.Map;
@@ -16,22 +18,22 @@ import java.util.stream.Stream;
  */
 public class LogRealTimeFilterRulesManager {
 
-    private static final Map<String, ReactorQL> RULES_MAP = new ConcurrentHashMap<>();
+    private static final LoadingCache<String, ReactorQL> LOG_REAL_TIME_FILTER_RULES_CACHE = SpringUtil.getBean("logRealTimeFilterRulesCache");
 
     public static Stream<String> stream() {
-        return LogRealTimeFilterRulesManager.RULES_MAP.keySet().stream();
+        return LOG_REAL_TIME_FILTER_RULES_CACHE.asMap().keySet().stream();
     }
 
     public static ReactorQL getLogRealTimeFilterRule(String clientId) {
-        return RULES_MAP.get(clientId);
+        return LOG_REAL_TIME_FILTER_RULES_CACHE.get(clientId);
     }
 
     public static void putLogRealTimeFilterRule(LogRealTimeFilterRule logRealTimeFilterRule) {
         String sql = logRealTimeFilterRule.getSql();
-        RULES_MAP.put(logRealTimeFilterRule.getClientId(), ReactorQL.builder().sql(sql).build());
+        LOG_REAL_TIME_FILTER_RULES_CACHE.put(logRealTimeFilterRule.getClientId(), ReactorQL.builder().sql(sql).build());
     }
 
     public static void removeLogRealTimeFilterRule(LogRealTimeFilterRule logRealTimeFilterRule) {
-        RULES_MAP.remove(logRealTimeFilterRule.getClientId());
+        LOG_REAL_TIME_FILTER_RULES_CACHE.invalidate(logRealTimeFilterRule.getClientId());
     }
 }

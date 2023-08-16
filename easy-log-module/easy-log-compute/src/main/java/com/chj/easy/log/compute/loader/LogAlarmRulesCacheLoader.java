@@ -1,10 +1,13 @@
-package com.chj.easy.log.admin.loader;
+package com.chj.easy.log.compute.loader;
 
+import com.chj.easy.log.core.model.LogAlarmRule;
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 /**
  * description TODO
@@ -15,10 +18,10 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class CaffeineCacheLoader implements CacheLoader<String, String> {
+public class LogAlarmRulesCacheLoader implements CacheLoader<String, Map<String, Map<String, LogAlarmRule>>> {
     @Override
-    public @Nullable String load(@NonNull String key) throws Exception {
+    public @Nullable Map<String, Map<String, LogAlarmRule>> load(@NonNull String key) throws Exception {
         log.debug("CaffeineCacheLoader load key={}", key);
-        return "default_" + key;
+        return null;
     }
 }

@@ -1,12 +1,13 @@
 package com.chj.easy.log.compute;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.chj.easy.log.core.model.LogAlarmRule;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
  */
 public class LogAlarmRulesManager {
 
-    public static final Map<String, Map<String, Map<String, LogAlarmRule>>> RULES_MAP = new ConcurrentHashMap<>();
+    private static final LoadingCache<String, Map<String, Map<String, LogAlarmRule>>> LOG_ALARM_RULES_CACHE = SpringUtil.getBean("logAlarmRulesCache");
 
     /**
      * 缓存日志告警规则
@@ -30,13 +31,13 @@ public class LogAlarmRulesManager {
         String appName = logAlarmRule.getAppName();
         String namespace = logAlarmRule.getNamespace();
         String loggerName = logAlarmRule.getLoggerName();
-        Map<String, Map<String, LogAlarmRule>> namespaceRule = RULES_MAP.get(appName);
+        Map<String, Map<String, LogAlarmRule>> namespaceRule = LOG_ALARM_RULES_CACHE.getIfPresent(appName);
         if (CollectionUtils.isEmpty(namespaceRule)) {
             namespaceRule = new HashMap<>();
             Map<String, LogAlarmRule> loggerNameRule = new HashMap<>();
             loggerNameRule.put(loggerName, logAlarmRule);
             namespaceRule.put(namespace, loggerNameRule);
-            RULES_MAP.put(appName, namespaceRule);
+            LOG_ALARM_RULES_CACHE.put(appName, namespaceRule);
         } else {
             Map<String, LogAlarmRule> rule = namespaceRule.get(namespace);
             if (CollectionUtils.isEmpty(rule)) {
@@ -58,11 +59,11 @@ public class LogAlarmRulesManager {
      * @return
      */
     public static Map<String, LogAlarmRule> getLogAlarmRule(String appName, String namespace, String... loggerName) {
-        Map<String, Map<String, LogAlarmRule>> map1 = RULES_MAP.get(appName);
-        if (CollectionUtils.isEmpty(map1)) {
+        Map<String, Map<String, LogAlarmRule>> namespaceRule = LOG_ALARM_RULES_CACHE.get(appName);
+        if (CollectionUtils.isEmpty(namespaceRule)) {
             return null;
         }
-        Map<String, LogAlarmRule> rule = map1.get(namespace);
+        Map<String, LogAlarmRule> rule = namespaceRule.get(namespace);
         if (CollectionUtils.isEmpty(rule)) {
             return null;
         }
@@ -73,11 +74,17 @@ public class LogAlarmRulesManager {
         String appName = logAlarmRule.getAppName();
         String namespace = logAlarmRule.getNamespace();
         String loggerName = logAlarmRule.getLoggerName();
-        Map<String, Map<String, LogAlarmRule>> map1 = RULES_MAP.get(appName);
-        if (!CollectionUtils.isEmpty(map1)) {
-            Map<String, LogAlarmRule> rule = map1.get(namespace);
+        Map<String, Map<String, LogAlarmRule>> namespaceRule = LOG_ALARM_RULES_CACHE.get(appName);
+        if (!CollectionUtils.isEmpty(namespaceRule)) {
+            Map<String, LogAlarmRule> rule = namespaceRule.get(namespace);
             if (!CollectionUtils.isEmpty(rule)) {
                 rule.remove(loggerName);
+                if (rule.isEmpty()) {
+                    namespaceRule.remove(namespace);
+                    if (namespaceRule.isEmpty()) {
+                        LOG_ALARM_RULES_CACHE.invalidate(appName);
+                    }
+                }
             }
         }
     }
