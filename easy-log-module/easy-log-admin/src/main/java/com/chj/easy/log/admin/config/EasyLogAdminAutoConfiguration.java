@@ -11,15 +11,11 @@ import com.chj.easy.log.admin.property.EasyLogAdminProperties;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.convention.Res;
 import com.chj.easy.log.core.convention.enums.IErrorCode;
-import com.github.benmanes.caffeine.cache.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 /**
  * description TODO
@@ -115,20 +111,5 @@ public class EasyLogAdminAutoConfiguration {
                 log.error(str, args);
             }
         };
-    }
-
-    @Bean
-    public LoadingCache<String, String> loadingCache(RemovalListener<String, String> removalListener, CacheLoader<String, String> cacheLoader) {
-        return Caffeine.newBuilder()
-                .scheduler(Scheduler.forScheduledExecutorService(Executors.newScheduledThreadPool(1)))
-                .maximumSize(10_000)
-                // 自上一次写入或者读取缓存开始，在经过指定时间之后过期。
-                .expireAfterAccess(5, TimeUnit.SECONDS)
-                // 自缓存生成后，经过指定时间或者一次替换值之后过期。
-                .expireAfterWrite(15, TimeUnit.SECONDS)
-                .refreshAfterWrite(10, TimeUnit.MINUTES)
-                .recordStats()  // 记录统计信息
-                .removalListener(removalListener)
-                .build(cacheLoader);
     }
 }
