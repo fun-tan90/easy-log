@@ -1,7 +1,7 @@
 <p align="center">
-	<img alt="logo" src="" width="150" height="150">
+	<img alt="logo" src="doc/img/Easy-Log-logo.png" width="250" height="100">
 </p>
-<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">Easy-Log</h1>
+<h1 align="center">Easy-Log</h1>
 <h4 align="center">易用的日志收集、分析和检索平台</h4>
 <p align="center">
 	<a href="https://gitee.com/easy-log/easy-log/stargazers"><img src="https://gitee.com/easy-log/easy-log/badge/star.svg"></a>
@@ -61,21 +61,24 @@ maxPushSize=500                         #日志批推送大小
 ### 客户端maven依赖引入
 
 ```xml
-<!--结合项目中使用的日志框架-->
-<dependency>
-    <groupId>com.chj</groupId>
-    <artifactId>easy-log-[log4j2|log4j|logback]-appender</artifactId>
-    <version>${latest}</version>
-</dependency>
-<!--tlog 
-    一个轻量级的分布式日志标记追踪神器，10分钟即可接入，自动对日志打标签完成微服务的链路追踪
-    基于tlog实现日志链路追踪，强烈建议引入该依赖
--->
-<dependency>
-    <groupId>com.yomahub</groupId>
-    <artifactId>tlog-all-spring-boot-starter</artifactId>
-    <version>${latest}</version>
-</dependency>
+
+<dependencies>
+    <!--结合项目中使用的日志框架-->
+    <dependency>
+        <groupId>com.chj</groupId>
+        <artifactId>easy-log-[log4j2|log4j|logback]-appender</artifactId>
+        <version>${latest}</version>
+    </dependency>
+    <!--tlog 
+        一个轻量级的分布式日志标记追踪神器，10分钟即可接入，自动对日志打标签完成微服务的链路追踪
+        基于tlog实现日志链路追踪，强烈建议引入该依赖
+    -->
+    <dependency>
+        <groupId>com.yomahub</groupId>
+        <artifactId>tlog-all-spring-boot-starter</artifactId>
+        <version>${latest}</version>
+    </dependency>
+</dependencies>
 ```
 
 ## 修改日志配置文件
