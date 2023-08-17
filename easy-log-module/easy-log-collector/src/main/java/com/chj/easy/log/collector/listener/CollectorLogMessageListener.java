@@ -38,6 +38,7 @@ public class CollectorLogMessageListener implements IMqttClientMessageListener {
 	@Override
 	public void onMessage(ChannelContext context, String topic, MqttPublishMessage message, byte[] payload) {
 		String msg = new String(payload, StandardCharsets.UTF_8);
+		log.debug("订阅到日志信息 topic:{} payload:{}", topic, msg);
 		List<LogTransferred> logTransferredList = JSONUtil.toList(msg, LogTransferred.class);
 		for (LogTransferred logTransferred : logTransferredList) {
 			LogDoc logDoc = LogDoc.builder()

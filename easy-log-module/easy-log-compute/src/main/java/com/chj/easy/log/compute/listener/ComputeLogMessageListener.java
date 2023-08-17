@@ -52,6 +52,7 @@ public class ComputeLogMessageListener implements IMqttClientMessageListener {
     @Override
     public void onMessage(ChannelContext context, String topic, MqttPublishMessage message, byte[] payload) {
         String msg = new String(payload, StandardCharsets.UTF_8);
+        log.debug("订阅到日志信息 topic:{} payload:{}", topic, msg);
         List<LogTransferred> logTransferredList = JSONUtil.toList(msg, LogTransferred.class);
         for (LogTransferred logTransferred : logTransferredList) {
             CompletableFuture<Void> cfAll = CompletableFuture.allOf(logInputSpeed(logTransferred, "recordId"), logAlarm(logTransferred, "recordId"), logRealTimeFilter(logTransferred));

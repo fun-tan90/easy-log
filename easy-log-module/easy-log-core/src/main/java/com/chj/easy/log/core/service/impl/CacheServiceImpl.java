@@ -91,6 +91,11 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
+    public void delLogRealTimeFilterRule(String clientId) {
+        stringRedisTemplate.delete(EasyLogConstants.LOG_REAL_TIME_FILTER_RULES + clientId);
+    }
+
+    @Override
     public String addAlarmPlatform(String alarmPlatformType, LogAlarmPlatform logAlarmPlatform) {
         String alarmPlatformId = NanoId.randomNanoId();
         stringRedisTemplate.opsForHash().put(EasyLogConstants.LOG_ALARM_PLATFORM + alarmPlatformType, alarmPlatformId, JSONUtil.toJsonStr(logAlarmPlatform));

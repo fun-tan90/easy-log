@@ -2,8 +2,7 @@ package com.chj.easy.log.compute.listener;
 
 import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.common.constant.EasyLogConstants;
-import com.chj.easy.log.compute.LogAlarmRulesManager;
-import com.chj.easy.log.core.model.LogAlarmRule;
+import com.chj.easy.log.compute.LogRealTimeFilterRulesManager;
 import lombok.extern.slf4j.Slf4j;
 import net.dreamlu.iot.mqtt.codec.MqttPublishMessage;
 import net.dreamlu.iot.mqtt.codec.MqttQoS;
@@ -23,17 +22,16 @@ import java.nio.charset.StandardCharsets;
  */
 @Slf4j
 @Component
-@MqttClientSubscribe(value = EasyLogConstants.MQTT_LOG_ALARM_RULES_TOPIC + "+", qos = MqttQoS.EXACTLY_ONCE)
-public class ComputeLogAlarmRulesMessageListener implements IMqttClientMessageListener {
+@MqttClientSubscribe(value = "$SYS/brokers/+/clients/+/+", qos = MqttQoS.EXACTLY_ONCE)
+public class ComputeMqttSysClientsMessageListener implements IMqttClientMessageListener {
 
     @Override
     public void onMessage(ChannelContext context, String topic, MqttPublishMessage message, byte[] payload) {
         String msg = new String(payload, StandardCharsets.UTF_8);
-        log.debug("订阅到日志告警规则信息 topic:{} payload:{}", topic, msg);
-        if (topic.endsWith("put")) {
-            LogAlarmRulesManager.putLogAlarmRule(JSONUtil.toBean(msg, LogAlarmRule.class));
-        } else if (topic.endsWith("remove")) {
-            LogAlarmRulesManager.removeLogAlarmRule(msg);
+        log.debug("订阅到客户端上下线事件信息 topic:{} payload:{}", topic, msg);
+        String clientId = JSONUtil.parseObj(msg).getStr("clientid");
+        if (topic.endsWith("disconnected") && clientId.startsWith(EasyLogConstants.MQTT_CLIENT_ID_FRONT_PREFIX)) {
+            LogRealTimeFilterRulesManager.removeLogRealTimeFilterRule(clientId);
         }
     }
 }

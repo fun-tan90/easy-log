@@ -43,6 +43,8 @@ public interface CacheService {
 
     void addLogRealTimeFilterRule(LogRealTimeFilterRule logRealTimeFilterRule);
 
+    void delLogRealTimeFilterRule(String clientId);
+
     /**
      * 添加日志告警平台信息
      *

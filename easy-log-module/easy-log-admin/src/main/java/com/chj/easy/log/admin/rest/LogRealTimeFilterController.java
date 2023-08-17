@@ -6,10 +6,7 @@ import com.chj.easy.log.core.convention.Res;
 import com.chj.easy.log.core.model.Topic;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -30,7 +27,13 @@ public class LogRealTimeFilterController {
     LogRealTimeFilterService logRealTimeFilterService;
 
     @PostMapping
-    public Res<Topic> submit(@RequestBody @Validated LogRealTimeFilterCmd logRealTimeFilterCmd) {
+    public Res<Topic> subscribe(@RequestBody @Validated LogRealTimeFilterCmd logRealTimeFilterCmd) {
         return Res.ok(logRealTimeFilterService.subscribe(logRealTimeFilterCmd));
+    }
+
+    @GetMapping
+    public Res<Void> unsubscribe(String mqttClientId) {
+        logRealTimeFilterService.unsubscribe(mqttClientId);
+        return Res.ok();
     }
 }

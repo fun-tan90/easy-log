@@ -15,4 +15,6 @@ public interface LogRealTimeFilterService {
 
     Topic subscribe(LogRealTimeFilterCmd logRealTimeFilterCmd);
 
+    void unsubscribe(String mqttClientId);
+
 }

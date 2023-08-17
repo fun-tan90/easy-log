@@ -23,13 +23,13 @@ import java.nio.charset.StandardCharsets;
  */
 @Slf4j
 @Component
-@MqttClientSubscribe(value = EasyLogConstants.LOG_REAL_TIME_FILTER_RULES_TOPIC + "#", qos = MqttQoS.EXACTLY_ONCE)
+@MqttClientSubscribe(value = EasyLogConstants.LOG_REAL_TIME_FILTER_RULES_TOPIC + "+", qos = MqttQoS.EXACTLY_ONCE)
 public class ComputeLogRealTimeFilterRulesMessageListener implements IMqttClientMessageListener {
 
     @Override
     public void onMessage(ChannelContext context, String topic, MqttPublishMessage message, byte[] payload) {
         String msg = new String(payload, StandardCharsets.UTF_8);
-        log.info("topic:{} payload:{}", topic, msg);
+        log.debug("订阅到日志过滤规则信息 topic:{} payload:{}", topic, msg);
         if (topic.endsWith("put")) {
             LogRealTimeFilterRulesManager.putLogRealTimeFilterRule(JSONUtil.toBean(msg, LogRealTimeFilterRule.class));
         } else if (topic.endsWith("remove")) {

@@ -106,4 +106,10 @@ public class LogRealTimeFilterServiceImpl implements LogRealTimeFilterService {
                 .build();
     }
 
+    @Override
+    public void unsubscribe(String mqttClientId) {
+        cacheService.delLogRealTimeFilterRule(mqttClientId);
+        mqttClientTemplate.publish(EasyLogConstants.LOG_REAL_TIME_FILTER_RULES_TOPIC + "remove", mqttClientId.getBytes(StandardCharsets.UTF_8), MqttQoS.EXACTLY_ONCE);
+    }
+
 }
