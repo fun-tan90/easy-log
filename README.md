@@ -27,7 +27,7 @@
 
 ## 核心模块说明
 
-- mqtt broker，负责消息推送，基于[EMQX](https://www.emqx.io/zh)中间件实现
+- mqtt broker负责日志消息发布与订阅，基于[EMQX](https://www.emqx.io/zh)中间件实现
 - easy-log-admin负责用户认证、日志告警规则、日志实时过滤等基础信息管理
 - easy-log-compute主要实现日志告警、日志实时过滤和日志收集速率计算等功能
 - easy-log-collector主要负责订阅日志数据，批量插入ES集群
