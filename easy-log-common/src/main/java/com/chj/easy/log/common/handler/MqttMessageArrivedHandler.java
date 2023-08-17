@@ -13,6 +13,7 @@ import com.chj.easy.log.common.utils.LocalhostUtil;
 import org.eclipse.paho.client.mqttv3.IMqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.boot.logging.*;
+import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -29,6 +30,9 @@ import java.util.stream.Collectors;
 public class MqttMessageArrivedHandler {
 
     public static void handlerCmd(String topic, String msg, IMqttAsyncClient client) {
+        if (!StringUtils.hasLength(msg)) {
+            return;
+        }
         String appName = EasyLogManager.GLOBAL_CONFIG.getAppName();
         String namespace = EasyLogManager.GLOBAL_CONFIG.getNamespace();
         if (topic.startsWith(EasyLogConstants.MQTT_CMD_DOWN_PREFIX)) {

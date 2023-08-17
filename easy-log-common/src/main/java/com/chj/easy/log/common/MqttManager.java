@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -48,7 +47,7 @@ public class MqttManager {
         if (MQTT_CLIENT_INITIALIZED.compareAndSet(false, true)) {
             String appName = EasyLogManager.GLOBAL_CONFIG.getAppName();
             String namespace = EasyLogManager.GLOBAL_CONFIG.getNamespace();
-            String clientId = EasyLogConstants.MQTT_CLIENT_ID_CLIENT_PREFIX + namespace + ":" + appName + ":" + RandomUtil.randomNumbers(4);
+            String clientId = EasyLogConstants.MQTT_CLIENT_ID_CLIENT_PREFIX + appName + ":" + namespace + ":" + RandomUtil.randomNumbers(4);
             String mqttAddress = EasyLogManager.GLOBAL_CONFIG.getMqttAddress();
             MqttAsyncClient mqttAsyncClient = new MqttAsyncClient(mqttAddress, clientId, new MemoryPersistence());
             MqttConnectOptions connOpts = new MqttConnectOptions();
@@ -62,7 +61,6 @@ public class MqttManager {
             mqttAsyncClient.setCallback(new MqttCallbackExtended() {
                 @Override
                 public void connectionLost(Throwable cause) {
-                    cause.printStackTrace();
                     System.err.println("连接断开，自动重连【" + cause.getMessage() + "】");
                 }
 
@@ -70,10 +68,7 @@ public class MqttManager {
                 public void messageArrived(String topic, org.eclipse.paho.client.mqttv3.MqttMessage message) throws Exception {
                     int qos = message.getQos();
                     String msg = new String(message.getPayload());
-                    System.out.println("接收消息主题: " + topic + ",接收消息Qos:" + qos + ",接收消息: " + msg);
-                    if (!StringUtils.hasLength(msg)) {
-                        return;
-                    }
+                    System.out.println("MQTT主题: " + topic + ", QOS: " + qos + ", payload: " + msg);
                     MqttMessageArrivedHandler.handlerCmd(topic, msg, mqttClient);
                 }
 
