@@ -83,7 +83,6 @@ maxPushSize=500                         #日志批推送大小
 ### logback 配置
 
 ```xml
-
 <configuration scan="false" debug="false">
     <!--其他Appender-->
     <appender name="EASY_LOG" class="com.chj.easy.log.logback.appender.EasyLogAppender"/>
@@ -97,7 +96,6 @@ maxPushSize=500                         #日志批推送大小
 ### log4j2 配置
 
 ```xml
-
 <Configuration>
     <Appenders>
         <!--其他Appender-->
