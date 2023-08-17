@@ -38,6 +38,8 @@ public class EasyLogConfig implements Serializable {
 
     private int maxPushSize = 500;
 
+    private boolean enableMeter;
+
     @Data
     @Builder
     public static class Topic {

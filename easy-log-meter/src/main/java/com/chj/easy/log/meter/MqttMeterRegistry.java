@@ -86,12 +86,12 @@ public class MqttMeterRegistry extends StepMeterRegistry {
         }
     }
 
-    private String convertName(String name) {
-        return StrUtil.isBlank(name) ? "unknown" : name.replace(".", "_");
-    }
-
     @Override
     protected TimeUnit getBaseTimeUnit() {
         return TimeUnit.MILLISECONDS;
+    }
+
+    private String convertName(String name) {
+        return StrUtil.isBlank(name) ? "unknown" : name.replace(".", "_");
     }
 }

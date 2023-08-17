@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.chj.easy.log.meter.MqttMeterRegistryRunner
+  com.chj.easy.log.meter.MqttStepMeterRegistryRunner
