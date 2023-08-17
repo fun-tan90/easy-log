@@ -13,26 +13,26 @@
 
 ---
 
-> 项目特性
+## 项目特性
 
 - 无代码入侵的分布式日志系统，基于log4j、log4j2、logback搜集日志，基于[TLog](https://tlog.yomahub.com)实现链路追踪，方便查询关联日志
 - elasticsearch作为日志存储、查询分析引擎,利用Data Streams + ILM机制功能特性完成日志索引的生命周期管理
 - 基于MQTT协议实现日志收集、实时修改应用日志级别、日志告警推送及日志实时过滤等功能
 
-> 核心架构
+## 核心架构
 
 ![Easy-Log系统架构.jpg](doc/img/Easy-Log系统架构.jpg)
 
 ---
 
-> 核心模块说明
+## 核心模块说明
 
 - mqtt broker，负责消息推送，基于[EMQX](https://www.emqx.io/zh)中间件实现
 - easy-log-admin负责用户认证、日志告警规则、日志实时过滤等基础信息管理
 - easy-log-compute主要实现日志告警、日志实时过滤和日志收集速率计算等功能
 - easy-log-collector主要负责订阅日志数据，批量插入ES集群
 
-> Easy-Log部署
+## Easy-Log部署
 
 1. [ES集群部署](doc/quick-start/es/es.md)
 2. [emqx集群部署](doc/quick-start/emqx/emqx.md)
@@ -40,7 +40,7 @@
 
 ---
 
-> 客户端使用说明
+## 客户端使用说明
 
 - 创建客户端配置文件
 
