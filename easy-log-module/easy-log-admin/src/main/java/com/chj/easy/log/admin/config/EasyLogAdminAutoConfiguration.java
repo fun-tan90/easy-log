@@ -16,6 +16,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * description TODO
@@ -25,6 +26,7 @@ import org.springframework.context.annotation.ComponentScan;
  * @date 2023/7/13 8:50
  */
 @Slf4j
+@EnableAsync
 @ConditionalOnProperty(value = "easy-log.admin.enable", havingValue = "true")
 @ComponentScan(EasyLogConstants.ADMIN_SCAN_BASE_PACKAGES)
 @EnableConfigurationProperties({EasyLogAdminProperties.class})

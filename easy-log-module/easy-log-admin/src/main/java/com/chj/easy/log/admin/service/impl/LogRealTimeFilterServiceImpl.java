@@ -7,6 +7,7 @@ import com.chj.easy.log.admin.service.LogRealTimeFilterService;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.model.LogRealTimeFilterRule;
 import com.chj.easy.log.core.model.Topic;
+import com.chj.easy.log.core.service.CacheService;
 import com.chj.easy.log.core.service.EsService;
 import lombok.extern.slf4j.Slf4j;
 import net.dreamlu.iot.mqtt.codec.MqttQoS;
@@ -34,6 +35,9 @@ public class LogRealTimeFilterServiceImpl implements LogRealTimeFilterService {
 
     @Resource
     MqttClientTemplate mqttClientTemplate;
+
+    @Resource
+    CacheService cacheService;
 
     @Resource
     EsService esService;
@@ -83,7 +87,18 @@ public class LogRealTimeFilterServiceImpl implements LogRealTimeFilterService {
         LogRealTimeFilterRule logRealTimeFilterRule = LogRealTimeFilterRule.builder()
                 .clientId(mqttClientId)
                 .sql(sql)
+                .namespace(logRealTimeFilterCmd.getNamespace())
+                .appNameList(logRealTimeFilterCmd.getAppNameList())
+                .levelList(logRealTimeFilterCmd.getLevelList())
+                .loggerName(logRealTimeFilterCmd.getLoggerName())
+                .lineNumber(logRealTimeFilterCmd.getLineNumber())
+                .ipList(logRealTimeFilterCmd.getIpList())
+                .analyzer(logRealTimeFilterCmd.getAnalyzer())
+                .content(logRealTimeFilterCmd.getContent())
+                .colList(logRealTimeFilterCmd.getColList())
+                .whereCondition(logRealTimeFilterCmd.getWhereCondition())
                 .build();
+        cacheService.addLogRealTimeFilterRule(logRealTimeFilterRule);
         mqttClientTemplate.publish(EasyLogConstants.LOG_REAL_TIME_FILTER_RULES_TOPIC + "put", JSONUtil.toJsonStr(logRealTimeFilterRule).getBytes(StandardCharsets.UTF_8), MqttQoS.EXACTLY_ONCE);
         return Topic.builder()
                 .topic(EasyLogConstants.MQTT_LOG_AFTER_FILTERED_TOPIC + mqttClientId)

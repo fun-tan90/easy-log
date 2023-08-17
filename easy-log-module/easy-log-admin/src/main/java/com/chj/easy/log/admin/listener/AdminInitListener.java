@@ -1,6 +1,5 @@
 package com.chj.easy.log.admin.listener;
 
-import com.chj.easy.log.admin.service.LogAlarmService;
 import com.chj.easy.log.admin.service.SysMonitorService;
 import com.chj.easy.log.core.service.EsService;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +35,7 @@ public class AdminInitListener implements ApplicationListener<ApplicationReadyEv
         if (initialized.compareAndSet(false, true)) {
             esService.initLifecyclePolicyAndTemplate();
 
-//            sysMonitorService.statsLogInputSpeed();
+            sysMonitorService.statsLogInputSpeed();
         }
     }
 }

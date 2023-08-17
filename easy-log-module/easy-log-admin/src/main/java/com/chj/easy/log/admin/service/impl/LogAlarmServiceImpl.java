@@ -13,6 +13,7 @@ import com.chj.easy.log.core.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
 import net.dreamlu.iot.mqtt.codec.MqttQoS;
 import net.dreamlu.iot.mqtt.spring.client.MqttClientTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -72,6 +73,7 @@ public class LogAlarmServiceImpl implements LogAlarmService {
     }
 
     @Override
+    @Async
     public void handlerLogAlarm(LogAlarmContent logAlarmContent) {
         if (Objects.isNull(logAlarmContent)) {
             return;

@@ -27,7 +27,6 @@ import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -124,22 +123,19 @@ public class ComputeLogMessageListener implements IMqttClientMessageListener {
      * @param logTransferred
      */
     private CompletableFuture<Void> logRealTimeFilter(LogTransferred logTransferred) {
-        Map<String, Object> logStrMap = BeanUtil.beanToMap(logTransferred);
         return CompletableFuture.runAsync(() -> {
-            List<String> clientIds = LogRealTimeFilterRulesManager.stream().filter(n -> {
-                ReactorQL reactorQl = LogRealTimeFilterRulesManager.getLogRealTimeFilterRule(n);
-                if (Objects.isNull(reactorQl)) {
-                    return true;
-                }
+            List<String> clientIds = LogRealTimeFilterRulesManager.stream().filter(clientId -> {
+                ReactorQL reactorQl = LogRealTimeFilterRulesManager.getLogRealTimeFilterRule(clientId);
+                Map<String, Object> logStrMap = BeanUtil.beanToMap(logTransferred);
                 AtomicReference<Boolean> afterSqlFilter = new AtomicReference<>(false);
-                reactorQl.start(Flux.just(logStrMap))
-                        .subscribe(m -> afterSqlFilter.set(true),
-                                err -> log.error("{}: {}", reactorQl.metadata().getSql().toString(), err.getMessage()));
+                reactorQl
+                        .start(Flux.just(logStrMap))
+                        .subscribe(m -> afterSqlFilter.set(true), err -> log.error("{}: {}", reactorQl.metadata().getSql().toString(), err.getMessage()));
                 return afterSqlFilter.get();
             }).collect(Collectors.toList());
             if (!CollectionUtils.isEmpty(clientIds)) {
                 for (String clientId : clientIds) {
-                    mqttClientTemplate.publish(EasyLogConstants.MQTT_LOG_AFTER_FILTERED_TOPIC + clientId, JSONUtil.toJsonStr(logStrMap).getBytes(StandardCharsets.UTF_8), MqttQoS.AT_LEAST_ONCE);
+                    mqttClientTemplate.publish(EasyLogConstants.MQTT_LOG_AFTER_FILTERED_TOPIC + clientId, JSONUtil.toJsonStr(logTransferred).getBytes(StandardCharsets.UTF_8), MqttQoS.AT_LEAST_ONCE);
                 }
             }
         }, EasyLogThreadPool.newEasyLogFixedPoolInstance());

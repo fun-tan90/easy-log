@@ -1,9 +1,6 @@
 package com.chj.easy.log.core.service;
 
-import com.chj.easy.log.core.model.LogAlarmContent;
-import com.chj.easy.log.core.model.LogAlarmPlatform;
-import com.chj.easy.log.core.model.LogAlarmRule;
-import com.chj.easy.log.core.model.SlidingWindow;
+import com.chj.easy.log.core.model.*;
 
 import java.util.List;
 import java.util.Map;
@@ -38,87 +35,13 @@ public interface CacheService {
     Map<String, Integer> slidingWindowCount(String keyPrefix);
 
     /**
-     * 新增实时日志过滤规则
-     *
-     * @param mqttClientId
-     * @param realTimeFilterRules
-     */
-    void addLogRealTimeFilterRule(String mqttClientId, Map<String, String> realTimeFilterRules);
-
-    /**
-     * 删除实时日志过滤规则
-     *
-     * @param mqttClientId
-     */
-    void delLogRealTimeFilterRule(String mqttClientId);
-
-    /**
-     * 获取实时日志过滤规则
-     *
-     * @param mqttClientId
-     * @return
-     */
-    Map<String, String> getLogRealTimeFilterRule(String mqttClientId);
-
-    /**
-     * 添加实时日志订阅客户端
-     *
-     * @param mqttClientId
-     */
-    void addRealTimeFilterSubscribingClient(String mqttClientId);
-
-    /**
-     * 删除实时日志订阅客户端
-     *
-     * @param mqttClientId
-     */
-    void delRealTimeFilterSubscribingClient(String mqttClientId);
-
-    /**
-     * 获取全部订阅中的客户端ID
-     *
-     * @return
-     */
-    Set<String> getRealTimeFilterSubscribingClients();
-
-    /**
-     * 添加过滤后的日志
-     *
-     * @param clientId
-     * @param logMap
-     * @param score
-     */
-    void addRealTimeFilteredLogs(String clientId, Map<String, byte[]> logMap, double score);
-
-    /**
-     * 获取过滤后的日志
-     *
-     * @param clientId
-     * @return
-     */
-    List<String> popRealTimeFilteredLog(String clientId);
-
-    /**
-     * 添加日志告警上下文信息
-     *
-     * @param logAlarmContent
-     */
-    void addLogAlarmContent(LogAlarmContent logAlarmContent);
-
-    /**
-     * 获取日志告警上下文信息
-     *
-     * @param timeout
-     * @return
-     */
-    LogAlarmContent popLogAlarmContent(long timeout);
-
-    /**
      * 添加日志告警规则
      *
      * @param logAlarmRule
      */
     void addLogAlarmRule(LogAlarmRule logAlarmRule);
+
+    void addLogRealTimeFilterRule(LogRealTimeFilterRule logRealTimeFilterRule);
 
     /**
      * 添加日志告警平台信息

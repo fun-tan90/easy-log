@@ -3,27 +3,23 @@ package com.chj.easy.log.core.service.impl;
 import cn.hutool.core.lang.Singleton;
 import cn.hutool.core.lang.id.NanoId;
 import cn.hutool.crypto.SecureUtil;
-import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.chj.easy.log.common.constant.EasyLogConstants;
-import com.chj.easy.log.core.model.LogAlarmContent;
 import com.chj.easy.log.core.model.LogAlarmPlatform;
 import com.chj.easy.log.core.model.LogAlarmRule;
+import com.chj.easy.log.core.model.LogRealTimeFilterRule;
 import com.chj.easy.log.core.model.SlidingWindow;
 import com.chj.easy.log.core.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.scripting.support.ResourceScriptSource;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -80,80 +76,6 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
-    public void addLogRealTimeFilterRule(String mqttClientId, Map<String, String> realTimeFilterRules) {
-        stringRedisTemplate.opsForValue().set(EasyLogConstants.REAL_TIME_FILTER_RULES + mqttClientId, JSONUtil.toJsonStr(realTimeFilterRules));
-    }
-
-    @Override
-    public void delLogRealTimeFilterRule(String mqttClientId) {
-        stringRedisTemplate.delete(EasyLogConstants.REAL_TIME_FILTER_RULES + mqttClientId);
-    }
-
-    @Override
-    public Map<String, String> getLogRealTimeFilterRule(String mqttClientId) {
-        String realTimeFilterRulesStr = stringRedisTemplate.opsForValue().get(EasyLogConstants.REAL_TIME_FILTER_RULES + mqttClientId);
-        JSONObject entries = Optional.ofNullable(realTimeFilterRulesStr).map(JSONUtil::parseObj).orElse(new JSONObject());
-        Map<String, String> realTimeFilterRules = new HashMap<>();
-        for (String key : entries.keySet()) {
-            realTimeFilterRules.put(key, entries.getStr(key));
-        }
-        return realTimeFilterRules;
-    }
-
-    @Override
-    public void addRealTimeFilterSubscribingClient(String mqttClientId) {
-        stringRedisTemplate.opsForSet().add(EasyLogConstants.REAL_TIME_FILTER_SUBSCRIBING_CLIENTS, mqttClientId);
-    }
-
-    @Override
-    public void delRealTimeFilterSubscribingClient(String mqttClientId) {
-        stringRedisTemplate.opsForSet().remove(EasyLogConstants.REAL_TIME_FILTER_SUBSCRIBING_CLIENTS, mqttClientId);
-    }
-
-    @Override
-    public Set<String> getRealTimeFilterSubscribingClients() {
-        return stringRedisTemplate.opsForSet().members(EasyLogConstants.REAL_TIME_FILTER_SUBSCRIBING_CLIENTS);
-    }
-
-    @Override
-    public void addRealTimeFilteredLogs(String clientId, Map<String, byte[]> logMap, double score) {
-        stringRedisTemplate.opsForZSet().add(EasyLogConstants.REAL_TIME_FILTER_Z_SET + clientId, JSONUtil.toJsonStr(logMap), score);
-    }
-
-    @Override
-    public List<String> popRealTimeFilteredLog(String clientId) {
-        Set<ZSetOperations.TypedTuple<String>> typedTuples = stringRedisTemplate.opsForZSet().popMax(EasyLogConstants.REAL_TIME_FILTER_Z_SET + clientId, -1);
-        if (CollectionUtils.isEmpty(typedTuples)) {
-            return new ArrayList<>();
-        }
-        return typedTuples.stream().sorted(Comparator.comparing(ZSetOperations.TypedTuple::getScore)).map(ZSetOperations.TypedTuple::getValue).collect(Collectors.toList());
-    }
-
-    @Override
-    public void addLogAlarmContent(LogAlarmContent logAlarmContent) {
-        String ruleId = logAlarmContent.getRuleId();
-        Integer period = logAlarmContent.getPeriod();
-        String lockKey = EasyLogConstants.LOG_ALARM_LOCK + ruleId;
-        Boolean lock = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, "", period, TimeUnit.SECONDS);
-        if (Boolean.TRUE.equals(lock)) {
-            try {
-                stringRedisTemplate.opsForList().leftPush(EasyLogConstants.LOG_ALARM, JSONUtil.toJsonStr(logAlarmContent));
-            } finally {
-                stringRedisTemplate.delete(lockKey);
-            }
-        }
-    }
-
-    @Override
-    public LogAlarmContent popLogAlarmContent(long timeout) {
-        String rightPop = stringRedisTemplate.opsForList().rightPop(EasyLogConstants.LOG_ALARM, timeout, TimeUnit.SECONDS);
-        if (StringUtils.hasLength(rightPop)) {
-            return JSONUtil.toBean(rightPop, LogAlarmContent.class);
-        }
-        return null;
-    }
-
-    @Override
     public void addLogAlarmRule(LogAlarmRule logAlarmRule) {
         String appName = logAlarmRule.getAppName();
         String namespace = logAlarmRule.getNamespace();
@@ -161,6 +83,11 @@ public class CacheServiceImpl implements CacheService {
         String ruleId = SecureUtil.md5(appName + ":" + namespace + ":" + loggerName);
         logAlarmRule.setRuleId(ruleId);
         stringRedisTemplate.opsForValue().set(EasyLogConstants.LOG_ALARM_RULES + ruleId, JSONUtil.toJsonStr(logAlarmRule));
+    }
+
+    @Override
+    public void addLogRealTimeFilterRule(LogRealTimeFilterRule logRealTimeFilterRule) {
+        stringRedisTemplate.opsForValue().set(EasyLogConstants.LOG_REAL_TIME_FILTER_RULES + logRealTimeFilterRule.getClientId(), JSONUtil.toJsonStr(logRealTimeFilterRule));
     }
 
     @Override
