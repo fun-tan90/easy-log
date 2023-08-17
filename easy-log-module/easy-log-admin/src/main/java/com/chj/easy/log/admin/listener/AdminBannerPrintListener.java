@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author 陈浩杰
  * @date 2023/7/13 10:15
  */
-@Slf4j(topic = EasyLogConstants.EASY_LOG_TOPIC)
+@Slf4j
 @Component
 public class AdminBannerPrintListener implements ApplicationListener<ContextRefreshedEvent> {
 

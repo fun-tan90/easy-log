@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  * @author chj
  * @date 2021年08月04日 8:49
  */
-@Slf4j(topic = EasyLogConstants.EASY_LOG_TOPIC)
+@Slf4j
 @Service
 public class SysCaptchaServiceImpl implements SysCaptchaService {
 

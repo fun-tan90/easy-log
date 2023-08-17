@@ -33,8 +33,6 @@ public interface EasyLogConstants {
 
     String INDEX_TEMPLATE_NAME = "easy-log-template";
 
-    String EASY_LOG_TOPIC = "easy-log";
-
     String CAPTCHA_IMG = "CAPTCHA_IMG:";
 
     int MQTT_MD5_SUB_INDEX = 12;

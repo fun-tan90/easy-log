@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * @author 陈浩杰
  * @date 2023/7/18 16:21
  */
-@Slf4j(topic = EasyLogConstants.EASY_LOG_TOPIC)
+@Slf4j
 @Service
 public class LogRealTimeFilterServiceImpl implements LogRealTimeFilterService {
 
