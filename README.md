@@ -62,22 +62,20 @@ maxPushSize=500                         #日志批推送大小
 
 ```xml
 <!--结合项目中使用的日志框架-->
-<dependencies>
-    <dependency>
-        <groupId>com.chj</groupId>
-        <artifactId>easy-log-[log4j2|log4j|logback]-appender</artifactId>
-        <version>${latest}</version>
-    </dependency>
-    <!--tlog 
-        一个轻量级的分布式日志标记追踪神器，10分钟即可接入，自动对日志打标签完成微服务的链路追踪
-        基于tlog实现日志链路追踪，强烈建议引入该依赖
-    -->
-    <dependency>
-        <groupId>com.yomahub</groupId>
-        <artifactId>tlog-all-spring-boot-starter</artifactId>
-        <version>${latest}</version>
-    </dependency>
-</dependencies>
+<dependency>
+    <groupId>com.chj</groupId>
+    <artifactId>easy-log-[log4j2|log4j|logback]-appender</artifactId>
+    <version>${latest}</version>
+</dependency>
+<!--tlog 
+    一个轻量级的分布式日志标记追踪神器，10分钟即可接入，自动对日志打标签完成微服务的链路追踪
+    基于tlog实现日志链路追踪，强烈建议引入该依赖
+-->
+<dependency>
+    <groupId>com.yomahub</groupId>
+    <artifactId>tlog-all-spring-boot-starter</artifactId>
+    <version>${latest}</version>
+</dependency>
 ```
 
 ## 修改日志配置文件
