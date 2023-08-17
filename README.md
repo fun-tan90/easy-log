@@ -25,12 +25,12 @@
 
 > 客户端使用说明
 
-- 客户端配置文件
+- 创建客户端配置文件
 ```properties
 # 创建src/main/resources/easy-log.properties
 appName=demo                            #应用名称
 namespace=test                          #命名空间
-mqttAddress=tcp://121.36.96.79:1883     #emqx地址
+mqttAddress=tcp://ip:1883               #emqx地址
 queueSize=10240                         #队列大小
 maxPushSize=500                         #日志批推送大小
 ```
@@ -57,7 +57,7 @@ maxPushSize=500                         #日志批推送大小
     </dependency>
 </dependencies>
 ```
-- 修改日志配置文件
+> 修改日志配置文件
 - logback 配置
 ```xml
 <configuration scan="false" debug="false">
