@@ -34,9 +34,9 @@
 
 ## Easy-Log部署
 
-### [ES集群部署](doc/quick-start/es/es.md)
-### [EMQX集群部署](doc/quick-start/emqx/emqx.md)
-### [Easy-Log部署](doc/quick-start/easy-log/el.md)
+1. [ES集群部署](doc/quick-start/es/es.md)
+2. [EMQX集群部署](doc/quick-start/emqx/emqx.md)
+3. [Easy-Log部署](doc/quick-start/easy-log/el.md)
 
 **Easy-Log两种部署方式**
 ![Easy-Log部署方式.png](doc/img/Easy-Log部署方式.png)
