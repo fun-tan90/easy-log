@@ -20,14 +20,17 @@ docker network create --driver=bridge --gateway=172.18.0.1 --subnet=172.18.0.0/1
 - 验证集群是否启动成功
 
 ```shell
-docker-compose ps
+# 启动es集群
+docker-compose up -d
+# 查看集群状态
+docker-compose ps -a
 ```
-![img.png](img/img02.png)
+![img.png](../../img/img02.png)
 ```shell
 # 验证集群状态
 curl localhost:9200
 ```
-![img.png](img/img03.png)
+![img.png](../../img/img03.png)
 #### 3、安装ik分词器
 ```
 https://github.com/medcl/elasticsearch-analysis-ik
@@ -40,11 +43,11 @@ unzip elasticsearch-analysis-ik-7.17.7.zip -d ik
 ```shell
 docker volume inspect es_plugins03
 ```
-![img.png](img/img01.png)
+![img.png](../../img/img01.png)
 - 3、重启三个es节点
 ```
 docker-compose restart es01 es02 es03
 ```
 - 4、使用kibana的Dev Tools工具验证ik分词器是否安装成功
-  ![img.png](img/img00.png)
+  ![img.png](../../img/img00.png)
 #### 4、恭喜安装成功
