@@ -1,22 +1,7 @@
 version: '3.7'
 services:
-  emqx:
-    image: emqx:5.1.0
-    container_name: emqx
-    healthcheck:
-      test: [ "CMD", "/opt/emqx/bin/emqx_ctl", "status" ]
-      interval: 5s
-      timeout: 25s
-      retries: 5
-    ports:
-      - "1883:1883"
-      - "8083:8083"
-      - "8084:8084"
-      - "8883:8883"
-      - "18083:18083"
-
   easy-log-server:
-    image: ${imageAppServer}
+    image: ${image}
     container_name: easy-log-server
     environment:
       - HEAP_SIZE=256m
@@ -25,7 +10,7 @@ services:
       - ES_HOT_MAX_PRIMARY_SHARD_SIZE=1gb
       - ES_HOT_MAX_DOCS=10000000
       - ES_DELETE_MIN_AGE=1d
-      - MQTT_HOST=emqx
+      - MQTT_HOST=121.36.96.79
       - MQTT_PORT=1883
       - REDIS_HOST=114.217.55.239
       - REDIS_PORT=6379

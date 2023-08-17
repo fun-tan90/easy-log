@@ -35,14 +35,17 @@
 ## Easy-Log部署
 
 1. [ES集群部署](doc/quick-start/es/es.md)
-2. [emqx集群部署](doc/quick-start/emqx/emqx.md)
+2. [EMQX集群部署](doc/quick-start/emqx/emqx.md)
 3. [Easy-Log部署](doc/quick-start/easy-log/el.md)
+
+**Easy-Log两种部署方式**
+![Easy-Log部署方式.png](doc/img/Easy-Log部署方式.png)
 
 ---
 
 ## 客户端使用说明
 
-- 创建客户端配置文件
+### 创建客户端配置文件
 
 ```properties
 # 创建src/main/resources/easy-log.properties
@@ -55,7 +58,7 @@ maxPushSize=500                         #日志批推送大小
 
 ---
 
-- 客户端maven依赖引入
+### 客户端maven依赖引入
 
 ```xml
 <!--结合项目中使用的日志框架-->
@@ -77,9 +80,9 @@ maxPushSize=500                         #日志批推送大小
 </dependencies>
 ```
 
-> 修改日志配置文件
+## 修改日志配置文件
 
-- logback 配置
+### logback 配置
 
 ```xml
 
@@ -93,7 +96,7 @@ maxPushSize=500                         #日志批推送大小
 </configuration>
 ```
 
-- log4j2 配置
+### log4j2 配置
 
 ```xml
 
@@ -112,7 +115,7 @@ maxPushSize=500                         #日志批推送大小
 </Configuration>
 ```
 
-- log4j 配置
+### log4j 配置
 
 ```properties
 log4j.appender.EASY_LOG=com.chj.easy.log.log4j.appender.EasyLogAppender
