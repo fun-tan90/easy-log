@@ -1,8 +1,8 @@
 version: '3.7'
 services:
-  easy-log-server-admin:
+  easy-log-admin:
     image: ${image}
-    container_name: easy-log-server-admin
+    container_name: easy-log-admin
     environment:
       - HEAP_SIZE=256m
       - ES_ADDRESS=172.16.8.31:9200,172.16.8.31:9201,172.16.8.31:9202
@@ -23,7 +23,7 @@ services:
       - EL_COMPUTE_ENABLE=false
       - EL_COLLECTOR_ENABLE=false
     volumes:
-      - easy-log-server-admin:/app
+      - easy-log-admin:/app
     ports:
       - "2124:1124"
     healthcheck:
@@ -31,9 +31,9 @@ services:
       start_period: 3s
       retries: 3
 
-  easy-log-server-compute:
+  easy-log-compute:
     image: ${image}
-    container_name: easy-log-server-compute
+    container_name: easy-log-compute
     environment:
       - HEAP_SIZE=256m
       - ES_ADDRESS=172.16.8.31:9200,172.16.8.31:9201,172.16.8.31:9202
@@ -51,15 +51,15 @@ services:
       - EL_COMPUTE_ENABLE=true
       - EL_COLLECTOR_ENABLE=false
     volumes:
-      - easy-log-server-compute:/app
+      - easy-log-compute:/app
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:1124/monitor/health" ]
       start_period: 3s
       retries: 3
 
-  easy-log-server-collector:
+  easy-log-collector:
     image: ${image}
-    container_name: easy-log-server-collector
+    container_name: easy-log-collector
     environment:
       - HEAP_SIZE=256m
       - ES_ADDRESS=172.16.8.31:9200,172.16.8.31:9201,172.16.8.31:9202
@@ -79,18 +79,18 @@ services:
       - EL_COLLECTOR_QUEUE_CAPACITY=100000
       - EL_COLLECTOR_INSERT_BATCH_SIZE=500
     volumes:
-      - easy-log-server-collector:/app
+      - easy-log-collector:/app
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:1124/monitor/health" ]
       start_period: 3s
       retries: 3
 
 volumes:
-  easy-log-server-admin:
+  easy-log-admin:
     driver: local
-  easy-log-server-compute:
+  easy-log-compute:
     driver: local
-  easy-log-server-collector:
+  easy-log-collector:
     driver: local
 
 networks:

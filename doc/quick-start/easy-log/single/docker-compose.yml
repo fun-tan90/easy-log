@@ -1,8 +1,8 @@
 version: '3.7'
 services:
-  easy-log-server:
+  easy-log:
     image: ${image}
-    container_name: easy-log-server
+    container_name: easy-log
     environment:
       - HEAP_SIZE=256m
       - ES_ADDRESS=172.16.8.31:9200,172.16.8.31:9201,172.16.8.31:9202
@@ -26,18 +26,16 @@ services:
       - EL_COLLECTOR_INSERT_BATCH_SIZE=500
 
     volumes:
-      - easy-log-server:/app
+      - easy-log:/app
     ports:
       - "2124:1124"
-    depends_on:
-      - emqx
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:1124/monitor/health" ]
       start_period: 3s
       retries: 3
 
 volumes:
-  easy-log-server:
+  easy-log:
     driver: local
 
 networks:
