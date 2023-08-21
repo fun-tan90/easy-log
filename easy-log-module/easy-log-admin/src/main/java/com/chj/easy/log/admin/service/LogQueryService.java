@@ -98,11 +98,21 @@ public interface LogQueryService {
             for (String desc : descList) {
                 searchSourceBuilder.sort(SortBuilders.fieldSort(desc).order(SortOrder.DESC));
             }
+            if (descList.contains("@timestamp")) {
+                searchSourceBuilder.sort(SortBuilders.fieldSort("seq").order(SortOrder.DESC));
+            }
         }
         if (!CollectionUtils.isEmpty(ascList)) {
             for (String asc : ascList) {
                 searchSourceBuilder.sort(SortBuilders.fieldSort(asc).order(SortOrder.ASC));
             }
+            if (ascList.contains("@timestamp")) {
+                searchSourceBuilder.sort(SortBuilders.fieldSort("seq").order(SortOrder.ASC));
+            }
+        }
+        if (CollectionUtils.isEmpty(descList) && CollectionUtils.isEmpty(ascList)) {
+            searchSourceBuilder.sort(SortBuilders.fieldSort("@timestamp").order(SortOrder.DESC));
+            searchSourceBuilder.sort(SortBuilders.fieldSort("seq").order(SortOrder.DESC));
         }
         return searchSourceBuilder;
     }
