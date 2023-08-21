@@ -44,12 +44,12 @@
 
 ---
 
-## 客户端使用说明
+## 应用使用说明
 
-### 创建客户端配置文件
+### 创建应用配置文件
 
 ```properties
-# 创建src/main/resources/easy-log.properties
+# 创建src/main/resources/easy-log.properties，文件名固定为easy-log.properties
 appName=demo                            #应用名称
 namespace=test                          #命名空间
 mqttAddress=tcp://ip:1883               #emqx地址
@@ -59,10 +59,9 @@ maxPushSize=500                         #日志批推送大小
 
 ---
 
-### 客户端maven依赖引入
+### 应用端maven依赖引入
 
 ```xml
-
 <dependencies>
     <!--结合项目中使用的日志框架-->
     <dependency>

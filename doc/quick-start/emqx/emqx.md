@@ -10,15 +10,14 @@
 docker network create --driver=bridge --gateway=172.18.0.1 --subnet=172.18.0.0/16 el_net
 ```
 
-#### 2、创挂载数据卷文件夹并授权
+#### 2、创建挂载数据卷文件夹并授权
 ```shell
+# 进入emqx文件夹下
 mkdir -p emqx_data_01 emqx_data_02
 chmod 777 emqx_data_*
 ```
 
 #### 3、启动EMQX集群
-- 将emqx文件夹复制到宿主机上
-- 在emqx目录下，执行docker-compose up -d 命令
 ```shell
 # 启动EMQX集群
 docker-compose up -d

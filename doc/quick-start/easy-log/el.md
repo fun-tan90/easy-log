@@ -11,8 +11,8 @@ docker network create --driver=bridge --gateway=172.18.0.1 --subnet=172.18.0.0/1
 ```
 #### 2、选择部署方式
 ```shell
-# single  单机
-# cluster 伪集群
+# single  单体版
+# cluster 集群版
 ```
 
 #### 3、选择对应的文件夹
