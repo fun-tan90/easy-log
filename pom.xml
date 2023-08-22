@@ -17,6 +17,7 @@
         <module>easy-log-module</module>
         <module>easy-log-server</module>
         <module>easy-log-meter</module>
+        <module>easy-log-client</module>
     </modules>
 
     <properties>
@@ -27,7 +28,7 @@
         <spring-boot-admin.version>2.6.11</spring-boot-admin.version>
         <spring-cloud.version>2021.0.5</spring-cloud.version>
         <spring-cloud-alibaba.version>2021.0.5.0</spring-cloud-alibaba.version>
-        <hutool.version>5.8.15</hutool.version>
+        <hutool.version>5.8.21</hutool.version>
         <lombok.version>1.18.24</lombok.version>
         <slf4j.version>1.7.25</slf4j.version>
         <logback.version>1.2.3</logback.version>

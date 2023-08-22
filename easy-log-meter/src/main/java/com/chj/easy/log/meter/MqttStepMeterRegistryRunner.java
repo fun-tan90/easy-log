@@ -1,17 +1,13 @@
 package com.chj.easy.log.meter;
 
 import com.chj.easy.log.common.EasyLogManager;
-import com.chj.easy.log.meter.jvm.JvmInfoMetrics;
-import io.micrometer.core.instrument.Tag;
-import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics;
-import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics;
-import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics;
-import io.micrometer.core.instrument.binder.system.ProcessorMetrics;
+import io.micrometer.core.instrument.binder.MeterBinder;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
+import javax.annotation.Resource;
 import java.time.Duration;
-import java.util.Collections;
+import java.util.Map;
 
 /**
  * description TODO
@@ -21,6 +17,9 @@ import java.util.Collections;
  * @date 2023/7/13 8:50
  */
 public class MqttStepMeterRegistryRunner implements ApplicationRunner {
+
+    @Resource
+    private Map<String, MeterBinder> metersMap;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -41,10 +40,6 @@ public class MqttStepMeterRegistryRunner implements ApplicationRunner {
                         return Duration.ofSeconds(5);
                     }
                 });
-        new ProcessorMetrics(Collections.singletonList(Tag.of("metricType", "ProcessorMetrics"))).bindTo(mqttMeterRegistry);
-        new JvmGcMetrics(Collections.singletonList(Tag.of("metricType", "JvmGcMetrics"))).bindTo(mqttMeterRegistry);
-        new JvmMemoryMetrics(Collections.singletonList(Tag.of("metricType", "JvmMemoryMetrics"))).bindTo(mqttMeterRegistry);
-        new JvmThreadMetrics(Collections.singletonList(Tag.of("metricType", "JvmThreadMetrics"))).bindTo(mqttMeterRegistry);
-        new JvmInfoMetrics(Collections.singletonList(Tag.of("metricType", "JvmInfoMetrics"))).bindTo(mqttMeterRegistry);
+        metersMap.values().forEach(n -> n.bindTo(mqttMeterRegistry));
     }
 }

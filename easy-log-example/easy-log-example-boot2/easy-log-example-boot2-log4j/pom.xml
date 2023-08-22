@@ -32,6 +32,10 @@
             <groupId>com.chj</groupId>
             <artifactId>easy-log-log4j-appender</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.chj</groupId>
+            <artifactId>easy-log-meter</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
