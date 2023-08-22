@@ -346,7 +346,7 @@
                             </goals>
                             <configuration>
                                 <target>
-                                    <delete dir="${project.basedir}/../doc/image/${project.name}/jar"/>
+                                    <delete dir="${project.basedir}/../../doc/image/${project.name}/jar"/>
                                 </target>
                             </configuration>
                         </execution>
