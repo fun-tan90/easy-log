@@ -1,6 +1,5 @@
 package com.chj.easy.log.collector.listener;
 
-import cn.hutool.core.date.StopWatch;
 import com.chj.easy.log.collector.property.EasyLogCollectorProperties;
 import com.chj.easy.log.common.threadpool.EasyLogThreadPool;
 import com.chj.easy.log.core.convention.exception.ServiceException;
@@ -57,15 +56,13 @@ public class CollectorInitListener implements ApplicationListener<ApplicationRea
             logDocBlockingQueue.drainTo(logDocs, Math.min(logDocBlockingQueue.size(), easyLogCollectorProperties.getInsertBatchSize()));
             if (!logDocs.isEmpty()) {
                 try {
-                    StopWatch stopWatch = new StopWatch("es批量输入");
-                    stopWatch.start();
+                    long start = System.currentTimeMillis();
                     int insertedSize = esService.insertBatch(LogDoc.indexName(), logDocs, true);
-                    log.debug("批量输入条数[{}-{}]", logDocs.size(), insertedSize);
-                    logDocs.clear();
-                    stopWatch.stop();
-                    log.debug("{}耗时:{}ms", stopWatch.getId(), stopWatch.getTotalTimeMillis());
+                    log.debug("批量输入条数[{}-{}]，耗时{}ms Queue remaining capacity:{}", logDocs.size(), insertedSize, (System.currentTimeMillis() - start), logDocBlockingQueue.remainingCapacity());
                 } catch (ServiceException e) {
                     log.error("es 批量插入异常", e);
+                } finally {
+                    logDocs.clear();
                 }
             }
         }, 1, 50, TimeUnit.MILLISECONDS);
