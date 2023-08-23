@@ -58,7 +58,7 @@ public class CollectorInitListener implements ApplicationListener<ApplicationRea
                 try {
                     long start = System.currentTimeMillis();
                     int insertedSize = esService.insertBatch(LogDoc.indexName(), logDocs, true);
-                    log.debug("批量输入条数[{}-{}]，耗时{}ms Queue remaining capacity:{}", logDocs.size(), insertedSize, (System.currentTimeMillis() - start), logDocBlockingQueue.remainingCapacity());
+                    log.debug("批量输入条数[{}-{}]，耗时{}ms，Queue remaining capacity:{}", logDocs.size(), insertedSize, (System.currentTimeMillis() - start), logDocBlockingQueue.remainingCapacity());
                 } catch (ServiceException e) {
                     log.error("es 批量插入异常", e);
                 } finally {

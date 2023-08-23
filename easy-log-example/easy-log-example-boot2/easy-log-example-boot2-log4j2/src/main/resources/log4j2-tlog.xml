@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-    status : 这个用于设置log4j2自身内部的信息输出,可以不设置,当设置成trace时,会看到log4j2内部各种详细输出
-    monitorInterval : Log4j能够自动检测修改配置文件和重新配置本身, 设置间隔秒数。
-    注：本配置文件的目标是将不同级别的日志输出到不同文件，最大2MB一个文件，
-    文件数据达到最大值时，旧数据会被压缩并放进指定文件夹
--->
 <Configuration status="debug" monitorInterval="600">
     <Properties>
-        <!-- 配置日志文件输出目录，此配置将日志输出到tomcat根目录下的指定文件夹 -->
         <Property name="LOG_HOME">logs</Property>
+        <Property name="APP_NAME">easy-log-example-boot2-log4j2</Property>
     </Properties>
     <Appenders>
         <Console name="CONSOLE" target="SYSTEM_OUT">
@@ -18,8 +12,8 @@
 
         <RollingRandomAccessFile name="FILE"
                                  immediateFlush="true"
-                                 fileName="${LOG_HOME}/info.log"
-                                 filePattern="${LOG_HOME}/info/info - %d{yyyy-MM-dd HH_mm_ss}.log.gz">
+                                 fileName="${LOG_HOME}/${APP_NAME}.log"
+                                 filePattern="${LOG_HOME}/${APP_NAME} - %d{yyyy-MM-dd HH_mm_ss}.log.gz">
             <PatternLayout>
                 <pattern>%5p [%t] %d{yyyy-MM-dd HH:mm:ss} %TX{tl} (%F:%L) %m%n</pattern>
             </PatternLayout>
