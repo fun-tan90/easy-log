@@ -4,61 +4,61 @@ services:
     image: ${elasticsearch}
     container_name: es01
     environment:
-    - node.name=es01
-    - cluster.name=es-docker-cluster
-    - discovery.seed_hosts=es02,es03
-    - cluster.initial_master_nodes=es01,es02,es03
-    - bootstrap.memory_lock=false
-    - ES_JAVA_OPTS=-Xms512m -Xmx512m
-    - xpack.security.enabled=false
+      - node.name=es01
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es02,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - xpack.security.enabled=false
     volumes:
-    - data01:/usr/share/elasticsearch/data
-    - plugins01:/usr/share/elasticsearch/plugins
+      - data01:/usr/share/elasticsearch/data
+      - plugins01:/usr/share/elasticsearch/plugins
     ports:
-    - "9200:9200"
+      - "9200:9200"
   es02:
     image: ${elasticsearch}
     container_name: es02
     environment:
-    - node.name=es02
-    - cluster.name=es-docker-cluster
-    - discovery.seed_hosts=es01,es03
-    - cluster.initial_master_nodes=es01,es02,es03
-    - bootstrap.memory_lock=false
-    - ES_JAVA_OPTS=-Xms512m -Xmx512m
-    - xpack.security.enabled=false
+      - node.name=es02
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es01,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - xpack.security.enabled=false
     volumes:
-    - data02:/usr/share/elasticsearch/data
-    - plugins02:/usr/share/elasticsearch/plugins
+      - data02:/usr/share/elasticsearch/data
+      - plugins02:/usr/share/elasticsearch/plugins
     ports:
       - "9201:9200"
   es03:
     image: ${elasticsearch}
     container_name: es03
     environment:
-    - node.name=es03
-    - cluster.name=es-docker-cluster
-    - discovery.seed_hosts=es01,es02
-    - cluster.initial_master_nodes=es01,es02,es03
-    - bootstrap.memory_lock=false
-    - ES_JAVA_OPTS=-Xms512m -Xmx512m
-    - xpack.security.enabled=false
+      - node.name=es03
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es01,es02
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - xpack.security.enabled=false
     volumes:
-    - data03:/usr/share/elasticsearch/data
-    - plugins03:/usr/share/elasticsearch/plugins
+      - data03:/usr/share/elasticsearch/data
+      - plugins03:/usr/share/elasticsearch/plugins
     ports:
       - "9202:9200"
   cerebro:
     image: ${cerebro}
     container_name: cerebro
     depends_on:
-    - es01
-    - es02
-    - es03
+      - es01
+      - es02
+      - es03
     ports:
-    - "9199:9000"
+      - "9199:9000"
     command:
-    - -Dhosts.0.host=http://es01:9200
+      - -Dhosts.0.host=http://es01:9200
   kibana:
     image: ${kibana}
     container_name: kibana
