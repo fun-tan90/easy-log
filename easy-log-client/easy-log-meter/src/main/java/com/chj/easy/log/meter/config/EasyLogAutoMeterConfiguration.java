@@ -1,5 +1,8 @@
 package com.chj.easy.log.meter.config;
 
+import com.chj.easy.log.common.EasyLogManager;
+import com.chj.easy.log.meter.MqttMeterRegistry;
+import com.chj.easy.log.meter.MqttRegistryConfig;
 import com.chj.easy.log.meter.MqttStepMeterRegistryRunner;
 import com.chj.easy.log.meter.jvm.JvmInfoMetrics;
 import io.micrometer.core.instrument.Tag;
@@ -25,6 +28,27 @@ import java.util.Collections;
  * @date 2023/8/22 16:26
  */
 public class EasyLogAutoMeterConfiguration {
+
+    @Bean
+    public MqttMeterRegistry mqttMeterRegistry(){
+        return new MqttMeterRegistry(
+                EasyLogManager.GLOBAL_CONFIG.getAppName(),
+                EasyLogManager.GLOBAL_CONFIG.getNamespace(),
+                new MqttRegistryConfig() {
+                    @Override
+                    public String get(String key) {
+                        if (key.endsWith("enabled")) {
+                            return String.valueOf(EasyLogManager.GLOBAL_CONFIG.isEnableMeter());
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    public Duration step() {
+                        return Duration.ofSeconds(5);
+                    }
+                });
+    }
 
     @Bean
     public ClassLoaderMetrics classLoaderMetrics() {
