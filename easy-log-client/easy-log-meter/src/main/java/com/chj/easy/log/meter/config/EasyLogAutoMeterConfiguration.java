@@ -4,6 +4,7 @@ import com.chj.easy.log.common.EasyLogManager;
 import com.chj.easy.log.meter.MqttMeterRegistry;
 import com.chj.easy.log.meter.MqttRegistryConfig;
 import com.chj.easy.log.meter.MqttStepMeterRegistryRunner;
+import com.chj.easy.log.meter.aop.CounterAspect;
 import com.chj.easy.log.meter.jvm.JvmInfoMetrics;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.binder.jvm.*;
@@ -30,7 +31,7 @@ import java.util.Collections;
 public class EasyLogAutoMeterConfiguration {
 
     @Bean
-    public MqttMeterRegistry mqttMeterRegistry(){
+    public MqttMeterRegistry mqttMeterRegistry() {
         return new MqttMeterRegistry(
                 EasyLogManager.GLOBAL_CONFIG.getAppName(),
                 EasyLogManager.GLOBAL_CONFIG.getNamespace(),
@@ -48,6 +49,11 @@ public class EasyLogAutoMeterConfiguration {
                         return Duration.ofSeconds(5);
                     }
                 });
+    }
+
+    @Bean
+    public CounterAspect counterAspect(MqttMeterRegistry mqttMeterRegistry) {
+        return new CounterAspect(mqttMeterRegistry);
     }
 
     @Bean

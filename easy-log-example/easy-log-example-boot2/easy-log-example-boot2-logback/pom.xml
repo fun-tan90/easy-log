@@ -20,10 +20,6 @@
             <groupId>com.chj</groupId>
             <artifactId>easy-log-logback-appender</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.chj</groupId>
-            <artifactId>easy-log-meter</artifactId>
-        </dependency>
     </dependencies>
 
     <build>

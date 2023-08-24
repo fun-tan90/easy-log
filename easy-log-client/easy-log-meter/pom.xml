@@ -20,5 +20,9 @@
             <groupId>com.chj</groupId>
             <artifactId>easy-log-common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+        </dependency>
     </dependencies>
 </project>
