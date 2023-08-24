@@ -2,5 +2,4 @@ logging:
   config: classpath:logback-spring.xml
   level:
     root: info
-    easy-log: debug
-#    net.dreamlu.iot.mqtt.core: error
+    easy-log: trace

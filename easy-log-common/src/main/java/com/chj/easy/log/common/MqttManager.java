@@ -32,7 +32,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author 陈浩杰
  * @date 2023/7/20 17:12
  */
-@Slf4j
+@Slf4j(topic = "easy-log")
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MqttManager {
 
@@ -128,6 +128,10 @@ public class MqttManager {
     }
 
     public static void pushMeter(MeterContext meterContext) {
+        log.error(JSONUtil.toJsonStr(meterContext));
+        log.warn(JSONUtil.toJsonStr(meterContext));
         log.info(JSONUtil.toJsonStr(meterContext));
+        log.debug(JSONUtil.toJsonStr(meterContext));
+        log.trace(JSONUtil.toJsonStr(meterContext));
     }
 }

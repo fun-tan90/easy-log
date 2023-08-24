@@ -34,11 +34,13 @@ public class EasyLogAgent {
                 .transform(new AgentTransformer())
                 // 配置增强监听器
                 .with(new AgentListener())
-                .installOn(instrumentation); // 安装到 Instrumentation
+                // 安装到 Instrumentation
+                .installOn(instrumentation);
     }
 
     private static ElementMatcher.Junction<AnnotationSource> type() {
-        return isAnnotatedWith(named("org.springframework.web.bind.annotation.RestController")
+        return isAnnotatedWith(
+                named("org.springframework.web.bind.annotation.RestController")
                 .or(named("org.springframework.stereotype.Controller"))
         );
     }
@@ -52,13 +54,5 @@ public class EasyLogAgent {
                 .or(nameContains("javassist"))
                 .or(nameContains(".asm."))
                 .or(nameContains(".reflectasm."));
-    }
-
-    /**
-     * 若不存在 premain(String agentArgs, Instrumentation inst)，
-     * 则会执行 premain(String agentArgs)
-     */
-    public static void premain(String arg) {
-        System.out.println("agent的premain(String arg)方法");
     }
 }

@@ -29,15 +29,21 @@ public class SpringMvcLogInterceptor {
         Object res = null;
         try {
             res = callable.call(); // 执行原函数
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.error(e.getMessage());
         } finally {
-            long spendMs = System.currentTimeMillis() - start;
             String targetArgumentType = Arrays.stream(targetArguments).map(n -> {
                 String simpleName = n.getClass().getSimpleName();
                 return simpleName + " " + (n.getClass().isArray() ? StrUtil.lowerFirst(simpleName).replace("[]", "") : StrUtil.lowerFirst(simpleName));
             }).collect(Collectors.joining(", "));
-            log.info("\n\n{}.{}({})->{}ms\nreq->{}\nres->{}\n", targetObj.getClass().getName(), targetMethod.getName(), targetArgumentType, spendMs, JSONUtil.toJsonStr(targetArguments.length == 1 ? targetArguments[0] : targetArguments), JSONUtil.toJsonStr(res));
+            log.info("\n\n{}.{}({})->{}ms\nreq->{}\nres->{}\n",
+                    targetObj.getClass().getName(),
+                    targetMethod.getName(),
+                    targetArgumentType,
+                    System.currentTimeMillis() - start,
+                    JSONUtil.toJsonStr(targetArguments.length == 1 ? targetArguments[0] : targetArguments),
+                    JSONUtil.toJsonStr(res)
+            );
         }
         return res;
     }
