@@ -30,17 +30,17 @@ public class CounterAspect {
     public Object counter(ProceedingJoinPoint joinPoint, Counter counter) throws Throwable {
         try {
             Object proceed = joinPoint.proceed();
-            record(joinPoint, counter, "success");
+            count(joinPoint, counter, "success");
             return proceed;
         } catch (Throwable e) {
-            record(joinPoint, counter, "failure");
+            count(joinPoint, counter, "failure");
             throw e;
         } finally {
-            record(joinPoint, counter, "total");
+            count(joinPoint, counter, "total");
         }
     }
 
-    private void record(ProceedingJoinPoint joinPoint, Counter counter, String countWay) {
+    private void count(ProceedingJoinPoint joinPoint, Counter counter, String statisticalType) {
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         String value = counter.value();
         Tag[] extraTags = counter.extraTags();
@@ -55,8 +55,8 @@ public class CounterAspect {
         tags[2 * counter.extraTags().length + 3] = Arrays.stream(method.getParameterTypes()).map(Class::getName).collect(Collectors.joining(","));
         tags[2 * counter.extraTags().length + 4] = "returnType";
         tags[2 * counter.extraTags().length + 5] = method.getReturnType().getName();
-        tags[2 * counter.extraTags().length + 6] = "countWay";
-        tags[2 * counter.extraTags().length + 7] = countWay;
+        tags[2 * counter.extraTags().length + 6] = "statisticalType";
+        tags[2 * counter.extraTags().length + 7] = statisticalType;
         io.micrometer.core.instrument.Counter.Builder builder =
                 io.micrometer.core.instrument.Counter.builder(value).tags(tags);
         String description = counter.description();
