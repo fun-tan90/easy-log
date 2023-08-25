@@ -47,6 +47,7 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 /**
@@ -60,6 +61,8 @@ import java.util.stream.Collectors;
 @Service
 public class EsServiceImpl implements EsService {
 
+    private final AtomicBoolean initLifecyclePolicyAndTemplate = new AtomicBoolean(false);
+
     @Resource
     EasyLogEsProperties easyLogEsProperties;
 
@@ -68,15 +71,19 @@ public class EsServiceImpl implements EsService {
 
     @Override
     public void initLifecyclePolicyAndTemplate() {
-        String lifecyclePolicyContent = generateLifecyclePolicy(easyLogEsProperties.getIndexLifecyclePolicy());
-        boolean lifecyclePolicy = putLifecyclePolicy(EasyLogConstants.ILM_POLICY_NAME, lifecyclePolicyContent);
-        if (lifecyclePolicy) {
-            String templateSource = ResourceUtil.readUtf8Str(EasyLogConstants.INDEX_TEMPLATE_PATH);
-            boolean indexTemplate = putIndexTemplate(EasyLogConstants.INDEX_TEMPLATE_NAME, templateSource);
-            if (indexTemplate) {
-                log.info("索引模板创建【easy-log-template】创建成功");
+        if (initLifecyclePolicyAndTemplate.compareAndSet(false, true)) {
+            String lifecyclePolicyContent = generateLifecyclePolicy(easyLogEsProperties.getIndexLifecyclePolicy());
+            boolean lifecyclePolicy = putLifecyclePolicy(EasyLogConstants.ILM_POLICY_NAME, lifecyclePolicyContent);
+            if (lifecyclePolicy) {
+                String templateSource = ResourceUtil.readUtf8Str(EasyLogConstants.INDEX_TEMPLATE_PATH);
+                boolean indexTemplate = putIndexTemplate(EasyLogConstants.INDEX_TEMPLATE_NAME, templateSource);
+                if (indexTemplate) {
+                    log.info("索引模板创建【easy-log-template】创建成功");
+                } else {
+                    log.error("索引模板创建【easy-log-template】创建失败");
+                }
             } else {
-                log.error("索引模板创建【easy-log-template】创建成功");
+                log.error("Index Lifecycle Policies 创建失败");
             }
         }
     }
@@ -99,7 +106,7 @@ public class EsServiceImpl implements EsService {
             Response response = restHighLevelClient.getLowLevelClient().performRequest(request);
             return response.getStatusLine().getStatusCode() == 200;
         } catch (IOException e) {
-            throw new ServiceException(StrUtil.format("createLifecyclePolicy failed, {}", e));
+            throw new ServiceException(StrUtil.format("putLifecyclePolicy failed, {}", e));
         }
     }
 

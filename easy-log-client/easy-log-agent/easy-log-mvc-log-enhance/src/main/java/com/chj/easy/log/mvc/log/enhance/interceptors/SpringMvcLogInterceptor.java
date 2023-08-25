@@ -7,6 +7,7 @@ import net.bytebuddy.implementation.bind.annotation.*;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
@@ -32,10 +33,12 @@ public class SpringMvcLogInterceptor {
         } catch (Throwable e) {
             log.error(e.getMessage());
         } finally {
-            String targetArgumentType = Arrays.stream(targetArguments).map(n -> {
-                String simpleName = n.getClass().getSimpleName();
-                return simpleName + " " + (n.getClass().isArray() ? StrUtil.lowerFirst(simpleName).replace("[]", "") : StrUtil.lowerFirst(simpleName));
-            }).collect(Collectors.joining(", "));
+            String targetArgumentType = Arrays.stream(targetArguments)
+                    .filter(n -> !Objects.isNull(n))
+                    .map(n -> {
+                        String simpleName = n.getClass().getSimpleName();
+                        return simpleName + " " + (n.getClass().isArray() ? StrUtil.lowerFirst(simpleName).replace("[]", "") : StrUtil.lowerFirst(simpleName));
+                    }).collect(Collectors.joining(", "));
             log.info("\n\n{}.{}({})->{}ms\nreq->{}\nres->{}\n",
                     targetObj.getClass().getName(),
                     targetMethod.getName(),

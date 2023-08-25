@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   easy-log:
-    image: ${image}
+    image: ${EASY_LOG}
     container_name: easy-log
     environment:
       - HEAP_SIZE=256m

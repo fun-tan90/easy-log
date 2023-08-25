@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   easy-log-admin:
-    image: ${image}
+    image: ${EASY_LOG}
     container_name: easy-log-admin
     environment:
       - HEAP_SIZE=256m
@@ -32,7 +32,7 @@ services:
       retries: 3
 
   easy-log-compute:
-    image: ${image}
+    image: ${EASY_LOG}
     container_name: easy-log-compute
     environment:
       - HEAP_SIZE=256m
@@ -58,7 +58,7 @@ services:
       retries: 3
 
   easy-log-collector:
-    image: ${image}
+    image: ${EASY_LOG}
     container_name: easy-log-collector
     environment:
       - HEAP_SIZE=256m
