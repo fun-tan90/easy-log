@@ -31,13 +31,3 @@ sa-token:
   is-print: false
   # 是否输出操作日志
   is-log: true
-  alone-redis:
-    # 连接超时时间（毫秒）
-    timeout: 5000ms
-    # Redis数据库索引（默认为0）
-    database: ${spring.redis.database}
-    # Redis服务器地址
-    host: ${spring.redis.host}
-    # Redis服务器连接端口
-    port: ${spring.redis.port}
-    password: ${spring.redis.password}
