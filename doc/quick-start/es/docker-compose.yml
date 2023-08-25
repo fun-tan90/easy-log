@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   es01:
-    image: ${elasticsearch}
+    image: ${ELASTICSEARCH}
     container_name: es01
     environment:
       - node.name=es01
@@ -17,7 +17,7 @@ services:
     ports:
       - "9200:9200"
   es02:
-    image: ${elasticsearch}
+    image: ${ELASTICSEARCH}
     container_name: es02
     environment:
       - node.name=es02
@@ -33,7 +33,7 @@ services:
     ports:
       - "9201:9200"
   es03:
-    image: ${elasticsearch}
+    image: ${ELASTICSEARCH}
     container_name: es03
     environment:
       - node.name=es03
@@ -49,7 +49,7 @@ services:
     ports:
       - "9202:9200"
   cerebro:
-    image: ${cerebro}
+    image: ${CEREBRO}
     container_name: cerebro
     depends_on:
       - es01
@@ -60,7 +60,7 @@ services:
     command:
       - -Dhosts.0.host=http://es01:9200
   kibana:
-    image: ${kibana}
+    image: ${KIBANA}
     container_name: kibana
     depends_on:
       - es01

@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   nginx:
-    image: nginx:1.25.2
+    image: ${NGINX}
     restart: always
     container_name: nginx
     ports:
@@ -19,7 +19,7 @@ services:
       - emqx2
 
   emqx1:
-    image: emqx:5.1.0
+    image: ${EMQX}
     container_name: emqx1
     environment:
     - "EMQX_NODE_NAME=emqx@node1.emqx.io"
@@ -41,7 +41,7 @@ services:
       - ./config/emqx.conf:/opt/emqx/etc/emqx.conf
 
   emqx2:
-    image: emqx:5.1.0
+    image: ${EMQX}
     container_name: emqx2
     environment:
     - "EMQX_NODE_NAME=emqx@node2.emqx.io"

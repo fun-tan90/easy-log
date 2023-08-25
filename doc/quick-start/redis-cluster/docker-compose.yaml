@@ -2,14 +2,14 @@ version: '3.7'
 
 services:
   redis-node-0:
-    image: ${IMG_VER}
+    image: ${REDIS_CLUSTER}
     volumes:
       - redis-cluster_data-0:/bitnami/redis/data
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_PORT_NUMBER=7000
       - REDIS_CLUSTER_ANNOUNCE_PORT=7000
-      - REDIS_CLUSTER_ANNOUNCE_IP=172.16.8.31
+      - REDIS_CLUSTER_ANNOUNCE_IP=${REDIS_CLUSTER_ANNOUNCE_IP}
       - REDIS_CLUSTER_ANNOUNCE_BUS_PORT=17000
       - REDIS_CLUSTER_DYNAMIC_IPS=no
       - REDIS_NODES=redis-node-0:7000 redis-node-1:7001 redis-node-2:7002 redis-node-3:7003 redis-node-4:7004 redis-node-5:7005
@@ -18,14 +18,14 @@ services:
       - "17000:17000"
 
   redis-node-1:
-    image: ${IMG_VER}
+    image: ${REDIS_CLUSTER}
     volumes:
       - redis-cluster_data-1:/bitnami/redis/data
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_PORT_NUMBER=7001
       - REDIS_CLUSTER_ANNOUNCE_PORT=7001
-      - REDIS_CLUSTER_ANNOUNCE_IP=172.16.8.31
+      - REDIS_CLUSTER_ANNOUNCE_IP=${REDIS_CLUSTER_ANNOUNCE_IP}
       - REDIS_CLUSTER_ANNOUNCE_BUS_PORT=17001
       - REDIS_CLUSTER_DYNAMIC_IPS=no
       - REDIS_NODES=redis-node-0:7000 redis-node-1:7001 redis-node-2:7002 redis-node-3:7003 redis-node-4:7004 redis-node-5:7005
@@ -34,14 +34,14 @@ services:
       - "17001:17001"
 
   redis-node-2:
-    image: ${IMG_VER}
+    image: ${REDIS_CLUSTER}
     volumes:
       - redis-cluster_data-2:/bitnami/redis/data
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_PORT_NUMBER=7002
       - REDIS_CLUSTER_ANNOUNCE_PORT=7002
-      - REDIS_CLUSTER_ANNOUNCE_IP=172.16.8.31
+      - REDIS_CLUSTER_ANNOUNCE_IP=${REDIS_CLUSTER_ANNOUNCE_IP}
       - REDIS_CLUSTER_ANNOUNCE_BUS_PORT=17002
       - REDIS_CLUSTER_DYNAMIC_IPS=no
       - REDIS_NODES=redis-node-0:7000 redis-node-1:7001 redis-node-2:7002 redis-node-3:7003 redis-node-4:7004 redis-node-5:7005
@@ -50,14 +50,14 @@ services:
       - "17002:17002"
 
   redis-node-3:
-    image: ${IMG_VER}
+    image: ${REDIS_CLUSTER}
     volumes:
       - redis-cluster_data-3:/bitnami/redis/data
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_PORT_NUMBER=7003
       - REDIS_CLUSTER_ANNOUNCE_PORT=7003
-      - REDIS_CLUSTER_ANNOUNCE_IP=172.16.8.31
+      - REDIS_CLUSTER_ANNOUNCE_IP=${REDIS_CLUSTER_ANNOUNCE_IP}
       - REDIS_CLUSTER_ANNOUNCE_BUS_PORT=17003
       - REDIS_CLUSTER_DYNAMIC_IPS=no
       - REDIS_NODES=redis-node-0:7000 redis-node-1:7001 redis-node-2:7002 redis-node-3:7003 redis-node-4:7004 redis-node-5:7005
@@ -66,14 +66,14 @@ services:
       - "17003:17003"
 
   redis-node-4:
-    image: ${IMG_VER}
+    image: ${REDIS_CLUSTER}
     volumes:
       - redis-cluster_data-4:/bitnami/redis/data
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_PORT_NUMBER=7004
       - REDIS_CLUSTER_ANNOUNCE_PORT=7004
-      - REDIS_CLUSTER_ANNOUNCE_IP=172.16.8.31
+      - REDIS_CLUSTER_ANNOUNCE_IP=${REDIS_CLUSTER_ANNOUNCE_IP}
       - REDIS_CLUSTER_ANNOUNCE_BUS_PORT=17004
       - REDIS_CLUSTER_DYNAMIC_IPS=no
       - REDIS_NODES=redis-node-0:7000 redis-node-1:7001 redis-node-2:7002 redis-node-3:7003 redis-node-4:7004 redis-node-5:7005
@@ -82,7 +82,7 @@ services:
       - "17004:17004"
 
   redis-node-5:
-    image: ${IMG_VER}
+    image: ${REDIS_CLUSTER}
     volumes:
       - redis-cluster_data-5:/bitnami/redis/data
     depends_on:
@@ -95,7 +95,7 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_PORT_NUMBER=7005
       - REDIS_CLUSTER_ANNOUNCE_PORT=7005
-      - REDIS_CLUSTER_ANNOUNCE_IP=172.16.8.31
+      - REDIS_CLUSTER_ANNOUNCE_IP=${REDIS_CLUSTER_ANNOUNCE_IP}
       - REDIS_CLUSTER_ANNOUNCE_BUS_PORT=17005
       - REDIS_CLUSTER_DYNAMIC_IPS=no
       - REDIS_NODES=redis-node-0:7000 redis-node-1:7001 redis-node-2:7002 redis-node-3:7003 redis-node-4:7004 redis-node-5:7005
