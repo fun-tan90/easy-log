@@ -1,4 +1,5 @@
 version: '3.7'
+
 services:
   redis-node-0:
     image: ${IMG_VER}
