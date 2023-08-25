@@ -9,6 +9,10 @@ package com.chj.easy.log.mvc.log.enhance.test;
  */
 public class UserManager {
 
+    public UserManager() {
+        System.out.println("UserManager 构造");
+    }
+
     public String selectUserName(Long userId) {
         return "用户名称为" + userId;
     }
@@ -17,7 +21,7 @@ public class UserManager {
         System.out.println("printUser 测试");
     }
 
-    public int selectAge(){
+    public int selectAge() {
         return 10;
     }
 }

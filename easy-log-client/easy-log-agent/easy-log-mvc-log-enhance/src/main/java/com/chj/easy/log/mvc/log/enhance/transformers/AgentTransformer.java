@@ -22,7 +22,11 @@ import static net.bytebuddy.matcher.ElementMatchers.*;
 @Slf4j
 public class AgentTransformer implements AgentBuilder.Transformer {
     @Override
-    public DynamicType.Builder<?> transform(DynamicType.Builder<?> builder, TypeDescription typeDescription, ClassLoader classLoader, JavaModule module, ProtectionDomain protectionDomain) {
+    public DynamicType.Builder<?> transform(DynamicType.Builder<?> builder,
+                                            TypeDescription typeDescription,
+                                            ClassLoader classLoader,
+                                            JavaModule module,
+                                            ProtectionDomain protectionDomain) {
         return builder.method(not(isStatic())
                         .and(isAnnotatedWith(nameStartsWith("org.springframework.web.bind.annotation").and(nameEndsWith("Mapping")))))
                 .intercept(MethodDelegation.to(SpringMvcLogInterceptor.class));

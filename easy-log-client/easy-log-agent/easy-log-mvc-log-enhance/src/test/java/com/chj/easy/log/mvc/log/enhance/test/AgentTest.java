@@ -5,6 +5,8 @@ import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.implementation.FieldAccessor;
 import net.bytebuddy.implementation.FixedValue;
+import net.bytebuddy.implementation.MethodDelegation;
+import net.bytebuddy.implementation.bind.annotation.Morph;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,10 +29,15 @@ public class AgentTest {
 
     @Before
     public void init() {
-        path = AgentTest.class.getResource("").getPath();
+        path = AgentTest.class.getClassLoader().getResource("").getPath();
         System.out.println("path = " + path);
     }
 
+    /**
+     * 方法插桩
+     *
+     * @throws IOException
+     */
     @Test
     public void test1() throws IOException {
         DynamicType.Unloaded<UserManager> unloaded = new ByteBuddy()
@@ -53,6 +60,11 @@ public class AgentTest {
         unloaded.saveIn(new File(path));
     }
 
+    /**
+     * 注入方法
+     *
+     * @throws IOException
+     */
     @Test
     public void test2() throws IOException {
         DynamicType.Unloaded<UserManager> unloaded = new ByteBuddy()
@@ -66,6 +78,11 @@ public class AgentTest {
         unloaded.saveIn(new File(path));
     }
 
+    /**
+     * 注入属性
+     *
+     * @throws IOException
+     */
     @Test
     public void test3() throws IOException {
         DynamicType.Unloaded<UserManager> unloaded = new ByteBuddy()
@@ -78,12 +95,93 @@ public class AgentTest {
         unloaded.saveIn(new File(path));
     }
 
+    /**
+     * 方法委托1
+     *
+     * @throws Exception
+     */
     @Test
-    public void test4() throws IOException {
+    public void test4() throws Exception {
         DynamicType.Unloaded<UserManager> unloaded = new ByteBuddy()
-                .redefine(UserManager.class)
+                .subclass(UserManager.class)
                 .name("a.b.SubUserManager4")
+                .method(named("selectUserName"))
+                .intercept(MethodDelegation.to(UserManagerInterceptor1.class))
                 .make();
+
+        DynamicType.Loaded<UserManager> load = unloaded.load(getClass().getClassLoader());
+        Class<? extends UserManager> loaded = load.getLoaded();
+        UserManager userManager = loaded.newInstance();
+        System.out.println("userManager.selectUserName(1) = " + userManager.selectUserName(1L));
+        unloaded.saveIn(new File(path));
+    }
+
+    /**
+     * 方法委托2
+     *
+     * @throws Exception
+     */
+    @Test
+    public void test5() throws Exception {
+        DynamicType.Unloaded<UserManager> unloaded = new ByteBuddy()
+                .subclass(UserManager.class)
+                .name("a.b.SubUserManager5")
+                .method(named("selectUserName"))
+                .intercept(MethodDelegation.to(new UserManagerInterceptor2()))
+                .make();
+
+        DynamicType.Loaded<UserManager> load = unloaded.load(getClass().getClassLoader());
+        Class<? extends UserManager> loaded = load.getLoaded();
+        UserManager userManager = loaded.newInstance();
+        System.out.println("userManager.selectUserName(2) = " + userManager.selectUserName(2L));
+        unloaded.saveIn(new File(path));
+    }
+
+    /**
+     * 方法委托3
+     *
+     * @throws Exception
+     */
+    @Test
+    public void test6() throws Exception {
+        DynamicType.Unloaded<UserManager> unloaded = new ByteBuddy()
+                .subclass(UserManager.class)
+                .name("a.b.SubUserManager6")
+                .method(named("selectUserName"))
+                .intercept(MethodDelegation.to(new UserManagerInterceptor3()))
+                .make();
+
+        DynamicType.Loaded<UserManager> load = unloaded.load(getClass().getClassLoader());
+        Class<? extends UserManager> loaded = load.getLoaded();
+        UserManager userManager = loaded.newInstance();
+        System.out.println("userManager.selectUserName(3) = " + userManager.selectUserName(3L));
+
+        unloaded.saveIn(new File(path));
+    }
+
+
+    /**
+     * 动态修改入参
+     *
+     * @throws Exception
+     */
+    @Test
+    public void test7() throws Exception {
+        DynamicType.Unloaded<UserManager> unloaded = new ByteBuddy()
+                .subclass(UserManager.class)
+                .name("a.b.SubUserManager7")
+                .method(named("selectUserName"))
+                .intercept(MethodDelegation
+                        .withDefaultConfiguration()
+                        .withBinders(Morph.Binder.install(UserCallable.class))
+                        .to(UserManagerInterceptor4.class))
+                .make();
+
+        DynamicType.Loaded<UserManager> load = unloaded.load(getClass().getClassLoader());
+        Class<? extends UserManager> loaded = load.getLoaded();
+        UserManager userManager = loaded.newInstance();
+        System.out.println("userManager.selectUserName(7) = " + userManager.selectUserName(7L));
+
         unloaded.saveIn(new File(path));
     }
 }

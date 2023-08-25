@@ -67,7 +67,7 @@ services:
       - es02
       - es03
     volumes:
-      - ./kibana.yml:/usr/share/kibana/config/kibana.yml
+      - ./config/kibana.yml:/usr/share/kibana/config/kibana.yml
     ports:
       - "5601:5601"
 
