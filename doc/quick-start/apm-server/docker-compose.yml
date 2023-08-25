@@ -1,0 +1,14 @@
+version: '3.7'
+services:
+  apm-server:
+    image: ${APM_SERVER}
+    container_name: apm-server
+    volumes:
+      - ./config/apm-server.yml:/usr/share/apm-server/apm-server.yml:ro
+    ports:
+      - "8200:8200"
+
+networks:
+  default:
+    external: true
+    name: el_net
