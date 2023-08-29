@@ -23,11 +23,17 @@ cd ./single
 
 #### 4、修复.env环境变量
 ```shell
-# 修改.env中image的版本信息以及堆内存大小
+# 修改.env中image的版本信息
 ```
 
 #### 5、启动Easy-Log
 
 ```shell
 docker-compose up -d
+```
+
+#### 6、查看Easy-Log状态
+
+```shell
+docker-compose ps -a
 ```

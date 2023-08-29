@@ -1,4 +1,7 @@
 version: '3.7'
+
+name: easy-log-cluster
+
 services:
   easy-log-admin:
     image: ${EASY_LOG}
