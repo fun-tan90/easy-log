@@ -1,5 +1,6 @@
 package com.chj.easy.log.core.convention.handler;
 
+import cn.hutool.core.util.StrUtil;
 import com.chj.easy.log.core.convention.Res;
 import com.chj.easy.log.core.convention.exception.AbstractException;
 import lombok.extern.slf4j.Slf4j;
@@ -100,7 +101,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Throwable.class)
     public Res<Void> defaultErrorHandler(HttpServletRequest request, Throwable throwable) {
         log.error("[{}] {} ", request.getMethod(), getUrl(request), throwable);
-        return Res.errorMsg(throwable.getMessage());
+        return Res.errorMsg(StrUtil.format("服务端发生异常，{}", throwable.getMessage()));
     }
 
     private String getUrl(HttpServletRequest request) {

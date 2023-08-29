@@ -3,6 +3,7 @@ package com.chj.easy.log.admin.rest;
 import com.chj.easy.log.admin.model.cmd.LogRealTimeFilterCmd;
 import com.chj.easy.log.admin.service.LogRealTimeFilterService;
 import com.chj.easy.log.core.convention.Res;
+import com.chj.easy.log.core.convention.annotation.Log;
 import com.chj.easy.log.core.model.Topic;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -19,6 +20,7 @@ import javax.annotation.Resource;
  * @date 2023/7/21 12:10
  */
 @Slf4j
+@Log
 @RestController
 @RequestMapping("log-real-time-filter")
 public class LogRealTimeFilterController {

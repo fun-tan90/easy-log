@@ -1,6 +1,7 @@
 package com.chj.easy.log.admin.rest;
 
 import com.chj.easy.log.core.convention.Res;
+import com.chj.easy.log.core.convention.annotation.Log;
 import com.chj.easy.log.core.model.IndexList;
 import com.chj.easy.log.core.service.EsService;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import java.util.List;
  * @date 2023/7/19 8:42
  */
 @Slf4j
+@Log
 @RestController
 @RequestMapping("sys/es")
 public class SysEsController {

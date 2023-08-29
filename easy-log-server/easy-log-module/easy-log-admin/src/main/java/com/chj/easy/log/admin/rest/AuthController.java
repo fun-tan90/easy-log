@@ -8,6 +8,7 @@ import com.chj.easy.log.admin.model.vo.SysUserMqttVo;
 import com.chj.easy.log.admin.service.SysCaptchaService;
 import com.chj.easy.log.admin.service.SysUserService;
 import com.chj.easy.log.core.convention.Res;
+import com.chj.easy.log.core.convention.annotation.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +27,7 @@ import javax.annotation.Resource;
  * @date 2023/7/31 17:52
  */
 @Slf4j
+@Log
 @RestController
 public class AuthController {
 

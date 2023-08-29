@@ -4,6 +4,7 @@ import com.chj.easy.log.admin.model.cmd.LogAlarmPlatformAddCmd;
 import com.chj.easy.log.admin.model.cmd.LogAlarmRuleAddCmd;
 import com.chj.easy.log.admin.service.LogAlarmService;
 import com.chj.easy.log.core.convention.Res;
+import com.chj.easy.log.core.convention.annotation.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +23,7 @@ import javax.annotation.Resource;
  * @date 2023/7/21 12:10
  */
 @Slf4j
+@Log
 @RestController
 @RequestMapping("log-alarm")
 public class LogAlarmController {

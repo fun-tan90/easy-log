@@ -8,6 +8,7 @@ import com.chj.easy.log.admin.model.cmd.LogQueryCmd;
 import com.chj.easy.log.admin.model.vo.BarChartVo;
 import com.chj.easy.log.admin.service.LogQueryService;
 import com.chj.easy.log.core.convention.Res;
+import com.chj.easy.log.core.convention.annotation.Log;
 import com.chj.easy.log.core.convention.page.es.EsPageInfo;
 import com.chj.easy.log.core.model.Doc;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,7 @@ import java.util.Map;
  * @date 2023/7/19 8:42
  */
 @Slf4j
+@Log
 @RestController
 @RequestMapping("log-query")
 public class LogQueryController {

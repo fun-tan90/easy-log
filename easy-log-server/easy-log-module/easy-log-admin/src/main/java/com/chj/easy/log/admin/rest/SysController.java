@@ -6,6 +6,7 @@ import cn.hutool.core.date.DateUtil;
 import com.chj.easy.log.admin.model.vo.SysInfoVo;
 import com.chj.easy.log.common.constant.EasyLogConstants;
 import com.chj.easy.log.core.convention.Res;
+import com.chj.easy.log.core.convention.annotation.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,7 @@ import java.util.Date;
  * @date 2023/7/13 11:08
  */
 @Slf4j
+@Log
 @RestController
 @RequestMapping("sys")
 public class SysController {
