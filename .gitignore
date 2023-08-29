@@ -36,3 +36,4 @@ jar
 agents
 .NEUTRINO_PROXY_CLIENT_ID
 emqx_data_*
+.flattened-pom.xml
