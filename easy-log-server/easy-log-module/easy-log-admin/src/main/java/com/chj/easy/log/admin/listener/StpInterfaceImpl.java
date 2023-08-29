@@ -29,7 +29,7 @@ public class StpInterfaceImpl implements StpInterface {
      */
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
-        log.debug("loginType {}, loginType {}", loginId, loginType);
+        log.debug("GetPermissionList loginType {}, loginType {}", loginId, loginType);
         // 1. 声明权限码集合
         List<String> permissionList = new ArrayList<>();
         // 2. 遍历角色列表，查询拥有的权限码
@@ -50,7 +50,7 @@ public class StpInterfaceImpl implements StpInterface {
      */
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
-        log.debug("loginType {}, loginType {}", loginId, loginType);
+        log.debug("GetRoleList loginType {}, loginType {}", loginId, loginType);
         SaSession session = StpUtil.getSessionByLoginId(loginId);
         return session.get("role_list", () -> {
             // 从数据库查询这个账号id拥有的角色列表
