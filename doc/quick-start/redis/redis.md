@@ -15,7 +15,7 @@ docker network create --driver=bridge --gateway=172.18.0.1 --subnet=172.18.0.0/1
 # 修改.env中image的版本信息
 ```
 
-#### 5、启动redis
+#### 4、启动redis
 
 ```shell
 # 单体版
@@ -24,8 +24,11 @@ docker-compose -f docker-compose-single.yaml up -d
 docker-compose -f docker-compose-cluster.yaml up -d
 ```
 
-#### 6、查看Redis状态
+#### 5、查看Redis状态
 
 ```shell
-docker-compose ps -a
+# 单体版
+docker-compose -f docker-compose-single.yaml ps -a
+# 集群版
+docker-compose -f docker-compose-cluster.yaml ps -a
 ```
