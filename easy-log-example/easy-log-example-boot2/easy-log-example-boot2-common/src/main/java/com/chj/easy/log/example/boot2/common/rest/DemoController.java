@@ -2,15 +2,12 @@ package com.chj.easy.log.example.boot2.common.rest;
 
 
 import com.chj.easy.log.core.appender.annotation.EL;
-import com.chj.easy.log.meter.annotation.Counter;
 import com.yomahub.tlog.core.thread.TLogInheritableTask;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -78,18 +75,5 @@ public class DemoController {
                     log.trace("{} trace is {} ", threadName, id);
                 }, 1, 1, TimeUnit.MILLISECONDS);
         return "ok";
-    }
-
-
-    @GetMapping("counter1")
-    @Counter(description = "测试统计1")
-    public String counter1(String name, HttpServletRequest request, MultipartFile file) {
-        return "";
-    }
-
-
-    @GetMapping("counter2")
-    @Counter(description = "测试统计2")
-    public void counter2() {
     }
 }

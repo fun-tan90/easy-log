@@ -17,10 +17,6 @@
             <artifactId>easy-log-core-appender</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.chj</groupId>
-            <artifactId>easy-log-meter</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>

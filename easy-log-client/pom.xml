@@ -15,7 +15,6 @@
 
     <modules>
         <module>easy-log-appender</module>
-        <module>easy-log-meter</module>
         <module>easy-log-agent</module>
     </modules>
 </project>

@@ -88,11 +88,6 @@
             </dependency>
             <dependency>
                 <groupId>com.chj</groupId>
-                <artifactId>easy-log-meter</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.chj</groupId>
                 <artifactId>easy-log-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -306,7 +301,7 @@
                 <version>1.2.7</version>
                 <configuration>
                     <updatePomFile>true</updatePomFile>
-                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                    <!--<flattenMode>resolveCiFriendliesOnly</flattenMode>-->
                 </configuration>
                 <executions>
                     <execution>
