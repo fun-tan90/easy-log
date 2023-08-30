@@ -9,6 +9,15 @@
     <a href="./LICENSE">
         <img src="https://img.shields.io/badge/license-MIT-red" alt="license MIT">
     </a>
+    <a>
+        <img src="https://img.shields.io/badge/JDK-1.8+-green.svg" >
+    </a>
+    <a>
+        <img src="https://img.shields.io/badge/springBoot-2.0+-green.svg" >
+    </a>
+    <a>
+        <img src="https://img.shields.io/badge/springBoot-3.0+-green.svg" >
+    </a>
 </p>
 
 ---
@@ -35,8 +44,9 @@
 ## Easy-Log部署
 
 1. [ES集群部署](doc/quick-start/es/es.md)
-2. [EMQX集群部署](doc/quick-start/emqx/emqx.md)
-3. [Easy-Log部署](doc/quick-start/easy-log/el.md)
+2. [Redis部署](doc/quick-start/redis/redis.md)
+3. [EMQX集群部署](doc/quick-start/emqx/emqx.md)
+4. [Easy-Log部署](doc/quick-start/easy-log/el.md)
 
 **Easy-Log两种部署方式**
 

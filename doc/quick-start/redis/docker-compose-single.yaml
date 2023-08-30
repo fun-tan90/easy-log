@@ -1,0 +1,19 @@
+version: '3.7'
+
+services:
+  redis:
+    image: ${REDIS}
+    volumes:
+      - redis_data:/data
+    entrypoint: redis-server --maxmemory 1G --appendonly yes --requirepass ${REDIS_PASSWORD}
+    ports:
+      - "6379:6379"
+
+volumes:
+  redis_data:
+    driver: local
+
+networks:
+  default:
+    external: true
+    name: el_net
