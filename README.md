@@ -75,7 +75,7 @@ maxPushSize=500                         #日志批推送大小
 <dependencies>
     <!--结合项目中使用的日志框架-->
     <dependency>
-        <groupId>com.chj</groupId>
+        <groupId>fun.tan90</groupId>
         <artifactId>easy-log-[log4j2|log4j|logback]-appender</artifactId>
         <version>${latest}</version>
     </dependency>
@@ -98,7 +98,7 @@ maxPushSize=500                         #日志批推送大小
 ```xml
 <configuration scan="false" debug="false">
     <!--其他Appender-->
-    <appender name="EASY_LOG" class="com.chj.easy.log.logback.appender.EasyLogAppender"/>
+    <appender name="EASY_LOG" class="fun.tan90.easy.log.logback.appender.EasyLogAppender"/>
     <root level="INFO">
         <!--其他appender-ref-->
         <appender-ref ref="EASY_LOG"/>
@@ -127,5 +127,5 @@ maxPushSize=500                         #日志批推送大小
 ### log4j 配置
 
 ```properties
-log4j.appender.EASY_LOG=com.chj.easy.log.log4j.appender.EasyLogAppender
+log4j.appender.EASY_LOG=fun.tan90.easy.log.log4j.appender.EasyLogAppender
 ```

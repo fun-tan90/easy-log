@@ -5,7 +5,7 @@ git remote set-url --add origin git@github.com:easy-log/easy-log.git
 
 ```json
 {
-  "loggerName":"com.chj",
+  "loggerName":"fun.tan90",
   "logLevel":"DEBUG",
   "cmdType": "SET_LOGGER_LEVEL_CONFIG"
 }

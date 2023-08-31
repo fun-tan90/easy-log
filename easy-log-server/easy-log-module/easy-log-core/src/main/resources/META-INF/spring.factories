@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.chj.easy.log.core.config.EasyLogCoreAutoConfiguration
+  fun.tan90.easy.log.core.config.EasyLogCoreAutoConfiguration

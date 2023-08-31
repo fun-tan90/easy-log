@@ -19,7 +19,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Premain-Class>com.chj.easy.log.mvc.log.enhance.EasyLogAgent</Premain-Class>
+                            <Premain-Class>fun.tan90.easy.log.mvc.log.enhance.EasyLogAgent</Premain-Class>
                         </manifestEntries>
                     </archive>
                 </configuration>

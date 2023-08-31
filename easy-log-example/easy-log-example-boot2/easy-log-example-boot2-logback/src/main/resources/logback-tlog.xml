@@ -36,7 +36,7 @@
         <appender-ref ref="FILE"/>
     </appender>
 
-    <appender name="EASY_LOG" class="com.chj.easy.log.logback.appender.EasyLogAppender"/>
+    <appender name="EASY_LOG" class="fun.tan90.easy.log.logback.appender.EasyLogAppender"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>

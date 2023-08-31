@@ -3,10 +3,10 @@ logging:
   level:
     root: info
 #    tracer: trace
-    com.chj.easy.log: debug
-    com.chj.easy.log.admin: debug
-    com.chj.easy.log.compute: debug
-    com.chj.easy.log.collector: debug
+    fun.tan90.easy.log: debug
+    fun.tan90.easy.log.admin: debug
+    fun.tan90.easy.log.compute: debug
+    fun.tan90.easy.log.collector: debug
 
 tlog:
   mdc-enable: true
