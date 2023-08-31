@@ -11,6 +11,10 @@
 
     <artifactId>easy-log-example</artifactId>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
     <packaging>pom</packaging>
 
     <modules>
