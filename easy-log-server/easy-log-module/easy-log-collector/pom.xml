@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.chj</groupId>
+        <groupId>fun.tan90</groupId>
         <artifactId>easy-log-module</artifactId>
         <version>${revision}</version>
     </parent>
@@ -13,7 +13,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.chj</groupId>
+            <groupId>fun.tan90</groupId>
             <artifactId>easy-log-core</artifactId>
         </dependency>
     </dependencies>
