@@ -11,11 +11,11 @@
 
     <artifactId>easy-log-example</artifactId>
 
+    <packaging>pom</packaging>
+
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
-
-    <packaging>pom</packaging>
 
     <modules>
         <module>easy-log-example-boot2</module>

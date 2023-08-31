@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>easy-log-server</artifactId>
+
     <packaging>pom</packaging>
 
     <properties>
@@ -20,4 +21,5 @@
         <module>easy-log-app</module>
         <module>easy-log-module</module>
     </modules>
+
 </project>

@@ -11,10 +11,6 @@
 
     <artifactId>easy-log-example-boot2-logback</artifactId>
 
-    <properties>
-        <maven.deploy.skip>true</maven.deploy.skip>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>fun.tan90</groupId>
