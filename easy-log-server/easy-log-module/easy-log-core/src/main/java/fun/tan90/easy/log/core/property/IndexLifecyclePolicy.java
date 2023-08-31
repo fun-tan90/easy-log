@@ -11,7 +11,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @date 2023/7/25 10:43
  */
 @Data
-@ConfigurationProperties(prefix = EasyLogEsProperties.PREFIX + ".index-lifecycle-policy")
 public class IndexLifecyclePolicy {
 
     /**

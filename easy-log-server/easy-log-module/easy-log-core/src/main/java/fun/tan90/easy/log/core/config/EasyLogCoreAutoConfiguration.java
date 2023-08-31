@@ -33,7 +33,7 @@ import java.util.Optional;
  * @date 2023/7/13 14:38
  */
 @ComponentScan(EasyLogConstants.CORE_SCAN_BASE_PACKAGES)
-@EnableConfigurationProperties({EasyLogEsProperties.class, IndexLifecyclePolicy.class})
+@EnableConfigurationProperties({EasyLogEsProperties.class})
 public class EasyLogCoreAutoConfiguration {
 
     @Resource

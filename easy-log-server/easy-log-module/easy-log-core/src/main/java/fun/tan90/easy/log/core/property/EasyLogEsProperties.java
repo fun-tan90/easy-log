@@ -2,6 +2,7 @@ package fun.tan90.easy.log.core.property;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 
 /**
@@ -70,5 +71,6 @@ public class EasyLogEsProperties {
     /**
      * data stream 索引生命周期
      */
+    @NestedConfigurationProperty
     private IndexLifecyclePolicy indexLifecyclePolicy;
 }
