@@ -12,6 +12,10 @@
     <artifactId>easy-log-server</artifactId>
     <packaging>pom</packaging>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
     <modules>
         <module>easy-log-app</module>
         <module>easy-log-module</module>

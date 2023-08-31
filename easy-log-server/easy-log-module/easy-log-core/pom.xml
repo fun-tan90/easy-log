@@ -11,6 +11,10 @@
 
     <artifactId>easy-log-core</artifactId>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>cn.hutool</groupId>
