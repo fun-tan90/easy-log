@@ -4,8 +4,8 @@
 <h1 align="center">Easy-Log</h1>
 <h4 align="center">易用的日志收集、分析和检索工具</h4>
 <p align="center">
-	<a href="https://gitee.com/easy-log/easy-log/stargazers"><img src="https://gitee.com/easy-log/easy-log/badge/star.svg"></a>
-	<a href="https://gitee.com/easy-log/easy-log/members"><img src="https://gitee.com/easy-log/easy-log/badge/fork.svg"></a>
+	<a href="https://gitee.com/fun-tan90/easy-log/stargazers"><img src="https://gitee.com/fun-tan90/easy-log/badge/star.svg"></a>
+	<a href="https://gitee.com/fun-tan90/easy-log/members"><img src="https://gitee.com/fun-tan90/easy-log/badge/fork.svg"></a>
     <a href="./LICENSE">
         <img src="https://img.shields.io/badge/license-MIT-red" alt="license MIT">
     </a>
