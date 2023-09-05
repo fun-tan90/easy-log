@@ -289,22 +289,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--            <plugin>-->
-            <!--                <groupId>org.apache.maven.plugins</groupId>-->
-            <!--                <artifactId>maven-javadoc-plugin</artifactId>-->
-            <!--                <version>2.10.3</version>-->
-            <!--                <executions>-->
-            <!--                    <execution>-->
-            <!--                        <id>attach-javadocs</id>-->
-            <!--                        <goals>-->
-            <!--                            <goal>jar</goal>-->
-            <!--                        </goals>-->
-            <!--                        <configuration>-->
-            <!--                            <additionalparam>-Xdoclint:none</additionalparam>-->
-            <!--                        </configuration>-->
-            <!--                    </execution>-->
-            <!--                </executions>-->
-            <!--            </plugin>-->
             <!-- 统一版本号管理 -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -331,14 +315,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--            <plugin>-->
-            <!--                <groupId>org.codehaus.mojo</groupId>-->
-            <!--                <artifactId>versions-maven-plugin</artifactId>-->
-            <!--                <version>2.11.0</version>-->
-            <!--                <configuration>-->
-            <!--                    <generateBackupPoms>false</generateBackupPoms>-->
-            <!--                </configuration>-->
-            <!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
@@ -366,39 +342,7 @@
                         </execution>
                     </executions>
                 </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-antrun-plugin</artifactId>
-                    <version>1.8</version>
-                    <executions>
-                        <execution>
-                            <id>clean</id>
-                            <phase>clean</phase>
-                            <goals>
-                                <goal>run</goal>
-                            </goals>
-                            <configuration>
-                                <target>
-                                    <delete dir="${project.basedir}/../../doc/image/${project.name}/jar"/>
-                                </target>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>package</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>run</goal>
-                            </goals>
-                            <configuration>
-                                <target>
-                                    <mkdir dir="${project.basedir}/../../doc/image/${project.name}/jar"/>
-                                    <copy file="${project.build.directory}/${project.build.finalName}.jar"
-                                          tofile="${project.basedir}/../../doc/image/${project.name}/jar/${project.build.finalName}.jar"/>
-                                </target>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
+
             </plugins>
         </pluginManagement>
     </build>

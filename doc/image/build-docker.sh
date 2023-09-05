@@ -1,5 +1,5 @@
 #!/bin/sh
-version=`awk '/<version>[^<]+<\/version>/{gsub(/<version>|<\/version>/,"",$1);print $1;exit;}' ../../pom.xml`
+version=`awk '/<version>[^<]+<\/version>/{gsub(/<version>|<\/version>/,"",$1);print $1;exit;}' ../../.flattened-pom.xml`
 export tag=$version
 echo $tag
 
