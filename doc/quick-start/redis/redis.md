@@ -12,23 +12,23 @@ docker network create --driver=bridge --gateway=172.18.0.1 --subnet=172.18.0.0/1
 
 #### 2、修复.env环境变量
 ```shell
-# 修改.env中image的版本信息
+# 修改.env中image的版本信息及redis参数配置信息
 ```
 
 #### 3、启动redis
 
 ```shell
-# 单体版
+# 单体版 二者选一
 docker-compose -f docker-compose-single.yaml up -d
-# 集群版
+# 集群版 二者选一
 docker-compose -f docker-compose-cluster.yaml up -d
 ```
 
 #### 4、查看Redis状态
 
 ```shell
-# 单体版
+# 单体版 二者选一
 docker-compose -f docker-compose-single.yaml ps -a
-# 集群版
+# 集群版 二者选一
 docker-compose -f docker-compose-cluster.yaml ps -a
 ```

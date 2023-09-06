@@ -1,4 +1,7 @@
 version: '3.7'
+
+name: es-cluster
+
 services:
   es01:
     image: ${ELASTICSEARCH}

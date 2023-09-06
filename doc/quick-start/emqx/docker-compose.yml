@@ -1,5 +1,7 @@
 version: '3.7'
 
+name: emqx-cluster
+
 services:
   nginx:
     image: ${NGINX}
@@ -36,7 +38,7 @@ services:
         - node1.emqx.io
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ./emqx_data_01:/opt/emqx/data
+      - emqx_data_01:/opt/emqx/data
       - ./config/acl.conf:/opt/emqx/etc/acl.conf
       - ./config/emqx.conf:/opt/emqx/etc/emqx.conf
 
@@ -58,9 +60,15 @@ services:
         - node2.emqx.io
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ./emqx_data_02:/opt/emqx/data
+      - emqx_data_02:/opt/emqx/data
       - ./config/acl.conf:/opt/emqx/etc/acl.conf
       - ./config/emqx.conf:/opt/emqx/etc/emqx.conf
+
+volumes:
+  emqx_data_01:
+    driver: local
+  emqx_data_02:
+    driver: local
 
 networks:
   default:

@@ -36,7 +36,7 @@
 
 ## 核心模块说明
 
-- mqtt broker负责日志消息发布与订阅，基于[EMQX](https://www.emqx.io/zh)中间件实现
+- mqtt broker负责日志消息发布与订阅，基于[EMQX](https://www.emqx.io/zh)中间件实现,**_不熟悉mqtt协议的同学，可以简单理解成消息中间件mq_**
 - easy-log-admin负责用户认证、日志告警规则、日志实时过滤等基础信息管理
 - easy-log-compute主要实现日志告警、日志实时过滤和日志收集速率计算等功能
 - easy-log-collector主要负责订阅日志数据，批量插入ES集群
@@ -77,7 +77,7 @@ maxPushSize=500                         #日志批推送大小
     <dependency>
         <groupId>fun.tan90</groupId>
         <artifactId>easy-log-[log4j2|log4j|logback]-appender</artifactId>
-        <version>${latest}</version>
+        <version>1.1.17</version>
     </dependency>
     <!--tlog 
         一个轻量级的分布式日志标记追踪神器，10分钟即可接入，自动对日志打标签完成微服务的链路追踪
@@ -86,7 +86,7 @@ maxPushSize=500                         #日志批推送大小
     <dependency>
         <groupId>com.yomahub</groupId>
         <artifactId>tlog-all-spring-boot-starter</artifactId>
-        <version>${latest}</version>
+        <version>1.5.1</version>
     </dependency>
 </dependencies>
 ```

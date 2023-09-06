@@ -1,6 +1,6 @@
 version: '3.7'
 
-name: easy-log
+name: easy-log-single
 
 services:
   easy-log:

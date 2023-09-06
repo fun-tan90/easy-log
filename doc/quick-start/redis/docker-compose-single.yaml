@@ -1,5 +1,7 @@
 version: '3.7'
 
+name: redis-single
+
 services:
   redis:
     image: ${REDIS}

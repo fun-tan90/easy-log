@@ -29,6 +29,7 @@ cd ./single
 #### 5、启动Easy-Log
 
 ```shell
+# 启动前结合环境，修改environment中的环境变量信息
 docker-compose up -d
 ```
 
