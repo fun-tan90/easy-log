@@ -53,7 +53,7 @@ public class MqttManager {
             MqttConnectOptions connOpts = new MqttConnectOptions();
             connOpts.setUserName(EasyLogManager.GLOBAL_CONFIG.getMqttUserName());
             connOpts.setPassword(EasyLogManager.GLOBAL_CONFIG.getMqttPassword().toCharArray());
-            // 关闭自动重连
+            // 设置自动重连
             connOpts.setAutomaticReconnect(true);
             // 设置keepalive
             connOpts.setKeepAliveInterval(30);

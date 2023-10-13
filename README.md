@@ -25,8 +25,8 @@
 ## 项目特性
 
 - 无代码入侵的分布式日志系统，基于log4j、log4j2、logback搜集日志，基于[TLog](https://tlog.yomahub.com)实现链路追踪，方便查询关联日志
-- elasticsearch作为日志存储、查询分析引擎,利用Data Streams + ILM机制功能特性完成日志索引的生命周期管理
-- 基于MQTT协议实现日志收集、在线调整应用日志级别、日志告警推送及日志实时过滤等功能
+- elasticsearch作为日志存储、查询分析引擎，利用Data Streams + ILM机制自动管理日志索引的生命周期
+- 基于MQTT协议实现日志收集、在线调整应用日志级别、日志告警及日志实时过滤等功能
 
 ## 核心架构
 
@@ -36,7 +36,7 @@
 
 ## 核心模块说明
 
-- mqtt broker负责日志消息发布与订阅，基于[EMQX](https://www.emqx.io/zh)中间件实现,**_不熟悉mqtt协议的同学，可以简单理解成消息中间件mq_**
+- mqtt broker负责日志消息发布与订阅，基于[EMQX](https://www.emqx.io/zh)中间件实现,**_不熟悉mqtt协议的同学，可以简单理解成消息中间件_**
 - easy-log-admin负责用户认证、日志告警规则、日志实时过滤等基础信息管理
 - easy-log-compute主要实现日志告警、日志实时过滤和日志收集速率计算等功能
 - easy-log-collector主要负责订阅日志数据，批量插入ES集群
@@ -48,15 +48,15 @@
 3. [EMQX集群部署](doc/quick-start/emqx/emqx.md)
 4. [Easy-Log部署](doc/quick-start/easy-log/el.md)
 
-**Easy-Log两种部署方式**
+**Easy-Log支持两种部署方式**
 
 ![Easy-Log部署方式.png](doc/img/Easy-Log部署方式.png)
 
 ---
 
-## 应用使用说明
+## 应用端接入说明
 
-### 创建应用配置文件
+### 创建配置文件
 
 ```properties
 # 创建src/main/resources/easy-log.properties，文件名固定为easy-log.properties
@@ -69,7 +69,7 @@ maxPushSize=500                         #日志批推送大小
 
 ---
 
-### 应用端maven依赖引入
+### maven依赖引入
 
 ```xml
 <dependencies>

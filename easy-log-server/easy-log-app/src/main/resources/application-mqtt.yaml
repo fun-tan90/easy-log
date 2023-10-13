@@ -1,7 +1,7 @@
 mqtt:
   client:
     enabled: true
-    ip: ${MQTT_HOST:121.36.96.79}
+    ip: ${MQTT_HOST:broker.emqx.io}
     port: ${MQTT_PORT:1883}
     # 固定前缀不能修改
     clientId: easy_log_server:${random.long(1000,9999)}
