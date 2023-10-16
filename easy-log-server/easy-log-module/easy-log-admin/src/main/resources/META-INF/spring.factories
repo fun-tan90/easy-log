@@ -1,3 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  fun.tan90.easy.log.admin.config.EasyLogAdminAutoConfiguration,\
-  fun.tan90.easy.log.admin.config.stp.StpLogicForTokenPrefixCompatibleCookie
+  fun.tan90.easy.log.admin.config.EasyLogAdminAutoConfiguration

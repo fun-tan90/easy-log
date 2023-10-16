@@ -7,6 +7,7 @@ import cn.dev33.satoken.log.SaLog;
 import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.json.JSONUtil;
+import fun.tan90.easy.log.admin.config.stp.StpLogicForTokenPrefixCompatibleCookie;
 import fun.tan90.easy.log.admin.property.EasyLogAdminProperties;
 import fun.tan90.easy.log.common.constant.EasyLogConstants;
 import fun.tan90.easy.log.core.convention.Res;
@@ -78,6 +79,11 @@ public class EasyLogAdminAutoConfiguration {
                     }
                     return JSONUtil.toJsonStr(Res.errorMsg(e.getMessage()));
                 });
+    }
+
+    @Bean
+    public StpLogicForTokenPrefixCompatibleCookie stpLogicForTokenPrefixCompatibleCookie() {
+        return new StpLogicForTokenPrefixCompatibleCookie();
     }
 
     @Bean
