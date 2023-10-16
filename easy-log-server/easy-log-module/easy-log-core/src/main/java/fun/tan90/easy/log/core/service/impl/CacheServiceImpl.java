@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 public class CacheServiceImpl implements CacheService {
 
     @Resource
-    private StringRedisTemplate stringRedisTemplate;
+    StringRedisTemplate stringRedisTemplate;
 
     @Override
     public SlidingWindow slidingWindow(String key, String unique, long timestamp, int period) {

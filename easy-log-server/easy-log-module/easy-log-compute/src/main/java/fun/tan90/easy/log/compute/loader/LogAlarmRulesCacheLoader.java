@@ -26,7 +26,7 @@ import java.util.Optional;
 public class LogAlarmRulesCacheLoader implements CacheLoader<String, LogAlarmRule> {
 
     @Resource
-    private StringRedisTemplate stringRedisTemplate;
+    StringRedisTemplate stringRedisTemplate;
 
     @Override
     public @Nullable LogAlarmRule load(@NonNull String key) throws Exception {
