@@ -43,6 +43,14 @@
         <reactor-ql.version>1.0.16</reactor-ql.version>
     </properties>
 
+    <!-- 作者信息 -->
+    <developers>
+        <developer>
+            <name>tan90</name>
+            <email>897546244@qq.com</email>
+        </developer>
+    </developers>
+
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
