@@ -24,7 +24,7 @@ docker-compose up -d
 # 查看集群状态
 docker-compose ps -a
 ```
-![img.png](../../img/img09.png)
+![img.png](img/img09.png)
 
 #### 4、打开EMQX Dashboard页面
 [EMQX官方文档](https://www.emqx.io/docs/zh/v5.1)
@@ -33,4 +33,4 @@ docker-compose ps -a
 # 默认账号/密码为：admin/public
 http://ip:18083
 ```
-![img.png](../../img/img08.png)
+![img.png](img/img08.png)
