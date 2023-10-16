@@ -5,7 +5,6 @@ import fun.tan90.easy.log.core.convention.aspect.LogAspect;
 import fun.tan90.easy.log.core.convention.exception.ServiceException;
 import fun.tan90.easy.log.core.indicator.MqttClientHealthIndicator;
 import fun.tan90.easy.log.core.property.EasyLogEsProperties;
-import fun.tan90.easy.log.core.property.IndexLifecyclePolicy;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -54,8 +53,7 @@ public class EasyLogCoreAutoConfiguration {
         if (!address.contains(":")) {
             throw new ServiceException("the address must contains port and separate by ':'");
         }
-        String schema = !StringUtils.hasLength(easyLogEsProperties.getSchema())
-                ? "http" : easyLogEsProperties.getSchema();
+        String schema = !StringUtils.hasLength(easyLogEsProperties.getSchema()) ? "http" : easyLogEsProperties.getSchema();
         List<HttpHost> hostList = new ArrayList<>();
         Arrays.stream(easyLogEsProperties.getAddress().split(","))
                 .forEach(item -> hostList.add(new HttpHost(item.split(":")[0],
@@ -77,8 +75,7 @@ public class EasyLogCoreAutoConfiguration {
             String password = easyLogEsProperties.getPassword();
             if (StringUtils.hasLength(username) && StringUtils.hasLength(password)) {
                 CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-                credentialsProvider.setCredentials(AuthScope.ANY,
-                        new UsernamePasswordCredentials(username, password));
+                credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
                 httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
             }
             return httpClientBuilder;
@@ -88,8 +85,7 @@ public class EasyLogCoreAutoConfiguration {
         builder.setRequestConfigCallback(requestConfigBuilder -> {
             Optional.ofNullable(easyLogEsProperties.getConnectTimeout()).ifPresent(requestConfigBuilder::setConnectTimeout);
             Optional.ofNullable(easyLogEsProperties.getSocketTimeout()).ifPresent(requestConfigBuilder::setSocketTimeout);
-            Optional.ofNullable(easyLogEsProperties.getConnectionRequestTimeout())
-                    .ifPresent(requestConfigBuilder::setConnectionRequestTimeout);
+            Optional.ofNullable(easyLogEsProperties.getConnectionRequestTimeout()).ifPresent(requestConfigBuilder::setConnectionRequestTimeout);
             return requestConfigBuilder;
         });
         return new RestHighLevelClient(builder);
