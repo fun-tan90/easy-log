@@ -294,7 +294,7 @@ public class EsServiceImpl implements EsService {
             JSONObject row = JSONUtil.parseObj(searchHit.getSourceAsString());
             searchHit.getHighlightFields().forEach((k, v) -> {
                 Optional<Text> fragmentOpt = Arrays.stream(v.getFragments()).findFirst();
-                fragmentOpt.ifPresent(value -> row.putOnce(k, value));
+                fragmentOpt.ifPresent(value -> row.set(k, value.string()));
             });
             Doc entity = row.toBean(tClass);
             entity.setIndexId(searchHit.getId());

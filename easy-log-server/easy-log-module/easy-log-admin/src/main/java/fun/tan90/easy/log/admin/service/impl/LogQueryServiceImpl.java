@@ -1,9 +1,7 @@
 package fun.tan90.easy.log.admin.service.impl;
 
 import cn.hutool.core.date.DateUtil;
-import fun.tan90.easy.log.admin.model.cmd.BaseLogQueryCmd;
-import fun.tan90.easy.log.admin.model.cmd.LogDropBoxCmd;
-import fun.tan90.easy.log.admin.model.cmd.LogQueryCmd;
+import fun.tan90.easy.log.admin.model.cmd.*;
 import fun.tan90.easy.log.admin.model.vo.BarChartVo;
 import fun.tan90.easy.log.admin.service.LogQueryService;
 import fun.tan90.easy.log.core.convention.page.es.EsPageInfo;
@@ -63,14 +61,16 @@ public class LogQueryServiceImpl implements LogQueryService {
     @Override
     public EsPageInfo<Doc> paging(LogQueryCmd logQueryCmd) {
         SearchSourceBuilder searchSourceBuilder = generateSearchSource(logQueryCmd.getBaseParam());
-        return esService.paging(LogDoc.indexName(), logQueryCmd.getPageParam().getPageNum(), logQueryCmd.getPageParam().getPageSize(), searchSourceBuilder, LogDoc.class);
+        PageParam pageParam = logQueryCmd.getPageParam();
+        generatePageSearchSource(searchSourceBuilder, pageParam);
+        return esService.paging(LogDoc.indexName(), pageParam.getPageNum(), pageParam.getPageSize(), searchSourceBuilder, LogDoc.class);
     }
 
     @Override
     public List<BarChartVo> barChart(LogQueryCmd logQueryCmd) {
         BaseLogQueryCmd baseParam = logQueryCmd.getBaseParam();
         SearchSourceBuilder searchSourceBuilder = generateSearchSource(baseParam);
-        LogQueryCmd.BarChartParam barChartParam = logQueryCmd.getBarChartParam();
+        BarChartParam barChartParam = logQueryCmd.getBarChartParam();
         String dateHistogramName = barChartParam.getDateHistogramField();
         String termsName = barChartParam.getTermsField();
         searchSourceBuilder

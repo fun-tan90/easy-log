@@ -35,9 +35,7 @@ public class BaseLogQueryCmd {
 
     private String content;
 
-    private List<String> ascList;
-
-    private List<String> descList;
+    private String operator = "or";
 
     @NotNull
     @NotEmpty

@@ -2,7 +2,7 @@ logging:
   config: classpath:logback-spring.xml
   level:
     root: info
-#    tracer: trace
+    tracer: trace
     fun.tan90.easy.log: debug
     fun.tan90.easy.log.admin: debug
     fun.tan90.easy.log.compute: debug

@@ -4,11 +4,13 @@ package fun.tan90.easy.log.admin.service;
 import fun.tan90.easy.log.admin.model.cmd.BaseLogQueryCmd;
 import fun.tan90.easy.log.admin.model.cmd.LogDropBoxCmd;
 import fun.tan90.easy.log.admin.model.cmd.LogQueryCmd;
+import fun.tan90.easy.log.admin.model.cmd.PageParam;
 import fun.tan90.easy.log.admin.model.vo.BarChartVo;
 import fun.tan90.easy.log.core.convention.exception.ClientException;
 import fun.tan90.easy.log.core.convention.page.es.EsPageInfo;
 import fun.tan90.easy.log.core.model.Doc;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
@@ -80,15 +82,19 @@ public interface LogQueryService {
         }
         String content = logQueryPageCmd.getContent();
         if (StringUtils.hasLength(content)) {
-            boolQueryBuilder.must(QueryBuilders.matchQuery("content", content));
+            String operator = logQueryPageCmd.getOperator();
+            boolQueryBuilder.must(QueryBuilders.matchQuery("content", content).operator(Operator.fromString(operator)));
             highlightBuilder.field("content");
         }
 
         searchSourceBuilder.query(boolQueryBuilder);
         searchSourceBuilder.highlighter(highlightBuilder);
+        return searchSourceBuilder;
+    }
 
-        List<String> descList = logQueryPageCmd.getDescList();
-        List<String> ascList = logQueryPageCmd.getAscList();
+    default void generatePageSearchSource(SearchSourceBuilder searchSourceBuilder, PageParam pageParam) {
+        List<String> descList = pageParam.getDescList();
+        List<String> ascList = pageParam.getAscList();
         if (!CollectionUtils.isEmpty(descList) && !CollectionUtils.isEmpty(ascList)) {
             if (descList.stream().anyMatch(ascList::contains)) {
                 throw new ClientException("升序和降序不能包含同一个字段");
@@ -115,7 +121,6 @@ public interface LogQueryService {
             searchSourceBuilder.sort(SortBuilders.fieldSort("@timestamp").order(SortOrder.DESC));
             searchSourceBuilder.sort(SortBuilders.fieldSort("seq").order(SortOrder.DESC));
         }
-        return searchSourceBuilder;
     }
 
     /**
