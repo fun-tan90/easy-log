@@ -39,6 +39,11 @@ public class SysUserLoginCmd {
      */
     private boolean rememberMe;
 
+    /**
+     * 记住我天数
+     */
+    private long rememberMeDays = 7;
+
     @NotNull
     @NotBlank
     @Length(min = 8, max = 12)

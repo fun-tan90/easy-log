@@ -47,7 +47,8 @@ public class SysUserServiceImpl implements SysUserService {
         boolean rememberMe = sysUserLoginCmd.isRememberMe();
         SaLoginModel saLoginModel = new SaLoginModel();
         if (rememberMe) {
-            saLoginModel.setTimeout(7 * 24 * 3600);
+            long rememberMeDays = sysUserLoginCmd.getRememberMeDays();
+            saLoginModel.setTimeout(rememberMeDays * 24 * 3600);
         }
         StpUtil.login(username, saLoginModel.setIsLastingCookie(rememberMe));
         String tokenValue = StpUtil.getTokenValue();
